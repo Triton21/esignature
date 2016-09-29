@@ -1,0 +1,24 @@
+login_customer:
+    path:   /customer/{token}
+    defaults: { _controller: AppBundle:Customer:index, token:nonexist }
+
+customer_index:
+    path:   /customer-area
+    defaults: { _controller: AppBundle:Customer:index }
+    
+customer_accessdenied:
+    path:   /access-denied/{ip}
+    defaults: { _controller: AppBundle:Customer:accessDenied, ip:non }
+    
+customer_alreadysigned:
+    path:   /already-signed/{ip}
+    defaults: { _controller: AppBundle:Customer:alreadySigned, ip:non }
+    
+customer_signednote:
+    path:   /signednote/{token}
+    defaults: { _controller: AppBundle:Customer:signednote, token:token }
+    
+customer_ajaxsketch:
+    path:   /customerajaxsketch
+    defaults: { _controller: AppBundle:Customer:customerAjaxSketch }
+    

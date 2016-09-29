@@ -1,0 +1,227 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+
+{% block stylesheets %}
+    <script src="{{asset('bundles/app/ckeditor/ckeditor.js')}}"></script>
+    <style>
+        .wrap {
+            width: 512px;
+            height: 800px;
+            padding: 0;
+            overflow: hidden;
+        }
+        .frame {
+            width: 900px;
+            height: 1406.25px;
+            border: 0;
+            -ms-transform: scale(0.569);
+            -moz-transform: scale(0.569);
+            -o-transform: scale(0.569);
+            -webkit-transform: scale(0.569);
+            transform: scale(0.5);
+
+            -ms-transform-origin: 0 0;
+            -moz-transform-origin: 0 0;
+            -o-transform-origin: 0 0;
+            -webkit-transform-origin: 0 0;
+            transform-origin: 0 0;
+        }
+        /* Modal box */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+
+
+
+{% endblock %}
+
+{% block body %}
+
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <span class="close">×</span>
+            <content id="modalContent"></content>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Saved templates</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="gi-1x">
+                        <table class="table table-striped gi-5p">
+
+                            <thead>
+                                <tr>
+                                    <th>Template name</th>
+                                    <th>Subject</th>
+                                    <th>Created at</th>
+                                    <th>Created by</th>
+                                    <th>Open</th>
+                                    <th></th>
+
+                                </tr>
+                            </thead>
+                            {% for all in emailTemplist %}
+                                <tr>
+                                    <td style="width:20%">{{ all.tempname }}</td>
+                                    <td style="width:35%">{{ all.subject }}</td>
+                                    <td style="width:10%">{{ all.createdAt|date('m-d-Y') }}</td>
+                                    <td style="width:10%">{{all.username}}</td>
+                                    <td style="width:5%"><a href="#" id="openEmail" action-data="{{all.id}}" ><span class="glyphicon glyphicon-open"></span></a></td>
+                                    <td style="width:15%"><a href="{{ path('app_deleteEmailTemplate', { 'id': all.id }) }}" class="btn btn-danger btn-xs"
+                                                             {% if is_granted('ROLE_ADMIN') == false %} disabled {% endif %}>Delete</a></td>
+                                    {% endfor %}
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Create new email template </h3>
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <span style="font-weight: bold;">Please use this placeholders in the template:</span>
+                        %username%, %name%, %date%
+                    </p>
+
+                    <p>
+                        {{ form_start(form) }}</p>
+                    <p>
+                        {{ form_label(form.tempname) }}
+                        {{ form_errors(form.tempname) }}
+                        {{ form_widget(form.tempname) }}
+                    </p>
+                    <p>
+                        {{ form_label(form.subject) }}
+                        {{ form_errors(form.subject) }}
+                        {{ form_widget(form.subject) }}
+                    </p>
+
+                    <p>
+
+                        {{ form_errors(form.body) }}
+                        {{ form_widget(form.body , { 'attr': { 
+                            'style' : 'height:250px', 
+                            'rows' : '30', 
+                            'cols' : '1' }} ) }}
+                    </p>
+                    <p>
+                        {{ form_end(form) }}</p>
+
+
+
+
+                </div>
+            </div>
+        </div> 
+
+
+
+
+
+
+
+    </div>
+
+{%endblock%}   
+
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+
+            CKEDITOR.replace('form_body');
+            $(function () {
+                var modal = $('#myModal')[0];
+                $(document).on('click', "#openEmail", function (e) {
+                    e.preventDefault();
+                    modal.style.display = "block";
+                    var emailID = $(this).attr('action-data');
+                    newWindow(emailID);
+                });
+
+                $(document).on('click', ".close", function () {
+                    modal.style.display = "none";
+                });
+
+                $(document).on('click', window, function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                });
+            });
+
+            function newWindow(emailID) {
+                var myUrl = "{{path('app_ajaxemailTemplate')}}";
+                var data = {'emailID': emailID };
+                
+                $.ajax({
+                    type: 'POST',
+                    url: myUrl,
+                    cache: false,
+                    data: data,
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        console.log(data);
+                        var contentDiv = document.getElementById('modalContent');
+                        contentDiv.innerHTML = data;
+
+                    }
+                });
+
+            }
+
+        });
+    </script>
+
+
+{% endblock %}
+

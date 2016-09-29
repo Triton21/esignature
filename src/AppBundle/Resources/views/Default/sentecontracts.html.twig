@@ -1,0 +1,499 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+{% block stylesheets %}
+    <style>
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        div.relative {
+            background-color: white;
+            position: relative;
+            width: 210mm;
+            height: 297mm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1cm;
+            box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+        }
+
+        div.footer {
+            position: absolute;
+            bottom: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+        div.header {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-top: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+        div.pagebody {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-top: 0cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+        .activeRow {
+            color: darkblue;
+        }
+        .inactiveRow {
+            color: lightgray;
+        }
+        .greenColor {
+            color: green;
+        }
+        .redColor {
+            color: red;
+        }
+
+
+
+    </style>   
+
+
+{% endblock %}
+
+{% block body %}
+
+    {#MODAL BOX#}
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <span class="close">×</span>
+            <content id="modalContent"></content>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="col-md-12">
+
+            {% if result == false %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-lg-12">
+                            <div class="col-lg-3">
+                                <h2>Client list</h2>
+                            </div>
+
+                            <!-- PAGINATOR -->
+
+                            <div class="col-lg-4">
+                                <div style="min-height: 22px; width: 100%"></div>
+                                {%if pager.pagedown == false%} <span class="gi-7p glyphicon glyphicon-chevron-left"></span>{% else%}<a href="{{ path('app_sentcontracts', { 'page': pager.pagedown })}}"><span class="gi-7p glyphicon glyphicon-chevron-left"></span></a>{%endif%}
+                                {% for all in pager.pagesarray %}{% if pager.page == all %} <button type="button" class="btn btn-sm disabled">{{all}}</button>{%else%}
+                                        <a href="{{ path('app_sentcontracts', { 'page': all })}}"><button type="button" class="btn btn-default btn-sm">{{all}}</button>{%endif%}</a>
+                                            {% endfor %}
+                                                {%if pager.pageup == false%} <span class="gi-7p glyphicon glyphicon-chevron-right"></span>{% else%}<a href="{{ path('app_sentcontracts', { 'page': pager.pageup })}}"><span class="gi-7p glyphicon glyphicon-chevron-right"></span></a>{%endif%}
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <div class="col-lg-8">
+                                                {{ form_start(form) }}
+                                                <div class="form-group">
+                                                    {{ form_errors(form.search) }}
+                                                    {{ form_widget(form.search) }}  
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                {{ form_end(form) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+
+                                    <!-- PAGINATOR END -->
+
+                                    <div class="col-md-12">
+                                        <br>
+                                        <br>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <th>
+                                                    Name
+                                                </th>
+                                                <th>
+                                                    Email
+                                                </th>
+                                                <th>
+                                                    User
+                                                </th>
+                                                <th>
+                                                    Created At
+                                                </th>
+                                                <th>
+                                                    Expire At
+                                                </th>
+                                                <th>
+                                                    Token
+                                                </th>
+                                                <th>
+                                                    Signed
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                </thead>
+                                                {% for econtract in econtracts %}
+                                                    <tr id="econtractRow{{econtract.id}}"
+                                                        {% if econtract.tokenactive == false %}
+                                                            class="inactiveRow" 
+                                                        {% else %}
+                                                            class="activeRow"    
+                                                        {% endif %}
+                                                        >
+                                                        <td>
+                                                            {{econtract.client.name}}
+                                                        </td>
+                                                        <td>
+                                                            {{econtract.email}}
+                                                        </td>
+                                                        <td>
+                                                            {{econtract.username}}
+                                                        </td>
+                                                        <td>
+                                                            {{econtract.createdAt|date('d-m-Y') }}
+                                                        </td>
+                                                        <td>
+                                                            {{econtract.tokenExpiry|date('d-m-Y') }}
+                                                        </td>
+                                                        <td>
+                                                            <span id="activeSpan{{econtract.id}}"
+                                                                  {% if econtract.tokenactive == true %}
+                                                                      class="glyphicon glyphicon-ok greenColor"     
+                                                                  {% else %}
+                                                                      class="glyphicon glyphicon-remove redColor"    
+                                                                  {% endif %}
+                                                                  ></span>
+                                                        </td>
+                                                        <td>
+                                                            <span {% if econtract.patientSigned == true %}
+                                                                class="glyphicon glyphicon-ok greenColor"     
+                                                            {% else %}
+                                                                class="glyphicon glyphicon-remove redColor"    
+                                                                {% endif %}
+                                                                    ></span>
+                                                            </td>
+                                                            <td style="vertical-align: middle;">
+                                                                <canvas id="clientSign{{econtract.id}}" width="120" height="36" style="border:1px solid #000000; "></canvas>
+                                                            </td>
+                                                            <td>
+                                                                <a href="{{path('app_resend_econtract', {'id': econtract.id })}}" id="resendContract" role="button" class="btn btn-sm btn-default">Resend</a>
+                                                            </td>
+                                                            <td>
+                                                                <a href="#" id="openContract" action-data="{{econtract.id}}" role="button" class="btn btn-sm btn-default">Open</a>
+                                                            </td>
+                                                            <td>
+                                                                <a href="#" id="disableContract" action-data="{{econtract.id}}" role="button" 
+                                                                   {% if econtract.tokenactive == true %}
+                                                                       class="btn btn-sm btn-danger">Disable
+                                                                   {% else %}
+                                                                       class="btn btn-sm btn-success">Enable        
+                                                                   {% endif %}
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+
+                                                        {% endfor %}
+                                                        </table>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% elseif result == 'no result' %}
+
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="col-lg-12">
+                                                        <div class="col-lg-10">
+                                                            <h2>No result for: {{searchTerm}}</h2>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <h4><a href="{{path('app_sentcontracts')}}"> Back to list</a></h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {% else %}
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-body">
+                                                        <div class="col-lg-12">
+                                                            <div class="col-lg-10">
+                                                                <h2>Search result for: {{searchTerm}}</h2>
+                                                            </div>
+
+
+                                                            <div class="col-md-12">
+                                                                <br>
+                                                                <br>
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-hover">
+                                                                        <thead>
+                                                                        <th>
+                                                                            Name
+                                                                        </th>
+                                                                        <th>
+                                                                            Email
+                                                                        </th>
+                                                                        <th>
+                                                                            User
+                                                                        </th>
+                                                                        <th>
+                                                                            Created At
+                                                                        </th>
+                                                                        <th>
+                                                                            Expire At
+                                                                        </th>
+                                                                        <th>
+                                                                            Token
+                                                                        </th>
+                                                                        <th>
+                                                                            Signed
+                                                                        </th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        </thead>
+                                                                        {% for econtract in result %}
+                                                                            <tr id="econtractRow{{econtract.id}}"
+                                                                                {% if econtract.tokenactive == false %}
+                                                                                    class="inactiveRow" 
+                                                                                {% else %}
+                                                                                    class="activeRow"    
+                                                                                {% endif %}
+                                                                                >
+                                                                                <td>
+                                                                                    {{econtract.client.name}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{econtract.email}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{econtract.username}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{econtract.createdAt|date('d-m-Y') }}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{econtract.tokenExpiry|date('d-m-Y') }}
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span id="activeSpan{{econtract.id}}"
+                                                                                          {% if econtract.tokenactive == true %}
+                                                                                              class="glyphicon glyphicon-ok greenColor"     
+                                                                                          {% else %}
+                                                                                              class="glyphicon glyphicon-remove redColor"    
+                                                                                          {% endif %}
+                                                                                          ></span>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span {% if econtract.patientSigned == true %}
+                                                                                        class="glyphicon glyphicon-ok greenColor"     
+                                                                                    {% else %}
+                                                                                        class="glyphicon glyphicon-remove redColor"    
+                                                                                        {% endif %}
+                                                                                            ></span>
+                                                                                    </td>
+                                                                                    <td style="vertical-align: middle;">
+                                                                                        <canvas id="clientSign{{econtract.id}}" width="120" height="36" style="border:1px solid #000000; "></canvas>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <a href="{{path('app_resend_econtract', {'id': econtract.id })}}" id="resendContract" role="button" class="btn btn-sm btn-default">Resend</a>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <a href="#" id="openContract" action-data="{{econtract.id}}" role="button" class="btn btn-sm btn-default">Open</a>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <a href="#" id="disableContract" action-data="{{econtract.id}}" role="button" 
+                                                                                           {% if econtract.tokenactive == true %}
+                                                                                               class="btn btn-sm btn-danger">Disable
+                                                                                           {% else %}
+                                                                                               class="btn btn-sm btn-success">Enable        
+                                                                                           {% endif %}
+                                                                                        </a>
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                                {% endfor %}
+                                                                                </table>
+                                                                            </div>
+                                                                            <br>
+                                                                            <br>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-12">
+                                                                        <h4><a href="{{path('app_sentcontracts')}}"> Back to list</a></h4>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {% endif %} 
+                                                            </div>
+                                                            {% endblock %}
+
+
+                                                                {% block javascripts %}
+
+                                                                    <script>
+                                                                        $(document).ready(function () {
+                                                                            $(function () {
+                                                                                var modal = $('#myModal')[0];
+                                                                                $(document).on('click', '#openContract', function (e) {
+                                                                                    e.preventDefault();
+                                                                                    modal.style.display = "block";
+                                                                                    var contractId = $(this).attr('action-data');
+                                                                                    opencontract(contractId);
+                                                                                });
+                                                                                $(document).on('click', ".close", function () {
+                                                                                    modal.style.display = "none";
+                                                                                });
+                                                                                $(document).on('click', window, function (event) {
+                                                                                    if (event.target == modal) {
+                                                                                    modal.style.display = "none";
+                                                                                }
+                                                                                });
+                                                                            });
+
+                                                                            function opencontract(contractId) {
+
+                                                                                var data = {'myid': contractId};
+                                                                                    var myUrl = "{{path('app_ajaxOpenContract')}}";
+                                                                                    $.ajax({
+                                                                                        type: 'POST',
+                                                                                        url: myUrl,
+                                                                                        cache: false,
+                                                                                        data: data,
+                                                                                        dataType: "json",
+                                                                                        success: function (data)
+                                                                                        {
+                                                                                            var contentDiv = document.getElementById('modalContent');
+                                                                                            contentDiv.innerHTML = data.html;
+                                                                                            var displaySign = $("#mySign")[0];
+                                                                                            var ctx = displaySign.getContext("2d");
+                                                                                            var image = new Image();
+                                                                                            image.onload = function () {
+                                                                                            ctx.drawImage(image, 0, 0, 300, 100);
+                                                                                            };
+                                                                                            image.src = data.image;
+                                                                                        }
+                                                                                    });
+                                                                            }
+
+                                                                            $(document).on('click', "#disableContract", function (e) {
+                                                                                var contractId = $(this).attr('action-data');
+                                                                                var data = {'myid': contractId};
+                                                                                var myUrl = "{{path('app_ajaxTokenDisable')}}";
+                                                                                $.ajax({
+                                                                                    type: 'POST',
+                                                                                    url: myUrl,
+                                                                                    cache: false,
+                                                                                    data: data,
+                                                                                    dataType: "json",
+                                                                                    success: function (response) {
+                                                                                        console.log($(e.target));
+                                                                                        $('#econtractRow' + contractId).toggleClass('inactiveRow');
+                                                                                        $('#econtractRow' + contractId).toggleClass('activeRow');
+                                                                                        $('#activeSpan' + contractId).toggleClass('glyphicon-ok greenColor');
+                                                                                        $('#activeSpan' + contractId).toggleClass('glyphicon-remove redColor');
+                                                                                        if ($('#econtractRow' + contractId).hasClass('inactiveRow')) {
+                                                                                            $(e.target).html('Enable');
+                                                                                            $(e.target).toggleClass('btn-danger');
+                                                                                            $(e.target).toggleClass('btn-success');
+                                                                                        } else {
+                                                                                            $(e.target).html('Disable');
+                                                                                            $(e.target).toggleClass('btn-danger');
+                                                                                            $(e.target).toggleClass('btn-success');
+                                                                                        }
+                                                                                    },
+                                                                                    complete: function () {
+                                                                                        console.log('Request is complete');
+                                                                                    },
+                                                                                    error: function () {
+                                                                                        console.log('Oops...there was an error!');
+                                                                                    }
+                                                                                });
+                                                                            });
+                                                                        });                                                                    </script>
+                                                                    {% if result == false %}
+                                                                        {% for econtract in econtracts %}
+                                                                            <script>
+                                                                                $(document).ready(function () {
+                                                                                var displaySign = document.getElementById("clientSign" + {{econtract.id}});
+                                                                                var ctx = displaySign.getContext("2d");
+                                                                                var image = new Image();
+                                                                                image.onload = function () {
+                                                                                ctx.drawImage(image, 0, 0, 120, 36);
+                                                                                };
+                                                                                image.src = '{{econtract.clientSignature}}';
+                                                                                });                                                                            </script>
+                                                                        {% endfor %}
+                                                                    {% endif %}
+
+                                                                    {% if result != false and result != 'no result' %}
+                                                                        {% for econtract in result %}
+                                                                            <script>
+                                                                                $(document).ready(function () {
+                                                                                var displaySign = document.getElementById("clientSign" + {{econtract.id}});
+                                                                                var ctx = displaySign.getContext("2d");
+                                                                                var image = new Image();
+                                                                                image.onload = function () {
+                                                                                ctx.drawImage(image, 0, 0, 120, 36);
+                                                                                };
+                                                                                image.src = '{{econtract.clientSignature}}';
+                                                                                });
+                                                                            </script>
+                                                                        {% endfor %}
+                                                                    {% endif %}
+
+
+                                                                {% endblock %}                         

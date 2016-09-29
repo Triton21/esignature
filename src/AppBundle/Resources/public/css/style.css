@@ -1,0 +1,58 @@
+body {
+    padding-top: 52px;
+}
+
+.center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.navbar-custom {
+    background-color:#229922;
+    color:#ffffff;
+    border-radius:0;
+}
+
+.navbar-custom .navbar-nav > li > a {
+    color:#fff;
+}
+.navbar-custom .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
+    color: #ffffff;
+    background-color:transparent;
+}
+.navbar-custom .navbar-brand {
+    color:#eeeeee;
+}
+
+.gi-1x{font-size: 1em;}
+.gi-2x{font-size: 2em;}
+.gi-3x{font-size: 3em;}
+.gi-4x{font-size: 4em;}
+.gi-5x{font-size: 5em;}
+
+.gi-1p{font-size: 9px;}
+.gi-2p{font-size: 10px;}
+.gi-3p{font-size: 11px;}
+.gi-4p{font-size: 12px;}
+.gi-5p{font-size: 13px;}
+.gi-6p{font-size: 14px;}
+.gi-7p{font-size: 16px;}
+.gi-8p{font-size: 18px;}
+.gi-9p{font-size: 20px;}
+.gi-35p{font-size: 35px;}
+.gi-45p{font-size: 45px;}
+
+.gi-1m{font-size: 1mm;}
+.gi-2m{font-size: 2mm;}
+.gi-3m{font-size: 3mm;}
+.gi-4m{font-size: 4mm;}
+.gi-5m{font-size: 5mm;}
+.gi-6m{font-size: 6mm;}
+.gi-7m{font-size: 7mm;}
+.gi-8m{font-size: 8mm;}
+.gi-9m{font-size: 9mm;}
+.gi-10m{font-size: 10mm;}
+
+
+

@@ -1,0 +1,5 @@
+services:
+    app_bundle.user_manager:
+        class: LoginBundle\Services\UserManager
+        arguments: ['@security.encoder_factory']
+        

@@ -1,0 +1,256 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+{% block stylesheets %}
+
+    <style>
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        div.relative {
+            background-color: white;
+            position: relative;
+            width: 210mm;
+            height: 297mm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1cm;
+            box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+        }
+
+        div.footer {
+            position: absolute;
+            bottom: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+        div.header {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-top: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+        div.pagebody {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-top: 0cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+
+
+    </style>    
+
+
+
+
+
+{% endblock %}
+
+{% block body %}
+
+    {#MODAL BOX#}
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <span class="close">×</span>
+            <content id="modalContent"></content>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-lg-12">
+                        <div class="col-lg-3">
+                            <h2>Template list</h2>
+                        </div>
+
+                        <!-- PAGINATOR -->
+
+                        <div class="col-lg-9">
+                            <div style="min-height: 22px; width: 100%"></div>
+                            {%if pager.pagedown == false%} <span class="gi-7p glyphicon glyphicon-chevron-left"></span>{% else%}<a href="{{ path('app_template', { 'page': pager.pagedown })}}"><span class="gi-7p glyphicon glyphicon-chevron-left"></span></a>{%endif%}
+                            {% for all in pager.pagesarray %}{% if pager.page == all %} <button type="button" class="btn btn-sm disabled">{{all}}</button>{%else%}
+                                    <a href="{{ path('app_template', { 'page': all })}}"><button type="button" class="btn btn-default btn-sm">{{all}}</button>{%endif%}</a>
+                                        {% endfor %}
+                                            {%if pager.pageup == false%} <span class="gi-7p glyphicon glyphicon-chevron-right"></span>{% else%}<a href="{{ path('app_template', { 'page': pager.pageup })}}"><span class="gi-7p glyphicon glyphicon-chevron-right"></span></a>{%endif%}
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+
+                                <!-- PAGINATOR END -->
+
+                                <div class="col-md-12">
+                                    <br>
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <th>
+                                                Template name
+                                            </th>
+                                            <th>
+                                                Created At
+                                            </th>
+                                            <th>
+                                                User
+                                            </th>
+                                            <th>
+                                            <th>
+                                            </th>
+                                            <th>
+                                            </th>
+                                            </thead>
+                                            {% for key, etemplate in etemplates %}
+                                                <tr>
+                                                    <td>
+                                                        {{etemplate.tempname}}
+                                                    </td>
+                                                    <td>
+                                                        {{etemplate.createdAt|date('m-d-Y') }}
+                                                    </td>
+                                                    <td>
+                                                        {{etemplate.username}}
+                                                    </td>
+                                                    <td>
+                                                        <a href="#" id="openTemplate" action-data="{{etemplate.id}}" role="button" class="btn btn-sm btn-default">Open</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{path('app_edit_template', {'id': etemplate.id })}}" role="button" class="btn btn-sm btn-default"
+                                                           {% if etemplate.username != name %}disabled {% endif %}
+                                                           >Edit</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{path('app_delete_template', {'id': etemplate.id })}}" id="deleteTemplate" role="button" class="btn btn-sm btn-danger"
+                                                           {% if etemplate.username != name %}disabled {% endif %}
+                                                           >Delete</a>
+                                                    </td>
+                                                </tr>
+
+                                            {% endfor %}
+
+
+
+                                        </table>
+                                    </div>
+
+
+
+
+                                    <br>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {% endblock %}
+
+                    {% block javascripts %}
+
+                        <script>
+                            $(document).ready(function () {
+
+                                $(function () {
+                                    var modal = $('#myModal')[0];
+                                    $(document).on('click', '#openTemplate', function (e) {
+                                        e.preventDefault();
+                                        modal.style.display = "block";
+                                        var settid = $(this).attr('action-data');
+                                        console.log(settid);
+                                        opentemplate(settid);
+                                    });
+
+                                    $(document).on('click', ".close", function () {
+                                        modal.style.display = "none";
+                                    });
+
+                                    $(document).on('click', window, function (event) {
+                                        if (event.target == modal) {
+                                            modal.style.display = "none";
+                                        }
+                                    });
+                                });
+
+                                function opentemplate(settid) {
+                                    var data = {'myid': settid};
+                                    var myUrl = "{{path('app_ajaxopentemplate')}}";
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: myUrl,
+                                        cache: false,
+                                        data: data,
+                                        dataType: "json",
+                                        success: function (data)
+                                        {
+                                            console.log(data);
+                                            
+                                            var contentDiv = document.getElementById('modalContent');
+                                            contentDiv.innerHTML = data.html;
+                                            var displaySign = $("#mySign")[0];
+                                            var ctx = displaySign.getContext("2d");
+                                            var image = new Image();
+                                            image.onload = function () {
+                                                ctx.drawImage(image, 0, 0, 300, 100);
+                                            };
+                                            image.src = data.image;
+                                            //image.src = '{{etemplates[0].signature}}';
+                                            
+                                        }
+                                    });
+                                };
+                            });
+
+
+
+
+
+                        </script>
+                    {% endblock %}

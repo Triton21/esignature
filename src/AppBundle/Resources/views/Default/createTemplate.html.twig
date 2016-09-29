@@ -1,0 +1,373 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+{% block stylesheets %}
+    <script src="{{asset('bundles/app/ckeditor/ckeditor.js')}}"></script>
+    <style>
+        .wrap {
+            width: 512px;
+            height: 800px;
+            padding: 0;
+            overflow: hidden;
+        }
+        .frame {
+            width: 900px;
+            height: 1406.25px;
+            border: 0;
+            -ms-transform: scale(0.569);
+            -moz-transform: scale(0.569);
+            -o-transform: scale(0.569);
+            -webkit-transform: scale(0.569);
+            transform: scale(0.5);
+
+            -ms-transform-origin: 0 0;
+            -moz-transform-origin: 0 0;
+            -o-transform-origin: 0 0;
+            -webkit-transform-origin: 0 0;
+            transform-origin: 0 0;
+        }
+        /* Modal box */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        div.relative {
+            background-color: white;
+            position: relative;
+            width: 210mm;
+            height: 297mm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1cm;
+            box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+        }
+
+        div.footer {
+            position: absolute;
+            bottom: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+        div.header {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-top: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+        div.pagebody {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-top: 0cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <span class="close">×</span>
+            <content id="modalContent"></content>
+        </div>
+    </div>
+
+    <div class="col-lg-offset-2 col-lg-10">
+        <div class="col-md-7">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2>Create new template</h2>
+
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="background-color:#f5f5f5; font-family:verdana; font-size: 13px;">
+                            Page breaks: insert this tags to every page ending:  [[page break]] 
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12">
+
+                        <br>
+                        <br>
+
+                        {{ form_start(form) }}
+                        {{ form_errors(form) }}
+
+
+                        <div class="form-group">
+
+                            {{ form_errors(form.tempname) }}
+                            {{ form_widget(form.tempname) }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appbundle_etemplate[heading]"><a href="#" id="editHeading">Edit heading</a></label>
+                            <div id="headingDiv" style="display:none;">
+                                {{ form_errors(form.heading) }}
+                                {{ form_widget(form.heading) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appbundle_etemplate[firstpage]"><a href="#" id="editFirstpage">Edit firstpage</a></label>
+                            <div id="firstpageDiv" style="display:none;">
+                                {{ form_errors(form.firstpage) }}
+                                {{ form_widget(form.firstpage) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appbundle_etemplate[content]">Content</label>
+                            {{ form_errors(form.content) }}
+                            {{ form_widget(form.content) }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appbundle_etemplate[footer]"><a href="#" id="editFooter">Edit footer</a></label>
+                            <div id="footerDiv" style="display:none;">
+                                {{ form_errors(form.footer) }}
+                                {{ form_widget(form.footer) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="appbundle_etemplate[signpage]"><a href="#" id="editSignpage">Edit signature page</a></label>
+                            <div id="signpageDiv" style="display:none;">
+                                {{ form_errors(form.signpage) }}
+                                {{ form_widget(form.signpage) }}
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <a href="#" id="previewButton" role="button" class="btn btn-primary">Preview</a>
+                            <button class="btn btn-primary" id="newWindow">New window</button>
+                            {{ form_widget(form.save) }}
+                        </div>
+
+                        {{ form_end(form) }}
+
+
+
+
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-md-12">
+                        <h3>Preview   </h3>
+                        <br>
+                        <div class="wrap">
+                            <iframe class="frame" id="iframeID"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script>
+        //CKEDITOR.replace( 'appbundle_etemplate_content' );
+        $(document).ready(function () {
+
+
+            CKEDITOR.replace('appbundle_etemplate_heading');
+            CKEDITOR.replace('appbundle_etemplate_content');
+            CKEDITOR.replace('appbundle_etemplate_footer');
+            CKEDITOR.replace('appbundle_etemplate_firstpage');
+
+            $(function () {
+                var modal = $('#myModal')[0];
+                $(document).on('click', "#newWindow", function (e) {
+                    e.preventDefault();
+                    modal.style.display = "block";
+                    newWindow();
+                });
+
+                $(document).on('click', ".close", function () {
+                    modal.style.display = "none";
+                });
+
+                $(document).on('click', window, function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                });
+            });
+
+            function newWindow() {
+                var contentText = CKEDITOR.instances.appbundle_etemplate_content.getData();
+                var headingtestText = CKEDITOR.instances.appbundle_etemplate_heading.getData();
+                var footerText = CKEDITOR.instances.appbundle_etemplate_footer.getData();
+                var firstpageText = CKEDITOR.instances.appbundle_etemplate_firstpage.getData();
+                var signpageText = $('#appbundle_etemplate_signpage').val();
+                var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText};
+                console.log(data);
+
+
+                var myUrl = "{{path('app_ajaxpreviewnewwindow')}}";
+                $.ajax({
+                    type: 'POST',
+                    url: myUrl,
+                    cache: false,
+                    data: data,
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        console.log(data);
+                        var contentDiv = document.getElementById('modalContent');
+                        contentDiv.innerHTML = data;
+                        var displaySign = $("#mySign")[0];
+                        var ctx = displaySign.getContext("2d");
+                        var image = new Image();
+                        image.onload = function () {
+                            ctx.drawImage(image, 0, 0, 300, 100);
+                        };
+                        image.src = '{{signatureImage}}';
+
+                    }
+                });
+            }
+            ;
+
+
+            $(function () {
+                var myUrl = "{{ path('app_initpreview' )}}";
+                $.ajax({
+                    url: myUrl,
+                    dataType: "json",
+                    success: function (response) {
+                        initPreview(response);
+                    }
+                });
+            });
+
+
+            function initPreview(response) {
+                var iframe = document.getElementById('iframeID');
+                iframe = iframe.contentWindow ?
+                        iframe.contentWindow :
+                        (
+                                iframe.contentDocument.document ?
+                                iframe.contentDocument.document :
+                                iframe.contentDocument
+                                );
+                iframe.document.open();
+                iframe.document.write(response);
+                iframe.document.close();
+            }
+
+            $(document).on('click', "#previewButton", function (e) {
+                e.preventDefault();
+                var contentText = CKEDITOR.instances.appbundle_etemplate_content.getData();
+                var headingtestText = CKEDITOR.instances.appbundle_etemplate_heading.getData();
+                var footerText = CKEDITOR.instances.appbundle_etemplate_footer.getData();
+                var firstpageText = CKEDITOR.instances.appbundle_etemplate_firstpage.getData();
+                var signpageText = $('#appbundle_etemplate_signpage').val();
+                //console.log(editorText);
+                var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText};
+                console.log(data);
+
+
+                var myUrl = "{{path('app_ajaxpreview')}}";
+                $.ajax({
+                    type: 'POST',
+                    url: myUrl,
+                    cache: false,
+                    data: data,
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        initPreview(data);
+                    }
+                });
+
+            });
+
+            $(document).on('click', "#editHeading", function (e) {
+                e.preventDefault();
+                $('#headingDiv').toggle();
+            });
+
+            $(document).on('click', "#editFirstpage", function (e) {
+                e.preventDefault();
+                $('#firstpageDiv').toggle();
+            });
+
+            $(document).on('click', "#editFooter", function (e) {
+                e.preventDefault();
+                $('#footerDiv').toggle();
+            });
+
+            $(document).on('click', "#editSignpage", function (e) {
+                e.preventDefault();
+                $('#signpageDiv').toggle();
+            });
+
+        });
+    </script>
+
+
+{% endblock %}

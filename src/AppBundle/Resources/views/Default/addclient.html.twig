@@ -1,0 +1,78 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+{% block stylesheets %}
+    <script src="{{asset('bundles/app/ckeditor/ckeditor.js')}}"></script>
+
+{% endblock %}
+
+{% block body %}
+
+
+    <div class="container">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2>Client details</h2>
+                    <div class="col-md-12">
+
+
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        {{ form_end(form) }}
+
+
+
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+    
+     <script>
+        $(document).ready(function () {
+            //console.log($("#appbundle_client_firstname"));
+            
+            $('#appbundle_client_firstname').attr('autocomplete', 'false');
+            $('#appbundle_client_lastname').attr('autocomplete', 'false');
+            $('#appbundle_client_firstname').on('input', function () {
+                var myval = $(this).val();
+                var lastname = $('#appbundle_client_lastname').val();
+                $('#appbundle_client_name').val(myval + ' ' + lastname);
+            });
+            $('#appbundle_client_lastname').on('input', function () {
+                var myval = $(this).val();
+                var firstname = $('#appbundle_client_firstname').val() + ' ';
+                $('#appbundle_client_name').val(firstname + myval);
+            });
+
+
+
+
+
+
+
+
+        });
+
+
+
+    </script>              
+    {% endblock %}

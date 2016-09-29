@@ -1,0 +1,114 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+{%block stylesheets %}
+
+{%endblock%}
+
+
+{% block body %} 
+    <div class="container">
+
+        {% if error == true %}
+            <div class="col-lg-12">{{error}}</div>
+        {% endif %}
+
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" style="text-align: left">Settings</h3>
+                </div>
+                <div class="panel-body">
+
+                    <table class="table table-striped gi-1x">
+                        <thead>
+                            <tr>
+                                <th>Setting name</th>
+                                <th>Created</th>
+                                <th>Username</th>
+                                <th>Authentication</th>
+                                <th></th>
+                                <th></th>
+                                <th>Delete setting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sett in settlist %}
+                                <tr {%if sett.active == false%} style="color:grey;"{%else%}style="font-weight: bold;" {%endif%}>
+                                    <td>{{ sett.settname }}</td>
+                                    <td>{% if sett.createdAt %}{{ sett.createdAt|date('d-m-Y') }}{% endif %}</td>
+                                    <td>{{ sett.eusername }}</td>
+                                    <td>
+                                        {% if sett.auth == true %}
+                                        <p>Yes</p>
+                                    {% else %}
+                                        <p>No</p> 
+                                        {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if sett.active == true %}
+                                            <p>Active</p>
+                                            {% else %}
+                                                <p>Inactive</p> 
+                                                {% endif %}
+                                                </td>
+                                                {% if sett.active == false %}
+                                                <td><a href="{{ path('app_activateemailsettings', { 'id': sett.id }) }}" class="btn-xs btn btn-info"
+                                                       {% if is_granted('ROLE_ADMIN') == false %} disabled {% endif %} >TURN ON</a>
+                                                    {% else %}
+                                                    <td><a href="{{ path('app_activateemailsettings', { 'id': sett.id }) }}" class="btn-xs btn btn-info"
+                                                           {% if is_granted('ROLE_ADMIN') == false %} disabled {% endif %} >TURN OFF</a></td>
+                                                    {% endif %}
+
+                                                        <td><a href="{{ path('app_deleteemailsettings', { 'id': sett.id }) }}" class="btn-xs btn btn-danger"
+                                                             {% if is_granted('ROLE_ADMIN') == false %} disabled {% endif %}  >Delete</a>
+                                                    </tr>
+
+
+
+                                                    {% endfor %}
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Use Gmail as smtp provider</h3>
+                                            </div>
+                                            <div class="panel-body">
+
+
+                                                {{ form_start(form) }} 
+                                                {{ form_widget(form) }}
+                                                {{ form_end(form) }}
+
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Use your own smtp provider</h3>
+                                            </div>
+                                            <div class="panel-body">
+
+
+                                                {{ form_start(form2) }} 
+                                                {{ form_widget(form2) }}
+                                                {{ form_end(form2) }}
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {%endblock%}   
+
+
+
+                                {% block javascripts %}{% endblock %}

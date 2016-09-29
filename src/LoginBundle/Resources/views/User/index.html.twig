@@ -1,0 +1,45 @@
+{% extends '::adminbase.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="col-lg-offset-1 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2>User list</h2>
+
+                    <table class="records_list table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Firstname</th>
+                                <th>Lastname</th>
+                                <th>Email</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                <tr>
+                                    <td><a href="{{ path('admin_show', { 'id': entity.id }) }}">{{ entity.username }}</a></td>
+                                    <td>{{ entity.firstname }}</td>
+                                    <td>{{ entity.lastname }}</td>
+                                    <td>{{ entity.email }}</td>
+                                    <td><a class="btn btn-default" href="{{ path('admin_show', { 'id': entity.id }) }}">Show</a></td>
+                                    <td> <a class="btn btn-default" href="{{ path('admin_edit', { 'id': entity.id }) }}">Edit</a></td>
+                                    <td> <a class="btn btn-default" href="{{ path('admin_password', { 'id': entity.id }) }}">Change password</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{{ path('admin_new') }}">
+                        <button class="btn btn-default">
+                            <i class="glyphicon glyphicon-plus"></i>  Create a new user
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block body %}
+
+
+    <div class="container">
+        <div class="col-md-offset-1 col-md-10">
+
+            {% if result == false %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-lg-12">
+                            <div class="col-lg-3">
+                                <h2>Client list</h2>
+                            </div>
+
+                            <!-- PAGINATOR -->
+
+                            <div class="col-lg-4">
+                                <div style="min-height: 22px; width: 100%"></div>
+                                {%if pager.pagedown == false%} <span class="gi-7p glyphicon glyphicon-chevron-left"></span>{% else%}<a href="{{ path('app_client', { 'page': pager.pagedown })}}"><span class="gi-7p glyphicon glyphicon-chevron-left"></span></a>{%endif%}
+                                {% for all in pager.pagesarray %}{% if pager.page == all %} <button type="button" class="btn btn-sm disabled">{{all}}</button>{%else%}
+                                        <a href="{{ path('app_client', { 'page': all })}}"><button type="button" class="btn btn-default btn-sm">{{all}}</button>{%endif%}</a>
+                                            {% endfor %}
+                                                {%if pager.pageup == false%} <span class="gi-7p glyphicon glyphicon-chevron-right"></span>{% else%}<a href="{{ path('app_client', { 'page': pager.pageup })}}"><span class="gi-7p glyphicon glyphicon-chevron-right"></span></a>{%endif%}
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <div class="col-lg-8">
+                                                {{ form_start(form) }}
+                                                <div class="form-group">
+                                                    {{ form_errors(form.search) }}
+                                                    {{ form_widget(form.search) }}  
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                {{ form_end(form) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+
+                                    <!-- PAGINATOR END -->
+
+                                    <div class="col-md-12">
+                                        <br>
+                                        <br>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <th>
+                                                    Name
+                                                </th>
+                                                <th>
+                                                    DoB
+                                                </th>
+                                                <th>
+                                                    Email
+                                                </th>
+                                                <th>
+                                                    Phone
+                                                </th>
+                                                <th>
+                                                    Created At
+                                                </th>
+                                                <th>
+                                                </th>
+                                                </thead>
+                                                {% for client in clientlist %}
+                                                    <tr>
+                                                        <td>
+                                                            <a href="{{path('app_openclient', {'id' : client.id})}}">{{client.name}}</a>
+                                                        </td>
+                                                        <td>
+                                                            {{client.dob|date('m-d-Y')}}
+                                                        </td>
+                                                        <td>
+                                                            {{client.email}}
+                                                        </td>
+                                                        <td>
+                                                            {{client.phone}}
+                                                        </td>
+                                                        <td>
+                                                            {{client.createdAt|date('m-d-Y') }}
+                                                        </td>
+                                                        <td>
+                                                            <a href="{{path('app_editclient', {'id': client.id })}}" id="resendContract" role="button" class="btn btn-sm btn-danger">Edit</a>
+                                                        </td>
+                                                    </tr>
+
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                        <br>
+                                        <br>
+                                    </div>
+                                </div>
+                            </div>
+                            {% elseif result == 'no result' %}
+
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="col-lg-12">
+                                            <div class="col-lg-10">
+                                                <h2>No result for: {{searchTerm}}</h2>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <h4><a href="{{path('app_client')}}"> Back to list</a></h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% else %}
+
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-10">
+                                                    <h2>Search result for: {{searchTerm}}</h2>
+                                                </div>
+
+
+                                                <div class="col-md-12">
+                                                    <br>
+                                                    <br>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                            <th>
+                                                                Name
+                                                            </th>
+                                                            <th>
+                                                                DoB
+                                                            </th>
+                                                            <th>
+                                                                Email
+                                                            </th>
+                                                            <th>
+                                                                Phone
+                                                            </th>
+                                                            <th>
+                                                                Created At
+                                                            </th>
+                                                            <th>
+                                                            </th>
+                                                            </thead>
+                                                            {% for client in result %}
+                                                                <tr>
+                                                                    <td>
+                                                                        <a href="{{path('app_openclient', {'id' : client.id})}}">{{client.name}}</a>
+                                                                    </td>
+                                                                    <td>
+                                                                        {{client.dob|date('m-d-Y')}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{client.email}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{client.phone}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{client.createdAt|date('m-d-Y') }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="{{path('app_editclient', {'id': client.id })}}" id="resendContract" role="button" class="btn btn-sm btn-danger">Edit</a>
+                                                                    </td>
+                                                                </tr>
+
+                                                            {% endfor %}
+                                                        </table>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <h4><a href="{{path('app_client')}}"> Back to list</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %} 
+
+                                        {% endblock %}

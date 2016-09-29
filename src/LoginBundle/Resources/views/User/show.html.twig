@@ -1,0 +1,81 @@
+{% extends '::adminbase.html.twig' %}
+
+{% block body -%}
+    <div class="container">
+        <div class="col-lg-offset-1 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-lg-offset-1 col-lg-10">
+                        <h2>{{ entity.username }}</h2>
+                        {% if app.session.flashbag.has('danger') %}
+                            <div class="alert alert-danger">
+                                {% for message in app.session.flashbag.get('danger') %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if app.session.flashbag.has('success') %}
+                            <div class="alert alert-danger">
+                                {% for message in app.session.flashbag.get('success') %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <table class="record_properties table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Id</th>
+                                    <td>{{ entity.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Username</th>
+                                    <td>{{ entity.username }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Firstname</th>
+                                    <td>{{ entity.firstname }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Lastname</th>
+                                    <td>{{ entity.lastname }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>{{ entity.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Admin</th>
+                                    <td>{% if entity.isAdmin == true %}Yes{% else %}No{% endif %}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <a href="{{ path('admin_edit', { 'id': entity.id }) }}" class="btn btn-default">
+                            Edit
+                        </a>       
+
+                        <br>
+                        <br>
+                        <a href="{{ path('admin_password', { 'id': entity.id }) }}" class="btn btn-default">
+                            Change password
+                        </a>
+
+                        <br>
+                        <br>
+                        <div class="center">
+                            <div class="pull-left">
+                                {{ form(delete_form) }}
+                            </div>
+                            <br>
+                            <br>
+                            <a href="{{ path('admin') }}">
+                                <i class="glyphicon glyphicon-arrow-left"></i> 
+                                Back to the list
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

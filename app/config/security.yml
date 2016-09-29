@@ -1,0 +1,89 @@
+security:
+    encoders:
+        LoginBundle\Entity\User: bcrypt
+        LoginBundle\Entity\Customer: bcrypt
+        LoginBundle\Security\User\WebserviceUser: bcrypt
+        
+    role_hierarchy:
+        ROLE_CUSTOMER: [ROLE_CUSTOMER]
+        ROLE_USER: [ROLE_USER, ROLE_CUSTOMER]
+        ROLE_ADMIN: [ROLE_USER, ROLE_ADMIN]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_MAKE_ADMINS]
+
+    providers:
+        database_users:
+            entity: { class: LoginBundle:User }
+            
+    access_denied_url: /    
+    
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            pattern: ^/administrator/
+            form_login:
+                check_path: /administrator/login_check
+                login_path: /administrator/login
+                username_parameter: _email
+                csrf_provider: security.csrf.token_manager
+                
+            logout:
+                path: /administrator/logout
+                target: /administrator/login
+            
+            anonymous:    ~
+            
+            remember_me:
+                key:      "%secret%"
+                lifetime: 604800 # 1 week in seconds
+                path:     /administrator/
+                
+        customer:
+            pattern: ^/
+            anonymous:      ~
+            
+        
+    access_control:
+        - { path: ^/customer-area, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/customer/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/administrator/login_check, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/administrator/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/administrator/logout, role: ROLE_USER }
+        - { path: ^/administrator/admin, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_show, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_new, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_create, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_delete, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_password, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_edit, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_update, role: ROLE_ADMIN }
+        - { path: ^/administrator/admin_password_update, role: ROLE_ADMIN }
+        - { path: ^/administrator/register, role: ROLE_ADMIN }
+        - { path: ^/administrator/app_index, role: ROLE_USER }
+        - { path: ^/administrator/app_template, role: ROLE_ADMIN }
+        - { path: ^/administrator/app_createtemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_edit_template, role: ROLE_USER }
+        - { path: ^/administrator/app_client, role: ROLE_USER }
+        - { path: ^/administrator/app_addclient, role: ROLE_USER }
+        - { path: ^/administrator/app_send_econtract, role: ROLE_USER }
+        - { path: ^/administrator/app_selfSignature, role: ROLE_USER }
+        - { path: ^/administrator/app_selfsignusethis, role: ROLE_USER }
+        - { path: ^/administrator/app_signaturepage, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxsketch, role: ROLE_USER }
+        - { path: ^/administrator/app_previewiframe, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxpreviewnewwindow, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxPreviewNewWindowTemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxpreview, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxPreviewTemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxopentemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxopensettings, role: ROLE_USER }
+        - { path: ^/administrator/app_deletesign, role: ROLE_USER }
+        - { path: ^/administrator/app_autocomplete, role: ROLE_USER }
+        - { path: ^/administrator/app_initpreview, role: ROLE_USER }
+        - { path: ^/administrator/app_templatesettings, role: ROLE_USER }
+        - { path: ^/administrator/app_usesettings, role: ROLE_USER }
+        - { path: ^/administrator/app_settingsdelete, role: ROLE_USER }
+        - { path: ^/administrator/app_settingsedit, role: ROLE_USER }
+ 

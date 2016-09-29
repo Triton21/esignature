@@ -1,0 +1,110 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+{% block stylesheets %}
+    <style>
+
+        .mycol > .panel{
+            position:relative;
+        }
+        .mycol .panel-footer{
+            position:absolute;
+            width:100%;
+            bottom:0;
+        }
+
+
+    </style>
+
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <br><br><br><br><br>
+        <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-6">
+                <hr style="width: 100%; color: black; height: 1px; background-color:black;" />
+                <br>
+                
+            </div>
+            <div class="col-md-6">
+                
+                
+            </div>
+            
+            
+            
+        </div>
+        <br><br><br><br><br>
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="container">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading">Panel Heading</div>
+                <div class="panel-body">Panel Content</div>
+                <div class="panel-footer myFoooter">Panel Footer</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <br><br><br><br><br>
+        <div class="col-md-offset-1 col-md-10">
+            Somethings
+            
+            
+            
+        </div>
+    </div>
+
+
+    <div class="container">
+        <h1>TEST</h1>
+
+        <div class="col-md-10 mycol">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Title</h3>
+
+                </div>
+                <div class="panel-body">BODY</div>
+                <div class="panel-footer">FOOTER</div>
+            </div>
+        </div>
+        <!--end grid -->
+    </div>
+    <!--end container -->
+
+
+{% endblock %}
+
+
+{% block javascripts %}
+
+    <script>
+        $(document).ready(function () {
+            var $topRightCol = $('.mycol .panel');
+            $topRightCol.height('15cm');
+            console.log($topRightCol);
+        });
+
+
+
+    </script>
+
+{% endblock %}
+
+
+

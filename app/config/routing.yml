@@ -1,0 +1,11 @@
+login:
+    resource: "@LoginBundle/Resources/config/routing.yml"
+    prefix:   /administrator/
+
+app:
+    resource: "@AppBundle/Resources/config/routing.yml"
+    prefix:   /administrator/
+    
+customer:
+    resource: "@AppBundle/Resources/config/routing-customer.yml"
+    prefix:   /

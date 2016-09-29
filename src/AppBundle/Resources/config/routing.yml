@@ -1,0 +1,170 @@
+app_index:
+    path:   /
+    defaults: { _controller: AppBundle:Default:index }
+    
+app_template:
+    path:   /template
+    defaults: { _controller: AppBundle:Default:template, page:1 }
+    
+app_createtemplate:
+    path:   /new-template
+    defaults: { _controller: AppBundle:Default:createTemplate }
+    
+app_edit_template:
+    path:   /edit-template/{id}
+    defaults: { _controller: AppBundle:Default:editTemplate, id:id }
+    
+app_client:
+    path:   /client
+    defaults: { _controller: AppBundle:Default:client, page:1 }
+    
+app_addclient:
+    path:   /addclient
+    defaults: { _controller: AppBundle:Default:addclient }
+    
+app_send_econtract:
+    path:   /econtract
+    defaults: { _controller: AppBundle:Default:sendEcontract }
+    
+app_resend_econtract:
+    path:   /resend-econtract/{id}
+    defaults: { _controller: AppBundle:Default:reSendEcontract, id:id }
+    
+app_selfSignature:
+    path:   /your-signature/{page}
+    defaults: { _controller: AppBundle:Default:selfSignature, page:1 }
+    
+app_selfsignusethis:
+    path:   /selfsignusethis/{id}
+    defaults: { _controller: AppBundle:Default:selfSignUseThis, id:id }
+    
+app_signaturepage:
+    path:   /signaturepage
+    defaults: { _controller: AppBundle:Default:signaturepage }
+    
+app_ajaxsketch:
+    path:   /ajaxsketch
+    defaults: { _controller: AppBundle:Default:ajaxsketch }
+    
+app_previewiframe:
+    path:   /previewiframe
+    defaults: { _controller: AppBundle:Default:previewIframe }
+    
+app_ajaxpreviewnewwindow:
+    path:   /ajaxpreviewnewwindow
+    defaults: { _controller: AppBundle:Default:ajaxPreviewNewWindow }
+    
+app_ajaxPreviewNewWindowTemplate:
+    path:   /ajaxPreviewNewWindowTemplate
+    defaults: { _controller: AppBundle:Default:ajaxPreviewNewWindowTemplate }
+    
+app_ajaxpreview:
+    path:   /ajaxpreview
+    defaults: { _controller: AppBundle:Default:ajaxPreview }
+    methods:  [GET, POST]
+    
+app_ajaxPreviewTemplate:
+    path:   /ajaxpreviewtemplate
+    defaults: { _controller: AppBundle:Default:ajaxPreviewTemplate }
+    methods:  [GET, POST]
+    
+app_ajaxopentemplate:
+    path:   /ajaxopentemplate
+    defaults: { _controller: AppBundle:Default:ajaxOpenTemplate }
+    methods:  [GET, POST]
+    
+app_ajaxOpenTemplateIframe:
+    path:   /ajaxOpenTemplateIframe
+    defaults: { _controller: AppBundle:Default:ajaxOpenTemplateIframe }
+    methods:  [GET, POST]
+    
+app_ajaxopensettings:
+    path:   /ajaxopensettings
+    defaults: { _controller: AppBundle:Default:ajaxOpenSettings }
+    methods:  [GET, POST]
+    
+app_ajaxOpenContract:
+    path:   /ajaxopencontract
+    defaults: { _controller: AppBundle:Default:ajaxOpenContract }
+    methods:  [GET, POST]
+    
+app_deletesign:
+    path:   /deletesign/{id}
+    defaults: { _controller: AppBundle:Default:deletesign, id:id }
+    
+app_autocomplete:
+        path: /autocomplete
+        defaults: { _controller: AppBundle:Default:autocomplete }
+    
+app_initpreview:
+    path:   /initpreview
+    defaults: { _controller: AppBundle:Default:initpreview }
+  
+app_templatesettings:
+    path:   /template-settings
+    defaults: { _controller: AppBundle:Default:templateSettings }
+    
+app_usesettings:
+    path:   /usesettings/{id}
+    defaults: { _controller: AppBundle:Default:useSettings }
+  
+app_settingsdelete:
+    path:   /settingsdelete/{id}
+    defaults: { _controller: AppBundle:Default:settingsDelete }
+  
+app_settingsedit:
+    path:   /settingsedit/{id}
+    defaults: { _controller: AppBundle:Default:settingsEdit }
+    
+app_sentcontracts:
+    path:   /sentcontracts/{page}
+    defaults: { _controller: AppBundle:Default:sentContracts, page:1 }
+    
+app_emailsettings:
+    path:   /emailsettings
+    defaults: { _controller: AppBundle:Default:emailsettings }
+    
+app_activateemailsettings:
+    path:   /activateemailsettings/{id}
+    defaults: { _controller: AppBundle:Default:activateemailsettings, id:id }
+
+app_deleteemailsettings:
+    path:   /deleteemailsettings/{id}
+    defaults: { _controller: AppBundle:Default:deleteemailsettings, id:id }
+    
+app_emailTemplate:
+    path:   /emailtemplate
+    defaults: { _controller: AppBundle:Default:emailTemplate }
+    
+app_ajaxemailTemplate:
+    path:   /ajaxemailTemplate
+    defaults: { _controller: AppBundle:Default:ajaxemailTemplate }
+    
+app_deleteEmailTemplate:
+    path:   /deleteEmailTemplate/{id}
+    defaults: { _controller: AppBundle:Default:deleteEmailTemplate, id:id }
+    
+app_ajaxappendemail:
+    path:   /ajaxappendemail
+    defaults: { _controller: AppBundle:Default:ajaxappendemail }
+    
+app_ajaxTokenDisable:
+    path:   /ajaxTokenDisable
+    defaults: { _controller: AppBundle:Default:ajaxTokenDisable }
+    
+app_openclient:
+    path:   /openclient/{id}
+    defaults: { _controller: AppBundle:Default:openclient, id:id }
+    
+app_editclient:
+    path:   /editclient/{id}
+    defaults: { _controller: AppBundle:Default:editclient, id:id }
+    
+app_delete_template:
+    path:   /deletetemplate/{id}
+    defaults: { _controller: AppBundle:Default:deletetemplate, id:id }
+
+app_test:
+    path:   /testpage
+    defaults: { _controller: AppBundle:Default:testpage }
+    

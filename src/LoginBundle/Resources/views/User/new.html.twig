@@ -1,0 +1,27 @@
+{% extends '::adminbase.html.twig' %}
+{% form_theme form 'LoginBundle:Form:formThemingRewrite.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="col-lg-offset-1 col-lg-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2>Create new user</h2>
+
+                    {{ form_start(form, {attr: {novalidate:'novalidate'}}) }}
+
+                    {{ form(form) }}
+
+                    {{ form_end(form) }}
+
+                    <div class="center">
+                        <a href="{{ path('admin') }}">
+                            <i class="glyphicon glyphicon-arrow-left"></i>   Back to the list
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

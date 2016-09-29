@@ -1,0 +1,183 @@
+{% extends "::customerbase.html.twig" %}
+
+{% block stylesheets %}
+    <style>
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    {#MODAL BOX#}
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <span class="close">×</span>
+            <content id="modalContent"></content>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>E-Contract</h4>
+                    <div class="col-md-12">
+                        {{eContract.firstpage|raw}}
+                        {{eContract.content|raw}}
+                        {{eContract.signpage|raw}}
+                        <div class="col-md-9">
+
+                            <!-- SMALL CANVAS  -->
+                            <div style="min-height:1em;"></div>
+                            <div class="col-md-6 center">
+                                <button type="button" class="btn btn-default btn-sm" id="clearsmallsketch">Clear</button>
+                            </div>
+                            <div style="min-height:3em;"></div>
+                        </div>
+                        <div class="row">
+                            <canvas id="clientSignature" width="400" height="120" style="margin-left:1em; border:1px solid #000000;"></canvas>
+                        </div>
+                        <div class="col-md-6 center">
+                            <button type="button" class="btn btn-default btn-lg" id="saveImage">Save signature</button>
+                        </div>
+                        <div style="min-height:6em;"></div>
+                        <div class="col-md-12">
+                            <p>Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.name}}</span></p>
+                            <p>Address: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addressfirstline}}</span></p>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addresstown}}</span></p>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.postcode}}</span></p>
+                            <p>
+                                DoB:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.dob|date('m/d/Y')}}</span>
+                            </p>
+                            <p class="gi-5m">
+                                DATE:&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{today}}</span>
+                            </p>
+
+
+                        </div>
+                        <div style="min-height:15em;"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="min-height:15em;"></div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{asset('bundles/app/js/clientsketch.js')}}"></script>
+    <script>
+        $(document).ready(function () {
+
+            $(function () {
+                var modal = $('#myModal')[0];
+                $(document).on('click', ".close", function () {
+                    modal.style.display = "none";
+                });
+
+                $(document).on('click', window, function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                });
+            });
+
+
+            $(function () {
+                var displaySign = $("#mySign")[0];
+                var ctx = displaySign.getContext("2d");
+                var image = new Image();
+                image.onload = function () {
+                    ctx.drawImage(image, 0, 0, 300, 100);
+                };
+                image.src = '{{eContract.signature}}';
+
+            });
+
+            $(document).on('click', "#saveImage", function (e) {
+                e.preventDefault();
+                var sketchpad = document.getElementById("clientSignature");
+                var format = 'png';
+                var mime = "image/" + format;
+                var myimage = sketchpad.toDataURL(mime);
+                downloadMyimage(myimage);
+            });
+            function downloadMyimage(myimage) {
+                var myUrl = "{{ path('customer_ajaxsketch')}}";
+                var contractId = "{{eContract.id}}";
+                console.log(contractId);
+                $.ajax({
+                    url: myUrl,
+                    type: "post",
+                    dataType: 'text',
+                    data: {image: myimage, contractId: contractId},
+                    success: function (response) {
+                        if (response == '"image empty"') {
+                            var modal = $('#myModal')[0];
+                            var contentDiv = document.getElementById('modalContent');
+                            console.log(contentDiv);
+                            contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
+                            modal.style.display = "block";
+                        }
+                        var token = '{{eContract.token}}';
+                        var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
+                        myUrl.replace('PLACEHOLDER', token);
+                        window.location.replace(myUrl.replace('PLACEHOLDER', token));
+                    },
+                    complete: function () {
+                        console.log('Request is complete');
+                    },
+                    error: function () {
+                        console.log('Oops...there was an error!');
+                    }
+                });
+            }
+
+
+
+
+        });
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="Peter Csatai" content="Template" />
+        <meta name="description" content="Preview for eContract template">
+        <title>Preview</title>
+
+        <!-- css stylesheets -->
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <style type="text/css">
+
+            body {
+                background: rgb(204,204,204); 
+            }
+            page[size="A4"] {
+                background: white;
+                width: 24.7cm;
+                height: 35cm;
+                display: block;
+                margin: 0 auto;
+                padding-top: 1.5cm;
+                padding-bottom: 1.5cm;
+                padding-left: 1.5cm;
+                padding-right: 1.5cm;
+                margin-bottom: 1.5cm;
+                margin-top: 0.5cm;
+                box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+            }
+            .myHeading {
+                background-color: white;
+                border-radius: 0;
+                border:0px;
+            }
+            .myFooter {
+                background-color: white;
+                border-radius: 0;
+                border:0px;
+            }
+            .myPanel {
+                width: 24.7cm;
+                min-height: 35cm;
+                margin-top: -1.5cm;
+                margin-left: -1.9cm;
+                border-radius: 0;
+                border:0px;
+            }
+
+            .mycol > .panel{
+                position:relative;
+            }
+            .mycol .panel-footer{
+                position:absolute;
+                width:100%;
+                bottom:0;
+            }
+
+            @media print {
+                body, page[size="A4"] {
+                    margin: 0;
+                    box-shadow: 0;
+                }
+                tr.vendorListHeading {
+                    background-color: #1a4567 !important;
+                    -webkit-print-color-adjust: exact; 
+
+
+                }
+            }
+
+            @media print {
+                .vendorListHeading th {
+                    color: white !important;
+                }}
+
+
+        </style>
+    </head>
+    <body>
+
+
+        {{firstpage|raw}}
+        {{content|raw}}
+        {{signpage|raw}}
+
+
+
+
+
+    </body>
+</html>
+
+
+
