@@ -24,3 +24,6 @@ app/cache/*
 #/bin/
 /composer.phar
 web/.htaccess
+
+/web/Files/*
+/web/images/products/*
