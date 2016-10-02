@@ -13,6 +13,7 @@ return array(
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'ProxyManager\\' => array($vendorDir . '/ocramius/proxy-manager/src'),
     'Metadata\\' => array($vendorDir . '/jms/metadata/src'),
+    'Knp\\Snappy' => array($vendorDir . '/knplabs/knp-snappy/src'),
     'Jmikola\\AutoLogin' => array($vendorDir . '/jmikola/auto-login/src'),
     'Doctrine\\ORM\\' => array($vendorDir . '/doctrine/orm/lib'),
     'Doctrine\\DBAL\\' => array($vendorDir . '/doctrine/dbal/lib'),

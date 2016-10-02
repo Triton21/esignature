@@ -179,6 +179,7 @@
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
+                                                <th></th>
                                                 </thead>
                                                 {% for econtract in econtracts %}
                                                     <tr id="econtractRow{{econtract.id}}"
@@ -189,7 +190,7 @@
                                                         {% endif %}
                                                         >
                                                         <td>
-                                                            {{econtract.client.name}}
+                                                            <a href="{{path('app_openclient', {'id' : econtract.client.id})}}">{{econtract.client.name}}</a>
                                                         </td>
                                                         <td>
                                                             {{econtract.email}}
@@ -229,6 +230,7 @@
                                                             <td>
                                                                 <a href="#" id="openContract" action-data="{{econtract.id}}" role="button" class="btn btn-sm btn-default">Open</a>
                                                             </td>
+                                                            <td>{% if econtract.filepath != false %}<a href="{{ asset('' ~ econtract.filepath) }}" class="btn btn-sm btn-default" role="button"  target="_blank">PDF</a>{% endif %}</td>
                                                             <td>
                                                                 <a href="#" id="disableContract" action-data="{{econtract.id}}" role="button" 
                                                                    {% if econtract.tokenactive == true %}
@@ -304,6 +306,7 @@
                                                                         <th></th>
                                                                         <th></th>
                                                                         <th></th>
+                                                                        <th></th>
                                                                         </thead>
                                                                         {% for econtract in result %}
                                                                             <tr id="econtractRow{{econtract.id}}"
@@ -314,7 +317,7 @@
                                                                                 {% endif %}
                                                                                 >
                                                                                 <td>
-                                                                                    {{econtract.client.name}}
+                                                                                    <a href="{{path('app_openclient', {'id' : econtract.client.id})}}">{{econtract.client.name}}</a>
                                                                                 </td>
                                                                                 <td>
                                                                                     {{econtract.email}}
@@ -354,6 +357,7 @@
                                                                                     <td>
                                                                                         <a href="#" id="openContract" action-data="{{econtract.id}}" role="button" class="btn btn-sm btn-default">Open</a>
                                                                                     </td>
+                                                                                    <td>{% if econtract.filepath != false %}<a href="{{ asset('' ~ econtract.filepath) }}" class="btn btn-sm btn-default" role="button"  target="_blank">PDF</a>{% endif %}</td>
                                                                                     <td>
                                                                                         <a href="#" id="disableContract" action-data="{{econtract.id}}" role="button" 
                                                                                            {% if econtract.tokenactive == true %}
@@ -425,6 +429,15 @@
                                                                                             ctx.drawImage(image, 0, 0, 300, 100);
                                                                                             };
                                                                                             image.src = data.image;
+                                                                                            //client signature display
+                                                                                            var clientSign = $("#clientSignature")[0];
+                                                                                            var ctx2 = clientSign.getContext("2d");
+                                                                                            var image2 = new Image();
+                                                                                            image2.onload = function () {
+                                                                                            ctx2.drawImage(image2, 0, 0, 400, 120);
+                                                                                            };
+                                                                                            image2.src = data.clientImage;
+                                                                                            
                                                                                         }
                                                                                     });
                                                                             }
@@ -475,7 +488,12 @@
                                                                                 ctx.drawImage(image, 0, 0, 120, 36);
                                                                                 };
                                                                                 image.src = '{{econtract.clientSignature}}';
-                                                                                });                                                                            </script>
+                                                                                });
+                                                                                                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                            </script>
                                                                         {% endfor %}
                                                                     {% endif %}
 

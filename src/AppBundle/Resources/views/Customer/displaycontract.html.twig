@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="Peter Csatai" content="Template" />
+        <meta name="description" content="Preview for eContract template">
+        <title>Preview</title>
+
+        <!-- css stylesheets -->
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <style type="text/css">
+            body {
+                background: rgb(204,204,204); 
+            }
+            div.relative {
+                background-color: white;
+                position: relative;
+                width: 238mm;
+                height: 346mm;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 0cm;
+                
+            }
+
+            div.footer {
+                position: absolute;
+                bottom: 10px;
+                width: 238mm;
+                padding-bottom: 1cm;
+                padding-left: 1.5cm;
+                padding-right: 1.5cm;
+            }
+
+            div.header {
+                position: relative;
+                top: 10px;
+                width: 238mm;
+                padding-top: 1cm;
+                padding-left: 1.5cm;
+                padding-right: 1.5cm;
+            }
+            div.pagebody {
+                position: relative;
+                top: 10px;
+                width: 238mm;
+                padding-bottom: 1cm;
+                padding-top: 0cm;
+                padding-left: 1.5cm;
+                padding-right: 1.5cm;
+            }
+
+        </style>
+    </head>
+    <body>
+
+
+        {{html|raw}}
+
+
+
+        <script>
+            $(document).ready(function () {
+                var displaySign = $("#mySign")[0];
+                var ctx = displaySign.getContext("2d");
+                var image = new Image();
+                image.onload = function () {
+                    ctx.drawImage(image, 0, 0, 300, 100);
+                };
+                image.src = '{{signImage}}';
+                
+                //client signature display
+                var clientSign = $("#clientSignature")[0];
+                var ctx2 = clientSign.getContext("2d");
+                var image2 = new Image();
+                image2.onload = function () {
+                    ctx2.drawImage(image2, 0, 0, 400, 120);
+                };
+                image2.src = '{{clientImage}}';
+
+
+            });
+        </script>
+
+
+    </body>
+</html>

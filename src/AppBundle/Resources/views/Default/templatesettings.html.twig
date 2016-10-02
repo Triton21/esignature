@@ -158,7 +158,7 @@
                                             {{savedSetting.settingsname}}
                                         </td>
                                         <td>
-                                            {{savedSetting.createdAt|date('m-d-Y') }}
+                                            {{savedSetting.createdAt|date('d-m-Y') }}
                                         </td>
                                         <td>
                                             {{savedSetting.username}}
@@ -238,7 +238,7 @@
 
 
                                     <div class="form-group">
-
+                                        {{ form_label(form.settingsname) }}
                                         {{ form_errors(form.settingsname) }}
                                         {{ form_widget(form.settingsname) }}
                                     </div>
@@ -272,6 +272,11 @@
                                             {{ form_errors(form.signpage) }}
                                             {{ form_widget(form.signpage) }}
                                         </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.signatureid) }}
+                                        {{ form_errors(form.signatureid) }}
+                                        {{ form_widget(form.signatureid) }}
                                     </div>
 
 
@@ -365,14 +370,14 @@
                                         {
                                             console.log(data);
                                             var contentDiv = document.getElementById('modalContent');
-                                            contentDiv.innerHTML = data;
+                                            contentDiv.innerHTML = data.html;
                                             var displaySign = $("#mySign")[0];
                                             var ctx = displaySign.getContext("2d");
                                             var image = new Image();
                                             image.onload = function () {
                                                 ctx.drawImage(image, 0, 0, 300, 90);
                                             };
-                                            image.src = '{{signatureImage}}';
+                                            image.src = data.image;
                                         }
                                     });
                                 }
@@ -383,8 +388,9 @@
                                     var footerText = CKEDITOR.instances.appbundle_templatesettings_footer.getData();
                                     var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
                                     var signpageText = $('#appbundle_templatesettings_signpage').val();
-                                    var data = {'content': '', 'heading': headinggText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText};
-                                    //console.log(data);
+                                    var signId = $('#appbundle_templatesettings_signatureid').val();
+                                    console.log(signId);
+                                    var data = {'content': '', 'heading': headinggText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText, signId: signId};
 
 
                                     var myUrl = "{{path('app_ajaxpreviewnewwindow')}}";
@@ -398,14 +404,14 @@
                                         {
                                             //console.log(data);
                                             var contentDiv = document.getElementById('modalContent');
-                                            contentDiv.innerHTML = data;
+                                            contentDiv.innerHTML = data.html;
                                             var displaySign = $("#mySign")[0];
                                             var ctx = displaySign.getContext("2d");
                                             var image = new Image();
                                             image.onload = function () {
                                                 ctx.drawImage(image, 0, 0, 300, 90);
                                             };
-                                            image.src = '{{signatureImage}}';
+                                            image.src = data.image;
                                         }
                                     });
                                 }
@@ -445,7 +451,8 @@
                                     var footerText = CKEDITOR.instances.appbundle_templatesettings_footer.getData();
                                     var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
                                     var signpageText = $('#appbundle_templatesettings_signpage').val();
-                                    var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText};
+                                    var signId = $('#appbundle_templatesettings_signatureid').val();
+                                    var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText, 'signId': signId};
 
                                     var myUrl = "{{path('app_ajaxpreview')}}";
                                     $.ajax({

@@ -221,7 +221,14 @@
 
     <script>
         $(document).ready(function () {
-
+            //disable send button by default
+            $(function () {
+                //console.log($('#form_save'));
+                $('#form_save').attr('disabled', true);
+            });
+            
+            
+            //autocomplete
             $(function () {
                 $.ajax({
                     url: "{{ path('app_autocomplete')}}",
@@ -250,7 +257,8 @@
                     }
                 });
             });
-
+            
+            //format Date of Birth
             function formatDob(dob) {
                 var newDob, splitDob, dobResult;
                 newDob = dob.date.replace(' 00:00:00', '');
@@ -300,6 +308,7 @@
                 previewContract(templateId, clientId);
                 referenceGenerator();
                 appendEmailBody(emailId, clientName);
+                $('#form_save').removeAttr('disabled');
             });
             
             //enable submit button if template id and client id set

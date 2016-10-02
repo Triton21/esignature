@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Iplog;
 use AppBundle\Entity\Blacklist;
 use AppBundle\Entity\Econtract;
+use AppBundle\Entity\Settings;
 use AppBundle\Entity\Client;
 
 class CustomerController extends Controller {
@@ -27,15 +28,15 @@ class CustomerController extends Controller {
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->findOneBy(array('token' => $token));
         if (!$eContract) {
-            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip ));
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
         }
         $isSigned = $eContract->getPatientSigned();
-        if($isSigned) {
-            return $this->redirectToRoute('customer_alreadysigned', array('id' => $ip ));
+        if ($isSigned) {
+            return $this->redirectToRoute('customer_alreadysigned', array('id' => $ip));
         }
         $active = $eContract->getTokenactive();
-        if(!$active) {
-            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip ));
+        if (!$active) {
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
         }
 
         $today = date("d/F/Y");
@@ -49,22 +50,20 @@ class CustomerController extends Controller {
      * Displays the not found homepage
      */
     public function accessDeniedAction($ip) {
-        
-        
-        
+
         return $this->render('AppBundle:customer:access.html.twig', array(
                     'ip' => $ip,));
     }
-    
+
     /**
      * Displays the already signed homepage
      */
     public function alreadySignedAction($ip) {
-        
+
         return $this->render('AppBundle:customer:alreadysigned.html.twig', array(
                     'ip' => $ip,));
     }
-    
+
     /**
      * Displays the already signed homepage
      */
@@ -77,10 +76,153 @@ class CustomerController extends Controller {
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->findOneBy(array('token' => $token));
         if (!$eContract) {
-            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip ));
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
         }
-        
+        $this->generatePdf($eContract->getId());
+        $this->sendEmail($eContract->getId());
+
         return $this->render('AppBundle:customer:signednote.html.twig');
+    }
+
+    /**
+     * send the email with the attached file
+     */
+    public function sendEmail($id) {
+        $em = $this->getDoctrine()->getManager();
+        $myContract = $em->getRepository('AppBundle:Econtract')
+                ->find($id);
+        if (!$myContract) {
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
+        }
+        $settid = $myContract->getSettid();
+        $mySetting = $em->getRepository('AppBundle:Settings')
+                ->find($settid);
+        $emailTemplate = $em->getRepository('AppBundle:Emailtemplate')
+                ->findOneBy(array('tempname' => 'default'));
+        $body = $emailTemplate->getBody();
+        $subject = $emailTemplate->getSubject();
+        $username = $myContract->getUsername();
+
+        $oldemail = $myContract->getEmail();
+        $trimmedemail = strtolower(trim($oldemail));
+        $email = str_replace(array("\r", "\n"), '', $trimmedemail);
+        $cname = $myContract->getClient()->getName();
+        $directoryPath = $this->container->getParameter('kernel.root_dir') . '/../web';
+        $filePath = $myContract->getFilepath();
+        $fullPath = $directoryPath . '/' . $filePath;
+        
+        //replace %name% and %username%
+        $body = str_replace('%name%', $cname, $body);
+        $body = str_replace('%username%', $username, $body);
+
+        $smtp = $mySetting->getSmtp();
+        $port = $mySetting->getPort();
+        $mssl = $mySetting->getEssl();
+        $euser = $mySetting->getEusername();
+        $epass = $mySetting->getEpassword();
+        $auth = $mySetting->getAuth();
+        $fromname = $mySetting->getFromname();
+
+        if ($auth) {
+            $transport = \Swift_SmtpTransport::newInstance($smtp, $port)
+                    ->setUsername($euser)
+                    ->setPassword($epass)
+                    ->setAuthMode('PLAIN')
+            ;
+        } else {
+            $transport = \Swift_SmtpTransport::newInstance($smtp, $port, $mssl)
+                    ->setUsername($euser)
+                    ->setPassword($epass)
+                    ->setAuthMode('PLAIN')
+            ;
+        }
+        $mailer = \Swift_Mailer::newInstance($transport);
+        $message = \Swift_Message::newInstance($subject)
+                ->setFrom(array($euser => $fromname))
+                ->setTo(array($email => $cname))
+                //->setBcc(array('sent@dentistabroad.co.uk' => 'Sent'))
+                ->setBody($body, 'text/html')
+        ;
+        $message->attach(\Swift_Attachment::fromPath($fullPath));
+        $mailer->getTransport()->start();
+        $mailer->send($message);
+        $mailer->getTransport()->stop();
+
+        return true;
+    }
+
+    /**
+     * Generate the pdf file
+     */
+    public function generatePdf($id) {
+        $em = $this->getDoctrine()->getManager();
+
+        $myContract = $em->getRepository('AppBundle:Econtract')
+                ->find($id);
+        if (!$myContract) {
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
+        }
+        $clientImage = $myContract->getClientSignature();
+
+        $rawContent = $myContract->getContent();
+        $rawHeading = $myContract->getHeading();
+        $rawFooter = $myContract->getFooter();
+        $rawFirstpage = $myContract->getFirstpage();
+        $rawSignpage = $myContract->getSignpage();
+        $realSignPage = $this->renderView('AppBundle:Customer:saveclientsignature.html.twig', array(
+            'eContract' => $myContract,));
+
+        $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
+        $footer = '<div class="footer">' . $rawFooter . '</div></div>';
+        $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
+        $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
+
+
+        $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
+        $content = str_replace('[[page break]]', $pageBREAK, $content);
+
+        $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
+        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
+
+        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+            'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
+        $signImage = $myContract->getSignature();
+
+
+        //generate pdf here
+        $nowDate = new \DateTime();
+        $nowString = $nowDate->format('d_m_Y_h_i_s');
+        $directoryPath = $this->container->getParameter('kernel.root_dir') . '/../web/Files/' . $id;
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+        $clientName = $myContract->getClient()->getName();
+        $filename = $clientName . '-' . $id . '-' . $nowString . '.pdf';
+        $fullPath = $directoryPath . '/' . $filename;
+        if (file_exists($fullPath)) {
+            rename($fullPath, $fullPath . '_old');
+        }
+
+        $this->get('knp_snappy.pdf')->generateFromHtml(
+                $this->renderView(
+                        'AppBundle:customer:displaycontract.html.twig', array(
+                    'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
+                        )
+                ), $fullPath
+        );
+        //Generate pdf end!
+        //save the filepath to the database
+        $relativePath = 'Files/' . $id . '/' . $filename;
+        $myContract->setFilepath($relativePath);
+        $em->persist($myContract);
+        $em->flush();
+        return true;
+        /*
+          return $this->render('AppBundle:customer:displaycontract.html.twig', array(
+          'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
+          ));
+         * 
+         */
     }
 
     /**

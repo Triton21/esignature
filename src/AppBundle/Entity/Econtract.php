@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -115,9 +116,16 @@ class Econtract
     /**
      * @var string
      *
-     * @ORM\Column(name="firstpage", type="text")
+     * @ORM\Column(name="firstpage", type="text", nullable=true)
      */
     private $firstpage;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="filepath", type="text", nullable=true)
+     */
+    private $filepath;
     
     /**
      * @var string
@@ -153,6 +161,13 @@ class Econtract
      * @ORM\Column(name="templateid", type="integer", nullable=true)
      */
     private $templateid;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="settid", type="integer", nullable=true)
+     */
+    private $settid;
     
     /**
      * @var string
@@ -780,5 +795,53 @@ class Econtract
     public function getTemplateid()
     {
         return $this->templateid;
+    }
+
+    /**
+     * Set filepath
+     *
+     * @param string $filepath
+     *
+     * @return Econtract
+     */
+    public function setFilepath($filepath)
+    {
+        $this->filepath = $filepath;
+
+        return $this;
+    }
+
+    /**
+     * Get filepath
+     *
+     * @return string
+     */
+    public function getFilepath()
+    {
+        return $this->filepath;
+    }
+
+    /**
+     * Set settid
+     *
+     * @param integer $settid
+     *
+     * @return Econtract
+     */
+    public function setSettid($settid)
+    {
+        $this->settid = $settid;
+
+        return $this;
+    }
+
+    /**
+     * Get settid
+     *
+     * @return integer
+     */
+    public function getSettid()
+    {
+        return $this->settid;
     }
 }

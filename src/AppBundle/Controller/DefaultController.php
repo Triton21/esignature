@@ -138,6 +138,11 @@ class DefaultController extends Controller {
         if ($name != $username) {
             return $this->redirectToRoute('app_template');
         }
+        $selfSignatureAll = $em->getRepository('AppBundle:Selfsignature')
+                ->findAll();
+        foreach ($selfSignatureAll as $selfSignatureObj) {
+            $selfSignature[$selfSignatureObj->getId()] = $selfSignatureObj->getSignname();
+        }
 
         $form = $this->createForm(new EtemplateType(), $etemplate);
         $form->handleRequest($request);
@@ -168,25 +173,19 @@ class DefaultController extends Controller {
 
         $savedSettings = $em->getRepository('AppBundle:Templatesettings')
                 ->findAll();
-        $findActive = $em->getRepository('AppBundle:Selfsignature')
-                ->findOneBy(array('usethis' => 1));
-        $signname = $findActive->getSignname();
-        $position = $findActive->getPosition();
-        $companyName = $findActive->getCompanyname();
-        $signatureImage = $findActive->getImage();
-        $address = $findActive->getAddressfirstline();
-        $town = $findActive->getAddresstown();
-        $postcode = $findActive->getPostcode();
+        $signatureList = $em->getRepository('AppBundle:Selfsignature')
+                ->findAll();
+
+        foreach ($signatureList as $signatureObject) {
+            $signatureArray[$signatureObject->getId()] = $signatureObject->getSignname();
+        }
 
         $templateSettings = new Templatesettings();
         $initHeading = '<br><br><hr>';
         $initFooter = '<hr>';
 
-        $initSignpage = $this->renderView('AppBundle:default:signlastpage.html.twig', array(
-            'postcode' => $postcode, 'town' => $town, 'address' => $address, 'signname' => $signname, 'position' => $position, 'company' => $companyName));
-        //var_dump($initSignpage);die;
-        //$initSignpage = '';
-        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFooter, $initSignpage), $templateSettings);
+        $initSignpage = $this->renderView('AppBundle:default:signlastpage.html.twig');
+        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFooter, $initSignpage, $signatureArray), $templateSettings);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -198,10 +197,20 @@ class DefaultController extends Controller {
                 $em->persist($findActive);
             }
             $templateSettings->setUsername($name);
-            $templateSettings->setCompanyname($companyName);
-            $templateSettings->setAddressfirstline($address);
-            $templateSettings->setAddresstown($town);
-            $templateSettings->setPostcode($postcode);
+            $signId = $form["signatureid"]->getData();
+            $mySignature = $em->getRepository('AppBundle:Selfsignature')
+                    ->find($signId);
+            //var_dump($mySignature);die;
+            $signPage = $this->renderView('AppBundle:default:savelastpage.html.twig', array(
+                'mySignature' => $mySignature));
+            /*
+              $templateSettings->setCompanyname($companyName);
+              $templateSettings->setAddressfirstline($address);
+              $templateSettings->setAddresstown($town);
+              $templateSettings->setPostcode($postcode);
+             * 
+             */
+            $templateSettings->setSignpage($signPage);
             $templateSettings->setUsethis(1);
             $em->persist($templateSettings);
 
@@ -210,7 +219,7 @@ class DefaultController extends Controller {
         }
 
         return $this->render('AppBundle:default:templatesettings.html.twig', array(
-                    'signatureImage' => $signatureImage, 'savedSettings' => $savedSettings, 'form' => $form->createView(), 'name' => $name,));
+                    'savedSettings' => $savedSettings, 'form' => $form->createView(), 'name' => $name,));
     }
 
     /**
@@ -223,26 +232,54 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $name = $user->getUsername();
 
-        $findActive = $em->getRepository('AppBundle:Selfsignature')
-                ->findOneBy(array('usethis' => 1));
-        $signname = $findActive->getSignname();
-        $position = $findActive->getPosition();
-        $signatureImage = $findActive->getImage();
+        /*
+          $findActive = $em->getRepository('AppBundle:Selfsignature')
+          ->findOneBy(array('usethis' => 1));
+          $signname = $findActive->getSignname();
+          $position = $findActive->getPosition();
+          $signatureImage = $findActive->getImage();
+         * 
+         */
+        $signatureList = $em->getRepository('AppBundle:Selfsignature')
+                ->findAll();
+
+        foreach ($signatureList as $signatureObject) {
+            $signatureArray[$signatureObject->getId()] = $signatureObject->getSignname();
+        }
+
 
         $templateSettings = $em->getRepository('AppBundle:Templatesettings')
                 ->find($id);
+        // var_dump($templateSettings->getSignatureid());die;
+
+        if ($templateSettings->getSignatureid()) {
+            $signature = $em->getRepository('AppBundle:Selfsignature')
+                    ->find($templateSettings->getSignatureid());
+            $signatureImage = $signature->getImage();
+        } else {
+            $signatureImage = '';
+        }
 
         $initHeading = $templateSettings->getHeading();
         $initFooter = $templateSettings->getFooter();
         $initSignpage = $templateSettings->getSignpage();
 
 
-        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFooter, $initSignpage), $templateSettings);
+        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFooter, $initSignpage, $signatureArray), $templateSettings);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
             $templateSettings->setUsername($name);
+            $signId = $form["signatureid"]->getData();
+            $mySignature = $em->getRepository('AppBundle:Selfsignature')
+                    ->find($signId);
+            //var_dump($mySignature);die;
+            $signPage = $this->renderView('AppBundle:default:savelastpage.html.twig', array(
+                'mySignature' => $mySignature));
+            $templateSettings->setSignpage($signPage);
             $em->persist($templateSettings);
+
+
 
             $em->flush();
             return $this->redirectToRoute('app_templatesettings');
@@ -265,6 +302,7 @@ class DefaultController extends Controller {
         $rawFooter = $request->request->get('footer');
         $rawFirstpage = $request->request->get('firstpage');
         $rawSignpage = $request->request->get('signpage');
+        $signId = $request->request->get('signId');
 
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
@@ -279,9 +317,9 @@ class DefaultController extends Controller {
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
 
         //get the signature png image and pass it to the template
-        $findActive = $em->getRepository('AppBundle:Selfsignature')
-                ->findOneBy(array('usethis' => 1));
-        $signImage = $findActive->getImage();
+        $findSignature = $em->getRepository('AppBundle:Selfsignature')
+                ->find($signId);
+        $signImage = $findSignature->getImage();
 
         if ($rawContent === '') {
             $content = false;
@@ -290,8 +328,8 @@ class DefaultController extends Controller {
         $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
 
-        $response = new Response(json_encode($html));
-        return $response;
+        $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
+        return $myJson;
     }
 
     /**
@@ -308,6 +346,7 @@ class DefaultController extends Controller {
         $rawFirstpage = $request->request->get('firstpage');
         $rawSignpage = $request->request->get('signpage');
         $rawSignature = $request->request->get('signature');
+        $signId = $request->request->get('signId');
 
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
@@ -321,10 +360,9 @@ class DefaultController extends Controller {
         $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
 
-        //get the signature png image and pass it to the template
-        $findActive = $em->getRepository('AppBundle:Selfsignature')
-                ->findOneBy(array('usethis' => 1));
-        $signImage = $findActive->getImage();
+        $findSignature = $em->getRepository('AppBundle:Selfsignature')
+                ->find($signId);
+        $signImage = $findSignature->getImage();
 
         if ($rawContent === '') {
             $content = false;
@@ -358,6 +396,100 @@ class DefaultController extends Controller {
      * @return Response
      */
     public function ajaxPreviewAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $rawContent = $request->request->get('content');
+        $rawHeading = $request->request->get('heading');
+        $rawFooter = $request->request->get('footer');
+        $rawFirstpage = $request->request->get('firstpage');
+        $rawSignpage = $request->request->get('signpage');
+        $signId = $request->request->get('signId');
+
+        $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
+        $footer = '<div class="footer">' . $rawFooter . '</div></div>';
+        $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
+        $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
+
+        $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
+        $content = str_replace('[[page break]]', $pageBREAK, $content);
+
+        $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
+        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
+
+        $findSignature = $em->getRepository('AppBundle:Selfsignature')
+                ->find($signId);
+        $signImage = $findSignature->getImage();
+
+        if ($rawContent === '') {
+            $content = false;
+        }
+
+        $html = $this->renderView('AppBundle:default:previewiframe.html.twig', array(
+            'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage,));
+
+        $response = new Response(json_encode($html));
+        return $response;
+    }
+
+    /**
+     * Ajax request, returns the preview HTML code with the unsaved form data
+     * @param Request $request
+     * @return Response
+     */
+    public function ajaxPreviewNewWindowNewTemplateAction(Request $request) {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $rawContent = $request->request->get('content');
+        $rawHeading = $request->request->get('heading');
+        $rawFooter = $request->request->get('footer');
+        $rawFirstpage = $request->request->get('firstpage');
+        $rawSignpage = $request->request->get('signpage');
+
+        $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
+        $footer = '<div class="footer">' . $rawFooter . '</div></div>';
+        $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
+        $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
+
+
+        $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
+        $content = str_replace('[[page break]]', $pageBREAK, $content);
+
+        $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
+        //$signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
+        //get the signature png image and pass it to the template
+        $findActive = $em->getRepository('AppBundle:Templatesettings')
+                ->findOneBy(array('usethis' => 1));
+        $signpageCode = $findActive->getSignpage();
+        $signpage = $heading . '<div class="pagebody">' . $signpageCode . '</div>' . $footer;
+
+
+        $signId = $findActive->getSignatureid();
+        $mySignature = $em->getRepository('AppBundle:Selfsignature')
+                ->find($signId);
+        $signImage = $mySignature->getImage();
+
+
+        if ($rawContent === '') {
+            $content = false;
+        }
+
+
+        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+            'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
+
+        //$html = 'something';
+        //$signImage = 'image';
+
+        $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
+        return $myJson;
+    }
+
+    /**
+     * Ajax request, returns the preview HTML code with the unsaved form data. Code will be displayed on the same page with iframe.
+     * @param Request $request
+     * @return Response
+     */
+    public function ajaxPreviewNewTemplateAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $rawContent = $request->request->get('content');
         $rawHeading = $request->request->get('heading');
@@ -442,7 +574,10 @@ class DefaultController extends Controller {
 
         $mySettings = $em->getRepository('AppBundle:Templatesettings')
                 ->find($settId);
-        $myName = $mySettings->getSettingsname();
+        $signId = $mySettings->getSignatureid();
+        $mySignature = $em->getRepository('AppBundle:Selfsignature')
+                ->find($signId);
+        $signImage = $mySignature->getImage();
 
         $content = false;
         $rawHeading = $mySettings->getHeading();
@@ -460,8 +595,8 @@ class DefaultController extends Controller {
         $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage));
 
-        $response = new Response(json_encode($html));
-        return $response;
+        $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
+        return $myJson;
     }
 
     /**
@@ -516,20 +651,28 @@ class DefaultController extends Controller {
 
         $myContract = $em->getRepository('AppBundle:Econtract')
                 ->find($contractId);
-        //$html = 'Econtract ajax' . $contractId;
-        //$myName = $myTemplate->getTempname();
-        $clientName = $myContract->getClient()->getName();
-        $addressFirstLine = $myContract->getClient()->getAddressfirstline();
-        $addressTown = $myContract->getClient()->getAddresstown();
-        $postcode = $myContract->getClient()->getPostcode();
-        $todayObj = $myContract->getCreatedAt();
-        $contractDate = $todayObj->format('d-m-Y');
+        $clientImage = $myContract->getClientSignature();
+        /*
+          //$html = 'Econtract ajax' . $contractId;
+          //$myName = $myTemplate->getTempname();
+          $clientName = $myContract->getClient()->getName();
+          $addressFirstLine = $myContract->getClient()->getAddressfirstline();
+          $addressTown = $myContract->getClient()->getAddresstown();
+          $postcode = $myContract->getClient()->getPostcode();
+          /*
+          $todayObj = $myContract->getCreatedAt();
+          $contractDate = $todayObj->format('d-m-Y');
+         * 
+         */
+
 
         $rawContent = $myContract->getContent();
         $rawHeading = $myContract->getHeading();
         $rawFooter = $myContract->getFooter();
         $rawFirstpage = $myContract->getFirstpage();
         $rawSignpage = $myContract->getSignpage();
+        $realSignPage = $this->renderView('AppBundle:default:saveclientsignature.html.twig', array(
+            'eContract' => $myContract,));
 
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
@@ -541,18 +684,21 @@ class DefaultController extends Controller {
         $content = str_replace('[[page break]]', $pageBREAK, $content);
 
         $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
-        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
+        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
 
         $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
         $signImage = $myContract->getSignature();
-        $html = str_replace('%%clientname%%', $clientName, $html);
-        $html = str_replace('%%firstlineaddress%%', $addressFirstLine, $html);
-        $html = str_replace('%%addresstown%%', $addressTown, $html);
-        $html = str_replace('%%postcode%%', $postcode, $html);
-        $html = str_replace('%%date%%', $contractDate, $html);
+        /*
+          $html = str_replace('%%clientname%%', $clientName, $html);
+          $html = str_replace('%%firstlineaddress%%', $addressFirstLine, $html);
+          $html = str_replace('%%addresstown%%', $addressTown, $html);
+          $html = str_replace('%%postcode%%', $postcode, $html);
+          $html = str_replace('%%date%%', $contractDate, $html);
+         * 
+         */
 
-        $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
+        $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage, 'clientImage' => $clientImage,));
         return $myJson;
 
 
@@ -660,7 +806,7 @@ class DefaultController extends Controller {
 
         return $this->redirectToRoute('app_templatesettings');
     }
-    
+
     /**
      * Delete template if username == saved username
      * @param type $id
@@ -681,7 +827,7 @@ class DefaultController extends Controller {
             }
         }
 
-        return $this->redirectToRoute('app_templatesettings');
+        return $this->redirectToRoute('app_template');
     }
 
     /**
@@ -711,7 +857,7 @@ class DefaultController extends Controller {
         $firstpage = false;
         $signpage = false;
         $signImage = false;
-        $html = $html = $this->renderView('AppBundle:default:previewiframeempty.html.twig', array(
+        $html = $this->renderView('AppBundle:default:previewiframeempty.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
         $response = new Response(json_encode($html));
         return $response;
@@ -819,6 +965,7 @@ class DefaultController extends Controller {
         return $this->render('AppBundle:default:addclient.html.twig', array(
                     'form' => $form->createView(), 'name' => $name,));
     }
+
     /**
      * Edit existing client
      * 
@@ -877,6 +1024,15 @@ class DefaultController extends Controller {
                 ->findAll();
         $emailtemplates = $em->getRepository('AppBundle:Emailtemplate')
                 ->findAll();
+        //remove default email template
+        //var_dump($emailtemplates);die;
+        foreach ($emailtemplates as $key => $emailtemplate) {
+            if ($emailtemplate->getTempname() === 'default') {
+                $defaultKey = $key;
+            }
+        }
+        unset($emailtemplates[$defaultKey]);
+
         foreach ($settings as $sett) {
             $settingsarray[$sett->getId()] = $sett->getFromname() . ' - ' . $sett->getEusername();
         }
@@ -886,9 +1042,9 @@ class DefaultController extends Controller {
                 ->add('tempId', 'hidden', array('read_only' => true))
                 ->add('clientId', 'hidden', array('read_only' => true))
                 ->add('token', 'hidden', array('read_only' => true))
-                ->add('reference', 'text', array('read_only' => true, 'label' => 'Reference'))
+                ->add('reference', 'text', array('read_only' => true, 'label' => 'Reference', 'required' => true,))
                 ->add('email', 'text', array('read_only' => true, 'label' => 'Email'))
-                ->add('subject', 'text', array('read_only' => true, 'label' => 'Subject'))
+                ->add('subject', 'text', array('read_only' => true, 'label' => 'Subject', 'required' => true,))
                 ->add('body', 'textarea', array('attr' => array('class' => 'ckeditor')))
                 ->add('settings', 'choice', array(
                     'label' => 'From',
@@ -947,6 +1103,7 @@ class DefaultController extends Controller {
             $eContract->setTokenactive(true);
             $eContract->setPatientSigned(false);
             $eContract->setEmail($toEmail);
+            $eContract->setSettid($settid);
             $eContract->setTokenDate(new \DateTime());
             $expiryObject = new \DateTime();
             $expiryObject->modify('+1 month');
@@ -1025,6 +1182,7 @@ class DefaultController extends Controller {
             $eContract->setClientSignature('');
             $eContract->setToken($token);
             $eContract->setTokenactive(1);
+            $eContract->setSettid($settid);
             $eContract->setPatientSigned(0);
             $expiryObject = new \DateTime();
             $expiryObject->modify('+1 month');
@@ -1464,7 +1622,62 @@ class DefaultController extends Controller {
         if (!$emailTemplist) {
             $emailTemplist = false;
         }
+        $confirmationEmail = $em->getRepository('AppBundle:Emailtemplate')
+                ->findOneby(array('tempname' => 'default'));
+        if (!$confirmationEmail) {
+            $confirmationEmail = new Emailtemplate();
+            $confirmationEmail->setTempname('default');
+            $confirmationEmail->setSubject('Your signed contract attached');
+            $confirmationEmail->setBody('<p>Dear %name%,</p><br><br><br><p>Your signed contract is attached.<br/>If you have any question please contact our customer service.</p><p>&nbsp;</p><br><br><p>Kind regards:</p><p>%username%</p><p>&nbsp;</p>');
+            $confirmationEmail->setUsername('default');
+            $confirmationEmail->setCreatedAt(new \DateTime());
+            $em->persist($confirmationEmail);
+            $em->flush();
+            $emailTemplist = $em->getRepository('AppBundle:Emailtemplate')->findAll();
+            if (!$emailTemplist) {
+                $emailTemplist = false;
+            }
+        }
+
         $emailtemplate = new Emailtemplate();
+        $form = $this->createFormBuilder($emailtemplate)
+                ->add('tempname', 'text', array(
+                    'label' => 'Template name',))
+                ->add('subject')
+                ->add('body', 'textarea')
+                ->add('save', 'submit')
+                ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+
+
+            $emailtemplate->setCreatedAt(new \DateTime());
+            $emailtemplate->setUsername($name);
+            $em->persist($emailtemplate);
+            $em->flush();
+
+            return $this->redirectToRoute('app_emailTemplate');
+        }
+        return $this->render('AppBundle:Default:emailtemplate.html.twig', array('emailTemplist' => $emailTemplist,
+                    'form' => $form->createView(), 'name' => $name,
+        ));
+    }
+
+    /**
+     * Edit email templates
+     * @param Request $request
+     * @return type
+     */
+    public function editEmailTemplateAction(Request $request, $id) {
+        $login = $this->getUser();
+        $name = $login->getUsername();
+        $em = $this->getDoctrine()->getManager();
+        $emailtemplate = $em->getRepository('AppBundle:Emailtemplate')->find($id);
+        if (!$emailtemplate) {
+            return $this->redirectToRoute('app_emailTemplate');
+        }
         $form = $this->createFormBuilder($emailtemplate)
                 ->add('tempname', 'text', array(
                     'label' => 'Template name',))
@@ -1485,7 +1698,7 @@ class DefaultController extends Controller {
 
             return $this->redirectToRoute('app_emailTemplate');
         }
-        return $this->render('AppBundle:Default:emailtemplate.html.twig', array('emailTemplist' => $emailTemplist,
+        return $this->render('AppBundle:Default:editemailtemplate.html.twig', array(
                     'form' => $form->createView(), 'name' => $name,
         ));
     }
@@ -1532,7 +1745,7 @@ class DefaultController extends Controller {
         $response = new Response(json_encode($html));
         return $response;
     }
-    
+
     /**
      * Delete email settings with id
      * @param type $id
@@ -1543,9 +1756,9 @@ class DefaultController extends Controller {
         $name = $login->getUsername();
         $thisClient = $em->getRepository('AppBundle:Client')
                 ->find($id);
-        
+
         return $this->render('AppBundle:Default:openclient.html.twig', array(
-            'client' => $thisClient, 'name' => $name,
+                    'client' => $thisClient, 'name' => $name,
         ));
     }
 

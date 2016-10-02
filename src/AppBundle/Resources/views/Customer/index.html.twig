@@ -1,6 +1,7 @@
 {% extends "::customerbase.html.twig" %}
 
 {% block stylesheets %}
+    <link href="{{asset('bundles/app/css/ispinner.css')}}" rel="stylesheet">
     <style>
         .modal {
             display: none; /* Hidden by default */
@@ -39,6 +40,10 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .spinnerStyle {
+            display: inline-block;
+            margin-top: 6px;
+        }
 
     </style>
 {% endblock %}
@@ -76,8 +81,14 @@
                             <canvas id="clientSignature" width="400" height="120" style="margin-left:1em; border:1px solid #000000;"></canvas>
                         </div>
                         <div class="col-md-6 center">
-                            <button type="button" class="btn btn-default btn-lg" id="saveImage">Save signature</button>
+                            <div class="col-md-4">
+                                <div class="spinnerStyle pull-right" id="spinnerHere"></div>
+                            </div>
+                            <div class="col-md-8 center">
+                                <button type="button" class="btn btn-danger btn-lg" id="saveImage">Save signature</button>
+                            </div>
                         </div>
+                        
                         <div style="min-height:6em;"></div>
                         <div class="col-md-12">
                             <p>Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.name}}</span></p>
@@ -108,7 +119,21 @@
     <script src="{{asset('bundles/app/js/clientsketch.js')}}"></script>
     <script>
         $(document).ready(function () {
-
+            var loading = '<div class="ispinner gray large animating myload" id="loader">\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                </div>   ';
+            
             $(function () {
                 var modal = $('#myModal')[0];
                 $(document).on('click', ".close", function () {
@@ -121,6 +146,19 @@
                     }
                 });
             });
+            
+            function loadAnimation() {
+                var myNewDiv = document.createElement('div');
+                myNewDiv.id = 'displayhere';
+                $('#spinnerHere').append(myNewDiv);
+                myNewDiv.innerHTML = loading;
+                return;
+            }
+            
+            function removeAnimation() {
+                $('#spinnerHere').html('');
+                return;
+            }
 
 
             $(function () {
@@ -136,6 +174,7 @@
 
             $(document).on('click', "#saveImage", function (e) {
                 e.preventDefault();
+                loadAnimation();
                 var sketchpad = document.getElementById("clientSignature");
                 var format = 'png';
                 var mime = "image/" + format;
@@ -158,11 +197,13 @@
                             console.log(contentDiv);
                             contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
                             modal.style.display = "block";
+                            removeAnimation();
+                        } else {
+                            var token = '{{eContract.token}}';
+                            var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
+                            myUrl.replace('PLACEHOLDER', token);
+                            window.location.replace(myUrl.replace('PLACEHOLDER', token));
                         }
-                        var token = '{{eContract.token}}';
-                        var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
-                        myUrl.replace('PLACEHOLDER', token);
-                        window.location.replace(myUrl.replace('PLACEHOLDER', token));
                     },
                     complete: function () {
                         console.log('Request is complete');

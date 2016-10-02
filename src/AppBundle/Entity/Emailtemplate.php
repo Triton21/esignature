@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,6 +27,8 @@ class Emailtemplate {
      * @var string
      *
      * @ORM\Column(name="tempname", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\NotEqualTo("default")
      */
     private $tempname;
 
@@ -33,6 +36,8 @@ class Emailtemplate {
      * @var string
      *
      * @ORM\Column(name="subject", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=5)
      */
     private $subject;
 
@@ -40,6 +45,7 @@ class Emailtemplate {
      * @var string
      *
      * @ORM\Column(name="body", type="text", length=21000)
+     * @Assert\NotBlank()
      */
     private $body;
 

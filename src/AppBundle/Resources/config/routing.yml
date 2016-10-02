@@ -54,6 +54,14 @@ app_ajaxpreviewnewwindow:
     path:   /ajaxpreviewnewwindow
     defaults: { _controller: AppBundle:Default:ajaxPreviewNewWindow }
     
+app_ajaxPreviewNewTemplate:
+    path:   /ajaxPreviewNewTemplate
+    defaults: { _controller: AppBundle:Default:ajaxPreviewNewTemplate }
+    
+app_ajaxPreviewNewWindowNewTemplate:
+    path:   /ajaxPreviewNewWindowNewTemplate
+    defaults: { _controller: AppBundle:Default:ajaxPreviewNewWindowNewTemplate }
+    
 app_ajaxPreviewNewWindowTemplate:
     path:   /ajaxPreviewNewWindowTemplate
     defaults: { _controller: AppBundle:Default:ajaxPreviewNewWindowTemplate }
@@ -163,6 +171,10 @@ app_editclient:
 app_delete_template:
     path:   /deletetemplate/{id}
     defaults: { _controller: AppBundle:Default:deletetemplate, id:id }
+    
+app_editEmailTemplate:
+    path:   /edit-email-template/{id}
+    defaults: { _controller: AppBundle:Default:editEmailTemplate, id:id }
 
 app_test:
     path:   /testpage

@@ -39,6 +39,13 @@ class Templatesettings
     /**
      * @var string
      *
+     * @ORM\Column(name="signatureid", type="integer", nullable=true)
+     */
+    private $signatureid;
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="usethis", type="text", nullable=true)
      */
     private $usethis;
@@ -88,28 +95,28 @@ class Templatesettings
     /**
      * @var string
      *
-     * @ORM\Column(name="companyname", type="text")
+     * @ORM\Column(name="companyname", type="text", nullable=true)
      */
     private $companyname;
     
     /**
      * @var string
      *
-     * @ORM\Column(name="addressfirstline", type="text")
+     * @ORM\Column(name="addressfirstline", type="text", nullable=true)
      */
     private $addressfirstline;
     
     /**
      * @var string
      *
-     * @ORM\Column(name="addresstown", type="text")
+     * @ORM\Column(name="addresstown", type="text", nullable=true)
      */
     private $addresstown;
     
     /**
      * @var string
      *
-     * @ORM\Column(name="postcode", type="text")
+     * @ORM\Column(name="postcode", type="text", nullable=true)
      */
     private $postcode;
 
@@ -441,5 +448,29 @@ class Templatesettings
     public function getPostcode()
     {
         return $this->postcode;
+    }
+
+    /**
+     * Set signatureid
+     *
+     * @param integer $signatureid
+     *
+     * @return Templatesettings
+     */
+    public function setSignatureid($signatureid)
+    {
+        $this->signatureid = $signatureid;
+
+        return $this;
+    }
+
+    /**
+     * Get signatureid
+     *
+     * @return integer
+     */
+    public function getSignatureid()
+    {
+        return $this->signatureid;
     }
 }

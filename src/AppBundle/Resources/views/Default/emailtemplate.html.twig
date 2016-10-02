@@ -99,6 +99,7 @@
                                     <th>Created by</th>
                                     <th>Open</th>
                                     <th></th>
+                                    <th></th>
 
                                 </tr>
                             </thead>
@@ -110,7 +111,10 @@
                                     <td style="width:10%">{{all.username}}</td>
                                     <td style="width:5%"><a href="#" id="openEmail" action-data="{{all.id}}" ><span class="glyphicon glyphicon-open"></span></a></td>
                                     <td style="width:15%"><a href="{{ path('app_deleteEmailTemplate', { 'id': all.id }) }}" class="btn btn-danger btn-xs"
-                                                             {% if is_granted('ROLE_ADMIN') == false %} disabled {% endif %}>Delete</a></td>
+                                                             {% if is_granted('ROLE_ADMIN') == false or all.tempname == 'default' %} disabled {% endif %}
+                                                             >Delete</a></td>
+                                    <td style="width:15%"><a href="{{ path('app_editEmailTemplate', { 'id': all.id }) }}" class="btn btn-danger btn-xs"
+                                                             {% if is_granted('ROLE_ADMIN') == false %} disabled {% endif %}>Edit</a></td>
                                     {% endfor %}
                             </tr>
                         </table>

@@ -1,0 +1,57 @@
+{% extends "AppBundle:Default:defaultbase.html.twig" %}
+
+
+{% block stylesheets %}
+    <script src="{{asset('bundles/app/ckeditor/ckeditor.js')}}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Edit email template </h3>
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <span style="font-weight: bold;">Please use this placeholders in the template:</span>
+                        %username%, %name%, %date%
+                    </p>
+
+                    <p>
+                        {{ form_start(form) }}</p>
+                    <p>
+                        {{ form_label(form.tempname) }}
+                        {{ form_errors(form.tempname) }}
+                        {{ form_widget(form.tempname) }}
+                    </p>
+                    <p>
+                        {{ form_label(form.subject) }}
+                        {{ form_errors(form.subject) }}
+                        {{ form_widget(form.subject) }}
+                    </p>
+
+                    <p>
+                        {{ form_errors(form.body) }}
+                        {{ form_widget(form.body , { 'attr': { 
+                            'style' : 'height:250px', 
+                            'rows' : '30', 
+                            'cols' : '1' }} ) }}
+                    </p>
+                    <p>
+                        {{ form_end(form) }}</p>
+                </div>
+            </div>
+        </div> 
+    </div>
+{% endblock %}   
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+
+            CKEDITOR.replace('form_body');
+        });
+
+    </script>
+{% endblock %}

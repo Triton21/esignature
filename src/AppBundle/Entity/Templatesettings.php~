@@ -39,6 +39,13 @@ class Templatesettings
     /**
      * @var string
      *
+     * @ORM\Column(name="signatureid", type="integer", nullable=true)
+     */
+    private $signatureid;
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="usethis", type="text", nullable=true)
      */
     private $usethis;
@@ -345,5 +352,101 @@ class Templatesettings
     public function getSignature()
     {
         return $this->signature;
+    }
+
+    /**
+     * Set companyname
+     *
+     * @param string $companyname
+     *
+     * @return Templatesettings
+     */
+    public function setCompanyname($companyname)
+    {
+        $this->companyname = $companyname;
+
+        return $this;
+    }
+
+    /**
+     * Get companyname
+     *
+     * @return string
+     */
+    public function getCompanyname()
+    {
+        return $this->companyname;
+    }
+
+    /**
+     * Set addressfirstline
+     *
+     * @param string $addressfirstline
+     *
+     * @return Templatesettings
+     */
+    public function setAddressfirstline($addressfirstline)
+    {
+        $this->addressfirstline = $addressfirstline;
+
+        return $this;
+    }
+
+    /**
+     * Get addressfirstline
+     *
+     * @return string
+     */
+    public function getAddressfirstline()
+    {
+        return $this->addressfirstline;
+    }
+
+    /**
+     * Set addresstown
+     *
+     * @param string $addresstown
+     *
+     * @return Templatesettings
+     */
+    public function setAddresstown($addresstown)
+    {
+        $this->addresstown = $addresstown;
+
+        return $this;
+    }
+
+    /**
+     * Get addresstown
+     *
+     * @return string
+     */
+    public function getAddresstown()
+    {
+        return $this->addresstown;
+    }
+
+    /**
+     * Set postcode
+     *
+     * @param string $postcode
+     *
+     * @return Templatesettings
+     */
+    public function setPostcode($postcode)
+    {
+        $this->postcode = $postcode;
+
+        return $this;
+    }
+
+    /**
+     * Get postcode
+     *
+     * @return string
+     */
+    public function getPostcode()
+    {
+        return $this->postcode;
     }
 }

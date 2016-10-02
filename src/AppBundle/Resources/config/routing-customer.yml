@@ -21,4 +21,3 @@ customer_signednote:
 customer_ajaxsketch:
     path:   /customerajaxsketch
     defaults: { _controller: AppBundle:Customer:customerAjaxSketch }
-    

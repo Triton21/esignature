@@ -2,6 +2,9 @@
 
 #/app/bootstrap.php.cache
 
+/bin/wkhtmltopdf-amd64
+/bin/wkhtmltopdf-amd64.bat
+
 /app/cache/*
 app/cache/*
 /app/config/parameters.yml

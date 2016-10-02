@@ -13,12 +13,14 @@ class TemplatesettingsType extends AbstractType
     private $initHeading;
     private $initFooter;
     private $initSignpage;
+    private $signatureArray;
     
     
-    function __construct($initHeading, $initFooter, $initSignpage) {
+    function __construct($initHeading, $initFooter, $initSignpage, $signatureArray) {
         $this->initHeading = $initHeading;
         $this->initFooter = $initFooter;
         $this->initSignpage = $initSignpage;
+        $this->signatureArray = $signatureArray;
     }
     
     /**
@@ -56,6 +58,12 @@ class TemplatesettingsType extends AbstractType
                     'data' => $this->initSignpage,
                     'required' => true,
                 ))
+                ->add('signatureid', 'choice', array(
+                    'label' => 'Signature',
+                    'choices' => $this->signatureArray, 
+                    'attr' => array(
+                        'placeholder' => 'Select signature'
+                    )))
                 ->add('save', 'submit', array(
                     'label' => 'Save', 'attr' => array('class' => 'btn btn-default btn-md')))
         ;

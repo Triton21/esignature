@@ -67,7 +67,7 @@ class Etemplate {
     /**
      * @var string
      *
-     * @ORM\Column(name="firstpage", type="text")
+     * @ORM\Column(name="firstpage", type="text", nullable=true)
      */
     private $firstpage;
     

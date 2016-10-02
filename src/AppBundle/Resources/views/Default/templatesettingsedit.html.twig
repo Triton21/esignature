@@ -148,7 +148,7 @@
 
 
                         <div class="form-group">
-
+                            {{ form_label(form.settingsname) }}
                             {{ form_errors(form.settingsname) }}
                             {{ form_widget(form.settingsname) }}
                         </div>
@@ -183,7 +183,11 @@
                                 {{ form_widget(form.signpage) }}
                             </div>
                         </div>
-
+                        <div class="form-group">
+                            {{ form_label(form.signatureid) }}
+                            {{ form_errors(form.signatureid) }}
+                            {{ form_widget(form.signatureid) }}
+                        </div>
 
                         <div class="form-group">
                             <a href="#" id="previewButton" role="button" class="btn btn-primary">Preview</a>
@@ -285,7 +289,8 @@
                 var footerText = CKEDITOR.instances.appbundle_templatesettings_footer.getData();
                 var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
                 var signpageText = $('#appbundle_templatesettings_signpage').val();
-                var data = {'content': '', 'heading': headinggText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText};
+                var signId = $('#appbundle_templatesettings_signatureid').val();
+                var data = {'content': '', 'heading': headinggText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText, signId: signId};
                 console.log(data);
 
 
@@ -298,9 +303,8 @@
                     dataType: "json",
                     success: function (data)
                     {
-                        console.log(data);
                         var contentDiv = document.getElementById('modalContent');
-                        contentDiv.innerHTML = data;
+                        contentDiv.innerHTML = data.html;
 
                         var displaySign = $("#mySign")[0];
                         var ctx = displaySign.getContext("2d");
@@ -308,7 +312,7 @@
                         image.onload = function () {
                             ctx.drawImage(image, 0, 0, 300, 100);
                         };
-                        image.src = '{{signatureImage}}';
+                        image.src = data.image;
 
 
 
@@ -323,7 +327,6 @@
                     url: myUrl,
                     dataType: "json",
                     success: function (response) {
-                        //console.log(response);
                         initPreview(response);
                         initSavedpreview();
                     }
@@ -352,8 +355,9 @@
                 var footerText = CKEDITOR.instances.appbundle_templatesettings_footer.getData();
                 var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
                 var signpageText = $('#appbundle_templatesettings_signpage').val();
+                var signId = $('#appbundle_templatesettings_signatureid').val();
                 //console.log(editorText);
-                var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText};
+                var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText, signId: signId};
                 console.log(data);
 
 
@@ -378,8 +382,9 @@
                 var footerText = CKEDITOR.instances.appbundle_templatesettings_footer.getData();
                 var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
                 var signpageText = $('#appbundle_templatesettings_signpage').val();
+                var signId = $('#appbundle_templatesettings_signatureid').val();
                 //console.log(editorText);
-                var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText};
+                var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText, signId: signId};
 
 
 
