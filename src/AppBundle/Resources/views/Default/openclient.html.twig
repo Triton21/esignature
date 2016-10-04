@@ -97,7 +97,7 @@
 {% endblock %}
 
 {% block body %}
-    
+
     {#MODAL BOX#}
     <div id="myModal" class="modal">
 
@@ -272,88 +272,50 @@
 
                                     {% endfor %}
                                     </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                 </div>    
-
-
-
-
-
-
-
-
-
-
-
-
-
                             </div>                            
                         </div>                            
-
-
                     </div>
                 </div>
-
-
-
-
-
-
-
                 {% endblock %}
-
-
                     {% block javascripts %}
                         <script>
                             $(document).ready(function () {
                                 $(document).on('click', "#disableContract", function (e) {
                                     var contractId = $(this).attr('action-data');
-                                        var data = {'myid': contractId};
-                                        var myUrl = "{{path('app_ajaxTokenDisable')}}";
-                                        $.ajax({
-                                            type: 'POST',
-                                            url: myUrl,
-                                            cache: false,
-                                            data: data,
-                                            dataType: "json",
-                                            success: function (response) {
+                                    var data = {'myid': contractId};
+                                    var myUrl = "{{path('app_ajaxTokenDisable')}}";
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: myUrl,
+                                        cache: false,
+                                        data: data,
+                                        dataType: "json",
+                                        success: function (response) {
                                             console.log($(e.target));
-                                                    $('#econtractRow' + contractId).toggleClass('inactiveRow');
-                                                    $('#econtractRow' + contractId).toggleClass('activeRow');
-                                                    $('#activeSpan' + contractId).toggleClass('glyphicon-ok greenColor');
-                                                    $('#activeSpan' + contractId).toggleClass('glyphicon-remove redColor');
-                                                    if ($('#econtractRow' + contractId).hasClass('inactiveRow')) {
-                                            $(e.target).html('Enable');
-                                                    $(e.target).toggleClass('btn-danger');
-                                                    $(e.target).toggleClass('btn-success');
+                                            $('#econtractRow' + contractId).toggleClass('inactiveRow');
+                                            $('#econtractRow' + contractId).toggleClass('activeRow');
+                                            $('#activeSpan' + contractId).toggleClass('glyphicon-ok greenColor');
+                                            $('#activeSpan' + contractId).toggleClass('glyphicon-remove redColor');
+                                            if ($('#econtractRow' + contractId).hasClass('inactiveRow')) {
+                                                $(e.target).html('Enable');
+                                                $(e.target).toggleClass('btn-danger');
+                                                $(e.target).toggleClass('btn-success');
                                             } else {
-                                            $(e.target).html('Disable');
-                                                    $(e.target).toggleClass('btn-danger');
-                                                    $(e.target).toggleClass('btn-success');
+                                                $(e.target).html('Disable');
+                                                $(e.target).toggleClass('btn-danger');
+                                                $(e.target).toggleClass('btn-success');
                                             }
-                                            },
-                                            complete: function () {
+                                        },
+                                        complete: function () {
                                             console.log('Request is complete');
-                                            },
-                                            error: function () {
+                                        },
+                                        error: function () {
                                             console.log('Oops...there was an error!');
-                                            }
-                                        });
+                                        }
                                     });
-                                
+                                });
+
                                 $(function () {
                                     var modal = $('#myModal')[0];
                                     $(document).on('click', '#openContract', function (e) {
@@ -367,36 +329,36 @@
                                     });
                                     $(document).on('click', window, function (event) {
                                         if (event.target == modal) {
-                                        modal.style.display = "none";
-                                    }
+                                            modal.style.display = "none";
+                                        }
                                     });
                                 });
 
                                 function opencontract(contractId) {
 
                                     var data = {'myid': contractId};
-                                        var myUrl = "{{path('app_ajaxOpenContract')}}";
-                                        $.ajax({
-                                            type: 'POST',
-                                            url: myUrl,
-                                            cache: false,
-                                            data: data,
-                                            dataType: "json",
-                                            success: function (data)
-                                            {
-                                                var contentDiv = document.getElementById('modalContent');
-                                                contentDiv.innerHTML = data.html;
-                                                var displaySign = $("#mySign")[0];
-                                                var ctx = displaySign.getContext("2d");
-                                                var image = new Image();
-                                                image.onload = function () {
+                                    var myUrl = "{{path('app_ajaxOpenContract')}}";
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: myUrl,
+                                        cache: false,
+                                        data: data,
+                                        dataType: "json",
+                                        success: function (data)
+                                        {
+                                            var contentDiv = document.getElementById('modalContent');
+                                            contentDiv.innerHTML = data.html;
+                                            var displaySign = $("#mySign")[0];
+                                            var ctx = displaySign.getContext("2d");
+                                            var image = new Image();
+                                            image.onload = function () {
                                                 ctx.drawImage(image, 0, 0, 300, 100);
-                                                };
-                                                image.src = data.image;
-                                            }
-                                        });
+                                            };
+                                            image.src = data.image;
+                                        }
+                                    });
                                 }
-                            });    
+                            });
                         </script> 
                         {% for econtract in client.econtracts %}
                             <script>

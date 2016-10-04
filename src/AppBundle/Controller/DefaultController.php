@@ -374,22 +374,7 @@ class DefaultController extends Controller {
         $myJson = new JsonResponse(array('html' => $html, 'image' => $rawSignature));
         return $myJson;
     }
-
-    public function testpageAction() {
-
-        return $this->render('AppBundle:default:testTemplate.html.twig');
-    }
-
-    public function signaturepageAction() {
-        $em = $this->getDoctrine()->getManager();
-        $findActive = $em->getRepository('AppBundle:Selfsignature')
-                ->findOneBy(array('usethis' => 1));
-        $signname = $findActive->getSignname();
-        $position = $findActive->getPosition();
-
-        return $this->render('AppBundle:default:signaturepage.html.twig', array('signname' => $signname, 'position' => $position));
-    }
-
+    
     /**
      * Ajax request, returns the preview HTML code with the unsaved form data. Code will be displayed on the same page with iframe.
      * @param Request $request
@@ -476,10 +461,6 @@ class DefaultController extends Controller {
 
         $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
-
-        //$html = 'something';
-        //$signImage = 'image';
-
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
         return $myJson;
     }
@@ -631,8 +612,6 @@ class DefaultController extends Controller {
         $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
 
-
-
         $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
         $signImage = $myTemplate->getSignature();
@@ -652,21 +631,8 @@ class DefaultController extends Controller {
         $myContract = $em->getRepository('AppBundle:Econtract')
                 ->find($contractId);
         $clientImage = $myContract->getClientSignature();
-        /*
-          //$html = 'Econtract ajax' . $contractId;
-          //$myName = $myTemplate->getTempname();
-          $clientName = $myContract->getClient()->getName();
-          $addressFirstLine = $myContract->getClient()->getAddressfirstline();
-          $addressTown = $myContract->getClient()->getAddresstown();
-          $postcode = $myContract->getClient()->getPostcode();
-          /*
-          $todayObj = $myContract->getCreatedAt();
-          $contractDate = $todayObj->format('d-m-Y');
-         * 
-         */
 
-
-        $rawContent = $myContract->getContent();
+        $rawContenst = $myContract->getContent();
         $rawHeading = $myContract->getHeading();
         $rawFooter = $myContract->getFooter();
         $rawFirstpage = $myContract->getFirstpage();
@@ -689,21 +655,8 @@ class DefaultController extends Controller {
         $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
         $signImage = $myContract->getSignature();
-        /*
-          $html = str_replace('%%clientname%%', $clientName, $html);
-          $html = str_replace('%%firstlineaddress%%', $addressFirstLine, $html);
-          $html = str_replace('%%addresstown%%', $addressTown, $html);
-          $html = str_replace('%%postcode%%', $postcode, $html);
-          $html = str_replace('%%date%%', $contractDate, $html);
-         * 
-         */
-
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage, 'clientImage' => $clientImage,));
         return $myJson;
-
-
-        //$response = new Response(json_encode($html));
-        //return $response;
     }
 
     /**
@@ -719,7 +672,6 @@ class DefaultController extends Controller {
 
         $myTemplate = $em->getRepository('AppBundle:Etemplate')
                 ->find($settId);
-        //$myName = $myTemplate->getTempname();
         $client = $em->getRepository('AppBundle:Client')
                 ->find($clientId);
         $clientName = $client->getName();
@@ -734,12 +686,10 @@ class DefaultController extends Controller {
         $rawFirstpage = $myTemplate->getFirstpage();
         $rawSignpage = $myTemplate->getSignpage();
 
-
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
         $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
         $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
-
 
         $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
         $content = str_replace('[[page break]]', $pageBREAK, $content);
@@ -756,7 +706,6 @@ class DefaultController extends Controller {
         $html = str_replace('%%addresstown%%', $addressTown, $html);
         $html = str_replace('%%postcode%%', $postcode, $html);
         $html = str_replace('%%date%%', $today, $html);
-
 
         $response = new Response(json_encode($html));
         return $response;
@@ -826,7 +775,6 @@ class DefaultController extends Controller {
                 $em->flush();
             }
         }
-
         return $this->redirectToRoute('app_template');
     }
 
@@ -842,7 +790,6 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $name = $user->getUsername();
         $content = true;
-
         return $this->render('AppBundle:default:previewiframe.html.twig', array(
                     'content' => $content,));
     }
@@ -904,7 +851,6 @@ class DefaultController extends Controller {
             return $this->render('AppBundle:default:client.html.twig', array(
                         'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'clientlist' => $clientlist, 'pager' => $pager, 'name' => $name,));
         }
-
         return $this->render('AppBundle:default:client.html.twig', array(
                     'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'clientlist' => $clientlist, 'pager' => $pager, 'name' => $name,));
     }

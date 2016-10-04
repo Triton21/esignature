@@ -6,7 +6,7 @@ app_template:
     path:   /template
     defaults: { _controller: AppBundle:Default:template, page:1 }
     
-app_createtemplate:
+app_create_template:
     path:   /new-template
     defaults: { _controller: AppBundle:Default:createTemplate }
     
@@ -18,7 +18,7 @@ app_client:
     path:   /client
     defaults: { _controller: AppBundle:Default:client, page:1 }
     
-app_addclient:
+app_add_client:
     path:   /addclient
     defaults: { _controller: AppBundle:Default:addclient }
     
@@ -34,13 +34,9 @@ app_selfSignature:
     path:   /your-signature/{page}
     defaults: { _controller: AppBundle:Default:selfSignature, page:1 }
     
-app_selfsignusethis:
+app_selfsign_usethis:
     path:   /selfsignusethis/{id}
     defaults: { _controller: AppBundle:Default:selfSignUseThis, id:id }
-    
-app_signaturepage:
-    path:   /signaturepage
-    defaults: { _controller: AppBundle:Default:signaturepage }
     
 app_ajaxsketch:
     path:   /ajaxsketch
@@ -175,8 +171,3 @@ app_delete_template:
 app_editEmailTemplate:
     path:   /edit-email-template/{id}
     defaults: { _controller: AppBundle:Default:editEmailTemplate, id:id }
-
-app_test:
-    path:   /testpage
-    defaults: { _controller: AppBundle:Default:testpage }
-    

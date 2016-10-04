@@ -2,9 +2,9 @@ login_customer:
     path:   /customer/{token}
     defaults: { _controller: AppBundle:Customer:index, token:nonexist }
 
-customer_index:
-    path:   /customer-area
-    defaults: { _controller: AppBundle:Customer:index }
+customer_display_contract:
+    path:   /e-contract/{token}/{dob}
+    defaults: { _controller: AppBundle:Customer:displaycontract, token:nonexist, dob:dob }
     
 customer_accessdenied:
     path:   /access-denied/{ip}

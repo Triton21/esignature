@@ -63,22 +63,26 @@ security:
         - { path: ^/administrator/register, role: ROLE_ADMIN }
         - { path: ^/administrator/app_index, role: ROLE_USER }
         - { path: ^/administrator/app_template, role: ROLE_ADMIN }
-        - { path: ^/administrator/app_createtemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_create_template, role: ROLE_USER }
         - { path: ^/administrator/app_edit_template, role: ROLE_USER }
         - { path: ^/administrator/app_client, role: ROLE_USER }
         - { path: ^/administrator/app_addclient, role: ROLE_USER }
         - { path: ^/administrator/app_send_econtract, role: ROLE_USER }
+        - { path: ^/administrator/app_resend_econtract, role: ROLE_USER }
         - { path: ^/administrator/app_selfSignature, role: ROLE_USER }
-        - { path: ^/administrator/app_selfsignusethis, role: ROLE_USER }
-        - { path: ^/administrator/app_signaturepage, role: ROLE_USER }
+        - { path: ^/administrator/app_selfsign_usethis, role: ROLE_USER }
         - { path: ^/administrator/app_ajaxsketch, role: ROLE_USER }
         - { path: ^/administrator/app_previewiframe, role: ROLE_USER }
         - { path: ^/administrator/app_ajaxpreviewnewwindow, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxPreviewNewTemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxPreviewNewWindowNewTemplate, role: ROLE_USER }
         - { path: ^/administrator/app_ajaxPreviewNewWindowTemplate, role: ROLE_USER }
         - { path: ^/administrator/app_ajaxpreview, role: ROLE_USER }
         - { path: ^/administrator/app_ajaxPreviewTemplate, role: ROLE_USER }
         - { path: ^/administrator/app_ajaxopentemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxOpenTemplateIframe, role: ROLE_USER }
         - { path: ^/administrator/app_ajaxopensettings, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxOpenContract, role: ROLE_USER }
         - { path: ^/administrator/app_deletesign, role: ROLE_USER }
         - { path: ^/administrator/app_autocomplete, role: ROLE_USER }
         - { path: ^/administrator/app_initpreview, role: ROLE_USER }
@@ -86,4 +90,17 @@ security:
         - { path: ^/administrator/app_usesettings, role: ROLE_USER }
         - { path: ^/administrator/app_settingsdelete, role: ROLE_USER }
         - { path: ^/administrator/app_settingsedit, role: ROLE_USER }
+        - { path: ^/administrator/app_sentcontracts, role: ROLE_USER }
+        - { path: ^/administrator/app_emailsettings, role: ROLE_USER }
+        - { path: ^/administrator/app_activateemailsettings, role: ROLE_USER }
+        - { path: ^/administrator/app_deleteemailsettings, role: ROLE_USER }
+        - { path: ^/administrator/app_emailTemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxemailTemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_deleteEmailTemplate, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxappendemail, role: ROLE_USER }
+        - { path: ^/administrator/app_ajaxTokenDisable, role: ROLE_USER }
+        - { path: ^/administrator/app_openclient, role: ROLE_USER }
+        - { path: ^/administrator/app_editclient, role: ROLE_USER }
+        - { path: ^/administrator/app_delete_template, role: ROLE_USER }
+        - { path: ^/administrator/app_editEmailTemplate, role: ROLE_USER }
  

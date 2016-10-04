@@ -16,6 +16,7 @@
                     <div class="col-md-12">
 
 
+                       
                         {{ form_start(form) }}
                         {{ form_widget(form) }}
                         {{ form_end(form) }}
@@ -45,11 +46,11 @@
 {% endblock %}
 
 {% block javascripts %}
-    
-     <script>
+
+    <script>
         $(document).ready(function () {
             //console.log($("#appbundle_client_firstname"));
-            
+
             $('#appbundle_client_firstname').attr('autocomplete', 'false');
             $('#appbundle_client_lastname').attr('autocomplete', 'false');
             $('#appbundle_client_firstname').on('input', function () {
@@ -75,4 +76,4 @@
 
 
     </script>              
-    {% endblock %}
+{% endblock %}

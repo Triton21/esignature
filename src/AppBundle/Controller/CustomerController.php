@@ -38,13 +38,55 @@ class CustomerController extends Controller {
         if (!$active) {
             return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
         }
+        
+        $savedDob = $eContract->getClient()->getDob();
+        $dob = [];
+        $form = $this->createFormBuilder($dob)
+            ->add('counter', 'hidden', array('read_only' => true))
+            ->add('dob', 'birthday', array(
+                    'format' => 'dd MM yyyy',
+                    'placeholder' => array(
+                        'day' => 'Day', 'month' => 'Month', 'year' => 'Year',
+                    )))
+            ->add('save', 'submit', array(
+                'label' => 'Submit',
+                'attr' => array('class' => 'btn btn-danger')
+                ))
+            ->getForm();
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+           $dob = $form['dob']->getData();
+           $dobString = date_format($dob, 'd-m-Y');
+           $savedDobString = date_format($savedDob, 'd-m-Y');
+           
+           if($dobString == $savedDobString) {
+               return $this->redirectToRoute('customer_display_contract', array('token' => $token, 'dob' => $dobString));
+           }
+        }
 
+
+        return $this->render('AppBundle:customer:checkdob.html.twig', array(
+                  'form' => $form->createView()));
+    }
+    
+    /**
+     * Displays the contract if token is valid and DoB submitted in indexAction
+     * @param type $token
+     * @param type $dob
+     */
+    public function displaycontractAction($token, $dob) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $eContract = $em->getRepository('AppBundle:Econtract')
+                ->findOneBy(array('token' => $token));
+        
+        
         $today = date("d/F/Y");
-        //var_dump($eContract);die;
-
         return $this->render('AppBundle:customer:index.html.twig', array(
                     'today' => $today, 'eContract' => $eContract,));
     }
+    
+    
 
     /**
      * Displays the not found homepage
