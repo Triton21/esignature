@@ -1,0 +1,135 @@
+{% extends "::customerbase.html.twig" %}
+
+{% block stylesheets %}
+    <link href="{{asset('bundles/app/css/ispinner.css')}}" rel="stylesheet">
+    <style>
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .spinnerStyle {
+            display: inline-block;
+            margin-top: 6px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    {#MODAL BOX#}
+    <div id="myModal" class="modal">
+
+        <div class="modal-content">
+            <span class="close">×</span>
+            <content id="modalContent"></content>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="container">
+
+        <div class="col-lg-offset-3 col-lg-7">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+
+            <div class="form-group pull-left">
+                <label for="form_dob">Please verify your Date of Birth</label>
+                {{ form_errors(form.dob) }}
+                {{ form_widget(form.dob) }}
+            </div>
+            {{ form_end(form) }}
+
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{asset('bundles/app/js/clientsketch.js')}}"></script>
+    <script>
+                $(document).ready(function () {
+        var loading = '<div class="ispinner gray large animating myload" id="loader">\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                    <div class="ispinner-blade"></div>\
+                                </div>   ';
+                $(function () {
+                var modal = $('#myModal')[0];
+                        $(document).on('click', ".close", function () {
+                modal.style.display = "none";
+                });
+                        $(document).on('click', window, function (event) {
+                if (event.target == modal) {
+                modal.style.display = "none";
+                }
+                });
+                });
+                function loadAnimation() {
+                var myNewDiv = document.createElement('div');
+                        myNewDiv.id = 'displayhere';
+                        $('#spinnerHere').append(myNewDiv);
+                        myNewDiv.innerHTML = loading;
+                        return;
+                }
+
+        function removeAnimation() {
+        $('#spinnerHere').html('');
+                return;
+        }
+
+
+
+
+        });
+    </script>
+
+
+{% endblock %}

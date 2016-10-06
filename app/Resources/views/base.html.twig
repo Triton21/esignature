@@ -18,7 +18,7 @@
 
         <!-- Custom styles for this template -->
         <link href="{{asset('bundles/app/css/style.css')}}" rel="stylesheet">
-        <link href="{{asset('bundles/app/css/sidebar.css')}}" rel="stylesheet">
+        <link href="{{asset('bundles/app/css/navbar.css')}}" rel="stylesheet">
         <style type="text/css">
             @font-face {
                 font-family: 'Drug'; 
@@ -37,6 +37,10 @@
             @media all and (max-width: 300px) {
                 .sideBarDiv { display: none; }
             }
+            #page-wrapper {
+                min-height: 65em;
+                margin-top: 50px;
+            }
         </style>
         {% block stylesheets %}
 
@@ -47,91 +51,66 @@
     </head>
 
     <body>
+        <div id="wrapper">
 
-
-        <div class="sideBarDiv">
-
-            <nav class="navbar navbar-inverse affix sidebar" role="navigation">
-                <div class="container-fluid">
-                    <!-- Brand and toggle get grouped for better mobile display -->
+            <!-- Navigation -->
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="container">
                     <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                             <span class="sr-only">Toggle navigation</span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="{{path('app_index')}}">Esign admin <span class="pull-right glyphicon glyphicon-home"></span></a>
+                        <a href="{{path('app_index')}}" class="navbar-brand">
+                            <div class="myLogo">
+                                <img style="margin-top:-7px;" src="{{asset('bundles/app/images/LogoMakrSmall.png')}}" alt="A3Software Logo">
+                                <span style="color:#e0e7e2;">Dent1st </span><span style="color:#cc3333;">Esign</span>
+                            </div>
+                        </a>
                     </div>
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                    <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            <li><a href="{{path('app_send_econtract')}}">Send Econtract<span class="pull-right hidden-xs showopacity glyphicon glyphicon-send"></span></a></li>
-                            <li><a href="{{path('app_sentcontracts')}}">Sent Econtracts<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
-                            <li><a href="{{path('app_add_client')}}">Add new client<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
-                            <li><a href="{{path('app_client')}}">Client manager<span class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
-                            <li><a href="{{path('app_template')}}">Templates<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
-                            <li><a href="{{path('app_create_template')}}">New template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
-                            <li><a href="{{path('app_templatesettings')}}">Template settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a></li>
-                            <li><a href="{{path('app_selfSignature')}}">Your signature<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
-                            <li><a href="{{path('app_emailsettings')}}">Email settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
-                            <li><a href="{{path('app_emailTemplate')}}">Email template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-
-            {% block sidebar %}
-
-
-            {% endblock %}
-        </div>
-        
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <a href="#" class="navbar-brand">
-                    <div class="myLogo">
-                        <img style="margin-top:-7px;" src="{{asset('bundles/app/images/LogoMakrSmall.png')}}" alt="A3Software Logo">
-                        <span style="color:#e0e7e2;">Dent1st </span><span style="color:#cc3333;">Esign</span>
-                    </div>
-                </a>
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div id="navbar" class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                    <ul class="nav navbar-right navbar-nav">
+                    <!-- Top Menu Items -->
+                    <ul class="nav navbar-right top-nav">
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <li><a href="{{path('admin')}}">Admin</a></li>
-                                <li><a href="{{path('register')}}">Register</a></li>
+                            <li><a href="#contact"><span class="showopacity glyphicon glyphicon-envelope"></span> Contact</a></li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{path('admin')}}"><span class="showopacity glyphicon glyphicon-cog"></span> Admin</a></li>
+                                <li><a href="{{path('register')}}"><span class="showopacity glyphicon glyphicon-pencil"></span> Register</a></li>
                                 {% endif %}
-                            <li><a href="{{path('logout')}}">Logout</a></li>
+                            <li><a href="{{path('logout')}}"><span class="showopacity glyphicon glyphicon-log-out"></span> Logout</a></li>
                             {% else %}
                             <li><a href="{{path('login')}}">Login</a></li>
-
-                        {% endif %}
+                            {% endif %}
                     </ul> 
-                </div><!--/.nav-collapse -->
+                </div>
+
+                <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav side-nav">
+                        <li style="border-bottom:solid #efefef 1px;border-top:solid #efefef 1px;"><a href="{{path('app_send_econtract')}}">Send Econtract<span class="pull-right hidden-xs showopacity glyphicon glyphicon-send"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_sentcontracts')}}">Sent Econtracts<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_add_client')}}">Add new client<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_client')}}">Client manager<span class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_template')}}">Templates<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_create_template')}}">New template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_templatesettings')}}">Template settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_selfSignature')}}">Your signature<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_emailsettings')}}">Email settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_emailTemplate')}}">Email template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </nav>
+
+            <div id="page-wrapper">
+                <div class="container-fluid">
+                    {% block body %}
+                    {% endblock %}
+
+                </div>
             </div>
-        </nav>
-
-
-        <div style="min-height: 20px;"></div>
-        
-        <div class="main">
-        {% block body %}
-        {% endblock %}
         </div>
 
 
