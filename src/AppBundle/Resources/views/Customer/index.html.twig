@@ -44,6 +44,15 @@
             display: inline-block;
             margin-top: 6px;
         }
+        #sketchpadapp {
+            /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
     </style>
 {% endblock %}
@@ -77,7 +86,7 @@
                             </div>
                             <div style="min-height:3em;"></div>
                         </div>
-                        <div class="row">
+                        <div class="row" id="sketchpadapp">
                             <canvas id="clientSignature" width="400" height="120" style="margin-left:1em; border:1px solid #000000;"></canvas>
                         </div>
                         <div class="col-md-6 center">
@@ -88,7 +97,7 @@
                                 <button type="button" class="btn btn-danger btn-lg" id="saveImage">Save signature</button>
                             </div>
                         </div>
-                        
+
                         <div style="min-height:6em;"></div>
                         <div class="col-md-12">
                             <p>Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.name}}</span></p>
@@ -118,8 +127,8 @@
 {% block javascripts %}
     <script src="{{asset('bundles/app/js/clientsketch.js')}}"></script>
     <script>
-        $(document).ready(function () {
-            var loading = '<div class="ispinner gray large animating myload" id="loader">\
+                $(document).ready(function () {
+        var loading = '<div class="ispinner gray large animating myload" id="loader">\
                                     <div class="ispinner-blade"></div>\
                                     <div class="ispinner-blade"></div>\
                                     <div class="ispinner-blade"></div>\
@@ -133,86 +142,81 @@
                                     <div class="ispinner-blade"></div>\
                                     <div class="ispinner-blade"></div>\
                                 </div>   ';
-            
-            $(function () {
+                $(function () {
                 var modal = $('#myModal')[0];
-                $(document).on('click', ".close", function () {
-                    modal.style.display = "none";
+                        $(document).on('click', ".close", function () {
+                modal.style.display = "none";
                 });
-
-                $(document).on('click', window, function (event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
+                        $(document).on('click', window, function (event) {
+                if (event.target == modal) {
+                modal.style.display = "none";
+                }
                 });
-            });
-            
-            function loadAnimation() {
+                });
+                function loadAnimation() {
                 var myNewDiv = document.createElement('div');
-                myNewDiv.id = 'displayhere';
-                $('#spinnerHere').append(myNewDiv);
-                myNewDiv.innerHTML = loading;
+                        myNewDiv.id = 'displayhere';
+                        $('#spinnerHere').append(myNewDiv);
+                        myNewDiv.innerHTML = loading;
+                        return;
+                }
+
+        function removeAnimation() {
+        $('#spinnerHere').html('');
                 return;
-            }
-            
-            function removeAnimation() {
-                $('#spinnerHere').html('');
-                return;
-            }
+        }
 
 
-            $(function () {
-                var displaySign = $("#mySign")[0];
+        $(function () {
+        var displaySign = $("#mySign")[0];
                 var ctx = displaySign.getContext("2d");
                 var image = new Image();
                 image.onload = function () {
-                    ctx.drawImage(image, 0, 0, 300, 100);
+                ctx.drawImage(image, 0, 0, 300, 100);
                 };
                 image.src = '{{eContract.signature}}';
-
-            });
-
-            $(document).on('click', "#saveImage", function (e) {
-                e.preventDefault();
+        });
+                $(document).on('click', "#saveImage", function (e) {
+        e.preventDefault();
                 loadAnimation();
                 var sketchpad = document.getElementById("clientSignature");
                 var format = 'png';
                 var mime = "image/" + format;
                 var myimage = sketchpad.toDataURL(mime);
                 downloadMyimage(myimage);
-            });
-            function downloadMyimage(myimage) {
+        });
+                function downloadMyimage(myimage) {
                 var myUrl = "{{ path('customer_ajaxsketch')}}";
-                var contractId = "{{eContract.id}}";
-                console.log(contractId);
-                $.ajax({
-                    url: myUrl,
-                    type: "post",
-                    dataType: 'text',
-                    data: {image: myimage, contractId: contractId},
-                    success: function (response) {
-                        if (response == '"image empty"') {
-                            var modal = $('#myModal')[0];
-                            var contentDiv = document.getElementById('modalContent');
-                            console.log(contentDiv);
-                            contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
-                            modal.style.display = "block";
-                            removeAnimation();
-                        } else {
-                            var token = '{{eContract.token}}';
-                            var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
-                            myUrl.replace('PLACEHOLDER', token);
-                            window.location.replace(myUrl.replace('PLACEHOLDER', token));
-                        }
-                    },
-                    complete: function () {
-                        console.log('Request is complete');
-                    },
-                    error: function () {
-                        console.log('Oops...there was an error!');
-                    }
-                });
-            }
+                        var contractId = "{{eContract.id}}";
+                        console.log(contractId);
+                        $.ajax({
+                        url: myUrl,
+                                type: "post",
+                                dataType: 'text',
+                                data: {image: myimage, contractId: contractId},
+                                success: function (response) {
+                                if (response == '"image empty"') {
+                                var modal = $('#myModal')[0];
+                                        var contentDiv = document.getElementById('modalContent');
+                                        console.log(contentDiv);
+                                        contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
+                                        modal.style.display = "block";
+                                        removeAnimation();
+                                } else {
+                                var token = '{{eContract.token}}';
+                                        var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
+                                        myUrl.replace('PLACEHOLDER', token);
+                                        window.location.replace(myUrl.replace('PLACEHOLDER', token));
+                                }
+                                },
+                                complete: function () {
+                                console.log('Request is complete');
+                                },
+                                error: function () {
+                                console.log('Oops...there was an error!');
+                                }
+                        });
+                }
 
 
 
