@@ -45,7 +45,7 @@ class DefaultController extends Controller {
 
         $name = $user->getUsername();
         // replace this example code with whatever you need
-        return $this->render('AppBundle:default:index.html.twig', array(
+        return $this->render('AppBundle:Default:index.html.twig', array(
                     'name' => $name,));
     }
 
