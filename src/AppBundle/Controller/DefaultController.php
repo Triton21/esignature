@@ -74,7 +74,7 @@ class DefaultController extends Controller {
                 ->findOneBy(array('usethis' => 1));
         $signatureImage = $findActiveSignature->getImage();
         $pager = new Paginator($page, $countAll, $limit);
-        return $this->render('AppBundle:default:template.html.twig', array(
+        return $this->render('AppBundle:Default:template.html.twig', array(
                     'signatureImage' => $signatureImage, 'etemplates' => $etemplates, 'pager' => $pager, 'name' => $name,));
     }
 
@@ -116,7 +116,7 @@ class DefaultController extends Controller {
             return $this->redirectToRoute('app_template');
         }
 
-        return $this->render('AppBundle:default:createTemplate.html.twig', array(
+        return $this->render('AppBundle:Default:createTemplate.html.twig', array(
                     'signatureImage' => $signatureImage, 'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -153,7 +153,7 @@ class DefaultController extends Controller {
             $em->flush();
             return $this->redirectToRoute('app_template');
         }
-        return $this->render('AppBundle:default:editTemplate.html.twig', array(
+        return $this->render('AppBundle:Default:editTemplate.html.twig', array(
                     'etemplate' => $etemplate, 'id' => $id, 'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -184,7 +184,7 @@ class DefaultController extends Controller {
         $initHeading = '<br><br><hr>';
         $initFooter = '<hr>';
 
-        $initSignpage = $this->renderView('AppBundle:default:signlastpage.html.twig');
+        $initSignpage = $this->renderView('AppBundle:Default:signlastpage.html.twig');
         $form = $this->createForm(new TemplatesettingsType($initHeading, $initFooter, $initSignpage, $signatureArray), $templateSettings);
 
         $form->handleRequest($request);
@@ -201,7 +201,7 @@ class DefaultController extends Controller {
             $mySignature = $em->getRepository('AppBundle:Selfsignature')
                     ->find($signId);
             //var_dump($mySignature);die;
-            $signPage = $this->renderView('AppBundle:default:savelastpage.html.twig', array(
+            $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
                 'mySignature' => $mySignature));
             /*
               $templateSettings->setCompanyname($companyName);
@@ -218,7 +218,7 @@ class DefaultController extends Controller {
             return $this->redirectToRoute('app_templatesettings');
         }
 
-        return $this->render('AppBundle:default:templatesettings.html.twig', array(
+        return $this->render('AppBundle:Default:templatesettings.html.twig', array(
                     'savedSettings' => $savedSettings, 'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -274,7 +274,7 @@ class DefaultController extends Controller {
             $mySignature = $em->getRepository('AppBundle:Selfsignature')
                     ->find($signId);
             //var_dump($mySignature);die;
-            $signPage = $this->renderView('AppBundle:default:savelastpage.html.twig', array(
+            $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
                 'mySignature' => $mySignature));
             $templateSettings->setSignpage($signPage);
             $em->persist($templateSettings);
@@ -285,7 +285,7 @@ class DefaultController extends Controller {
             return $this->redirectToRoute('app_templatesettings');
         }
 
-        return $this->render('AppBundle:default:templatesettingsedit.html.twig', array(
+        return $this->render('AppBundle:Default:templatesettingsedit.html.twig', array(
                     'signatureImage' => $signatureImage, 'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -325,7 +325,7 @@ class DefaultController extends Controller {
             $content = false;
         }
 
-        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
 
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
@@ -368,7 +368,7 @@ class DefaultController extends Controller {
             $content = false;
         }
 
-        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
 
         $myJson = new JsonResponse(array('html' => $html, 'image' => $rawSignature));
@@ -408,7 +408,7 @@ class DefaultController extends Controller {
             $content = false;
         }
 
-        $html = $this->renderView('AppBundle:default:previewiframe.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage,));
 
         $response = new Response(json_encode($html));
@@ -459,7 +459,7 @@ class DefaultController extends Controller {
         }
 
 
-        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
         return $myJson;
@@ -497,7 +497,7 @@ class DefaultController extends Controller {
             $content = false;
         }
 
-        $html = $this->renderView('AppBundle:default:previewiframe.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage,));
 
         $response = new Response(json_encode($html));
@@ -537,7 +537,7 @@ class DefaultController extends Controller {
             $content = false;
         }
 
-        $html = $this->renderView('AppBundle:default:previewiframe.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
 
         $response = new Response(json_encode($html));
@@ -573,7 +573,7 @@ class DefaultController extends Controller {
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
 
 
-        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage));
 
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
@@ -612,7 +612,7 @@ class DefaultController extends Controller {
         $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
 
-        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
         $signImage = $myTemplate->getSignature();
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage));
@@ -637,7 +637,7 @@ class DefaultController extends Controller {
         $rawFooter = $myContract->getFooter();
         $rawFirstpage = $myContract->getFirstpage();
         $rawSignpage = $myContract->getSignpage();
-        $realSignPage = $this->renderView('AppBundle:default:saveclientsignature.html.twig', array(
+        $realSignPage = $this->renderView('AppBundle:Default:saveclientsignature.html.twig', array(
             'eContract' => $myContract,));
 
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
@@ -652,7 +652,7 @@ class DefaultController extends Controller {
         $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
 
-        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
         $signImage = $myContract->getSignature();
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage, 'clientImage' => $clientImage,));
@@ -699,7 +699,7 @@ class DefaultController extends Controller {
 
         $signImage = $myTemplate->getSignature();
 
-        $html = $this->renderView('AppBundle:default:previewiframe.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
             'signImage' => $signImage, 'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
         $html = str_replace('%%clientname%%', $clientName, $html);
         $html = str_replace('%%firstlineaddress%%', $addressFirstLine, $html);
@@ -790,7 +790,7 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $name = $user->getUsername();
         $content = true;
-        return $this->render('AppBundle:default:previewiframe.html.twig', array(
+        return $this->render('AppBundle:Default:previewiframe.html.twig', array(
                     'content' => $content,));
     }
 
@@ -804,7 +804,7 @@ class DefaultController extends Controller {
         $firstpage = false;
         $signpage = false;
         $signImage = false;
-        $html = $this->renderView('AppBundle:default:previewiframeempty.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewiframeempty.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage, 'signImage' => $signImage));
         $response = new Response(json_encode($html));
         return $response;
@@ -848,10 +848,10 @@ class DefaultController extends Controller {
             $result = $this->searchClient($searchTerm);
             $clientlist = false;
             $pager = false;
-            return $this->render('AppBundle:default:client.html.twig', array(
+            return $this->render('AppBundle:Default:client.html.twig', array(
                         'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'clientlist' => $clientlist, 'pager' => $pager, 'name' => $name,));
         }
-        return $this->render('AppBundle:default:client.html.twig', array(
+        return $this->render('AppBundle:Default:client.html.twig', array(
                     'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'clientlist' => $clientlist, 'pager' => $pager, 'name' => $name,));
     }
 
@@ -908,7 +908,7 @@ class DefaultController extends Controller {
             return $this->redirectToRoute('app_client');
         }
 
-        return $this->render('AppBundle:default:addclient.html.twig', array(
+        return $this->render('AppBundle:Default:addclient.html.twig', array(
                     'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -947,7 +947,7 @@ class DefaultController extends Controller {
             return $this->redirectToRoute('app_client');
         }
 
-        return $this->render('AppBundle:default:addclient.html.twig', array(
+        return $this->render('AppBundle:Default:addclient.html.twig', array(
                     'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -1065,7 +1065,7 @@ class DefaultController extends Controller {
             return $this->redirectToRoute('app_sentcontracts');
         }
 
-        return $this->render('AppBundle:default:sendecontract.html.twig', array(
+        return $this->render('AppBundle:Default:sendecontract.html.twig', array(
                     'emailtemplates' => $emailtemplates, 'settings' => $settings, 'etemplates' => $etemplates, 'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -1139,7 +1139,7 @@ class DefaultController extends Controller {
             return $this->redirectToRoute('app_sentcontracts');
         }
 
-        return $this->render('AppBundle:default:resendecontract.html.twig', array(
+        return $this->render('AppBundle:Default:resendecontract.html.twig', array(
                     'eContract' => $eContract, 'emailtemplates' => $emailtemplates, 'settings' => $settings, 'etemplates' => $etemplates, 'form' => $form->createView(), 'name' => $name,));
     }
 
@@ -1292,11 +1292,11 @@ class DefaultController extends Controller {
             $result = $this->searchEcontract($searchTerm);
             $econtracts = false;
             $pager = false;
-            return $this->render('AppBundle:default:sentecontracts.html.twig', array(
+            return $this->render('AppBundle:Default:sentecontracts.html.twig', array(
                         'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
         }
 
-        return $this->render('AppBundle:default:sentecontracts.html.twig', array(
+        return $this->render('AppBundle:Default:sentecontracts.html.twig', array(
                     'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
     }
 
@@ -1359,10 +1359,10 @@ class DefaultController extends Controller {
             $em->flush();
             $imageName = $document->getImageName();
 
-            return $this->render('AppBundle:default:selfsignature.html.twig', array(
+            return $this->render('AppBundle:Default:selfsignature.html.twig', array(
                         'uploadedImage' => $imageName, 'form' => $form->createView(), 'selfSignature' => $selfSignature, 'pager' => $pager, 'name' => $name,));
         }
-        return $this->render('AppBundle:default:selfsignature.html.twig', array(
+        return $this->render('AppBundle:Default:selfsignature.html.twig', array(
                     'uploadedImage' => $uploadedImage, 'form' => $form->createView(), 'selfSignature' => $selfSignature, 'pager' => $pager, 'name' => $name,));
     }
 

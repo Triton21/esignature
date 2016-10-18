@@ -65,7 +65,7 @@ class CustomerController extends Controller {
         }
 
 
-        return $this->render('AppBundle:customer:checkdob.html.twig', array(
+        return $this->render('AppBundle:Customer:checkdob.html.twig', array(
                   'form' => $form->createView()));
     }
     
@@ -82,7 +82,7 @@ class CustomerController extends Controller {
         
         
         $today = date("d/F/Y");
-        return $this->render('AppBundle:customer:index.html.twig', array(
+        return $this->render('AppBundle:Customer:index.html.twig', array(
                     'today' => $today, 'eContract' => $eContract,));
     }
     
@@ -93,7 +93,7 @@ class CustomerController extends Controller {
      */
     public function accessDeniedAction($ip) {
 
-        return $this->render('AppBundle:customer:access.html.twig', array(
+        return $this->render('AppBundle:Customer:access.html.twig', array(
                     'ip' => $ip,));
     }
 
@@ -102,7 +102,7 @@ class CustomerController extends Controller {
      */
     public function alreadySignedAction($ip) {
 
-        return $this->render('AppBundle:customer:alreadysigned.html.twig', array(
+        return $this->render('AppBundle:Customer:alreadysigned.html.twig', array(
                     'ip' => $ip,));
     }
 
@@ -123,7 +123,7 @@ class CustomerController extends Controller {
         $this->generatePdf($eContract->getId());
         $this->sendEmail($eContract->getId());
 
-        return $this->render('AppBundle:customer:signednote.html.twig');
+        return $this->render('AppBundle:Customer:signednote.html.twig');
     }
 
     /**
@@ -247,7 +247,7 @@ class CustomerController extends Controller {
 
         $this->get('knp_snappy.pdf')->generateFromHtml(
                 $this->renderView(
-                        'AppBundle:customer:displaycontract.html.twig', array(
+                        'AppBundle:Customer:displaycontract.html.twig', array(
                     'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
                         )
                 ), $fullPath
@@ -259,12 +259,6 @@ class CustomerController extends Controller {
         $em->persist($myContract);
         $em->flush();
         return true;
-        /*
-          return $this->render('AppBundle:customer:displaycontract.html.twig', array(
-          'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
-          ));
-         * 
-         */
     }
 
     /**
@@ -300,7 +294,6 @@ class CustomerController extends Controller {
         }
 
         $html = 'no data';
-        //$html = $data;
         $response = new Response(json_encode($html));
         return $response;
     }
