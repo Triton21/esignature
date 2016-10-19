@@ -225,10 +225,10 @@
                 e.preventDefault();
                 var emailId = $('#emailTemplate').val();
                 var clientName = '{{eContract.client.name}}';
-                var clientId = '{{eContract.client.id}}';
-                var templateId = '{{eContract.templateid}}';
+                //var clientId = '{{eContract.client.id}}';
+                //var templateId = '{{eContract.templateid}}';
                 appendEmailBody(emailId, clientName);
-                previewContract(templateId, clientId);
+                previewContract('{{eContractId}}');
             });
 
             //enable submit button if template id and client id set
@@ -275,11 +275,11 @@
                 });
             }
 
-            function previewContract(templateId, clientId) {
-                var data = {'myid': templateId, 'clientId': clientId};
+            function previewContract(contractId) {
+                var data = {'myid': contractId };
                 console.log(data);
 
-                var myUrl = "{{path('app_ajaxOpenTemplateIframe')}}";
+                var myUrl = "{{path('app_ajaxOpenContractIframe')}}";
                 $.ajax({
                     type: 'POST',
                     url: myUrl,

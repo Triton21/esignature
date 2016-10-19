@@ -171,3 +171,7 @@ app_delete_template:
 app_editEmailTemplate:
     path:   /edit-email-template/{id}
     defaults: { _controller: AppBundle:Default:editEmailTemplate, id:id }
+    
+app_ajaxOpenContractIframe:
+    path:   /ajaxOpenContractIframe
+    defaults: { _controller: AppBundle:Default:ajaxOpenContractIframe }

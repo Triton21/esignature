@@ -626,7 +626,7 @@ class DefaultController extends Controller {
                 ->find($contractId);
         $clientImage = $myContract->getClientSignature();
 
-        $rawContenst = $myContract->getContent();
+        $rawContent = $myContract->getContent();
         $rawHeading = $myContract->getHeading();
         $rawFooter = $myContract->getFooter();
         $rawFirstpage = $myContract->getFirstpage();
@@ -652,6 +652,46 @@ class DefaultController extends Controller {
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage, 'clientImage' => $clientImage,));
         return $myJson;
     }
+    
+    /**
+     * Ajax request, returns the preview HTML code of the saved templates
+     * @param Request $request
+     * @return Response
+     */
+    public function ajaxOpenContractIframeAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $contractId = $request->request->get('myid');
+        $myContract = $em->getRepository('AppBundle:Econtract')
+                ->find($contractId);
+        $signImage = $myContract->getSignature();
+        
+        $rawContent = $myContract->getContent();
+        $rawHeading = $myContract->getHeading();
+        $rawFooter = $myContract->getFooter();
+        $rawFirstpage = $myContract->getFirstpage();
+        $rawSignpage = $myContract->getSignpage();
+        $realSignPage = $this->renderView('AppBundle:Default:saveclientsignature.html.twig', array(
+            'eContract' => $myContract,));
+        
+        
+        $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
+        $footer = '<div class="footer">' . $rawFooter . '</div></div>';
+        $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
+        $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
+        
+
+        $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
+        $content = str_replace('[[page break]]', $pageBREAK, $content);
+
+        $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
+        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
+
+        $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
+            'signImage' => $signImage, 'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
+        
+        $response = new Response(json_encode($html));
+        return $response;
+    }
 
     /**
      * Ajax request, returns the preview HTML code of the saved templates
@@ -662,24 +702,24 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $settId = $request->request->get('myid');
         $clientId = $request->request->get('clientId');
-
-
+        
         $myTemplate = $em->getRepository('AppBundle:Etemplate')
                 ->find($settId);
         $client = $em->getRepository('AppBundle:Client')
                 ->find($clientId);
+        
+        
         $clientName = $client->getName();
         $addressFirstLine = $client->getAddressfirstline();
         $addressTown = $client->getAddresstown();
         $postcode = $client->getPostcode();
         $today = date("d/F/Y");
-
-        $rawContent = $myTemplate->getContent();
+        
         $rawHeading = $myTemplate->getHeading();
         $rawFooter = $myTemplate->getFooter();
         $rawFirstpage = $myTemplate->getFirstpage();
         $rawSignpage = $myTemplate->getSignpage();
-
+        
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
         $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
@@ -1076,8 +1116,11 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $name = $user->getUsername();
+        /*
         $etemplates = $em->getRepository('AppBundle:Etemplate')
                 ->findAll();
+         * 
+         */
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->find($id);
         //var_dump($eContract);die;
@@ -1085,6 +1128,13 @@ class DefaultController extends Controller {
                 ->findAll();
         $emailtemplates = $em->getRepository('AppBundle:Emailtemplate')
                 ->findAll();
+        foreach ($emailtemplates as $key => $emailtemplate) {
+            if ($emailtemplate->getTempname() === 'default') {
+                $defaultKey = $key;
+            }
+        }
+        unset($emailtemplates[$defaultKey]);
+        
         foreach ($settings as $sett) {
             $settingsarray[$sett->getId()] = $sett->getFromname() . ' - ' . $sett->getEusername();
         }
@@ -1134,7 +1184,7 @@ class DefaultController extends Controller {
         }
 
         return $this->render('AppBundle:Default:resendecontract.html.twig', array(
-                    'eContract' => $eContract, 'emailtemplates' => $emailtemplates, 'settings' => $settings, 'etemplates' => $etemplates, 'form' => $form->createView(), 'name' => $name,));
+                   'eContractId' => $id, 'eContract' => $eContract, 'emailtemplates' => $emailtemplates, 'settings' => $settings, 'form' => $form->createView(), 'name' => $name,));
     }
 
     /**
