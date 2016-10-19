@@ -50,7 +50,7 @@ class DefaultController extends Controller {
     }
 
     /**
-     * List of templates
+     * List of saved contract templates
      */
     public function templateAction($page) {
 
@@ -79,7 +79,7 @@ class DefaultController extends Controller {
     }
 
     /**
-     * Create the new template form and persist the data to database. Form content displayed with CK editor.
+     * Create the new contract template form and persist the data to database. Form content displayed with CK editor.
      * 
      */
     public function createTemplateAction(Request $request) {
@@ -121,7 +121,8 @@ class DefaultController extends Controller {
     }
 
     /**
-     * Edit previously saved template.
+     * Edit previously saved contract template.
+     * @param int $id Contract template id
      * 
      */
     public function editTemplateAction(Request $request, $id) {
@@ -203,13 +204,6 @@ class DefaultController extends Controller {
             //var_dump($mySignature);die;
             $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
                 'mySignature' => $mySignature));
-            /*
-              $templateSettings->setCompanyname($companyName);
-              $templateSettings->setAddressfirstline($address);
-              $templateSettings->setAddresstown($town);
-              $templateSettings->setPostcode($postcode);
-             * 
-             */
             $templateSettings->setSignpage($signPage);
             $templateSettings->setUsethis(1);
             $em->persist($templateSettings);
@@ -224,8 +218,8 @@ class DefaultController extends Controller {
 
     /**
      * Edit saved settings if username == saved username
-     * @param type $id
-     * @return type
+     * @param integer $id
+     * @return render twig
      */
     public function settingsEditAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
@@ -292,7 +286,7 @@ class DefaultController extends Controller {
     /**
      * Ajax request, returns the preview HTML code with the unsaved form data
      * @param Request $request
-     * @return Response
+     * @return Json object
      */
     public function ajaxPreviewNewWindowAction(Request $request) {
 
@@ -335,7 +329,7 @@ class DefaultController extends Controller {
     /**
      * Ajax request, returns the preview HTML code of the unsaved form data
      * @param Request $request
-     * @return Response
+     * @return Json object
      */
     public function ajaxPreviewNewWindowTemplateAction(Request $request) {
 
@@ -1070,7 +1064,7 @@ class DefaultController extends Controller {
     }
 
     /**
-     * Resend saved econtract to a previously saved client. Link will be regenerated, link expiry reset.
+     * Resend saved econtract to a previously saved client. Token link will be regenerated, link expiry reset.
      * 
      */
     public function reSendEcontractAction(Request $request, $id) {
@@ -1205,8 +1199,9 @@ class DefaultController extends Controller {
         $todayObj = new \DateTime();
         $todayDate = $todayObj->format('d-m-Y');
 
-        //URL NEEDS TO BE CHANGE FOR PRODUCTION ENVIROMENT!!!
-        $url = 'http://localhost/esignature/web/app_dev.php/customer';
+        //URL NEEDS TO BE CHANGED FOR PRODUCTION ENVIROMENT!!!
+        //$url = 'http://localhost/esignature/web/app_dev.php/customer/customer';
+        $url = 'http://52.211.29.66/customer/customer';
         $token = $url . '/' . $tokenRaw;
         $mylink = '<a href="' . $token . '">click here to access your contract</a>';
 

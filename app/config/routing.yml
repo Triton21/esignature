@@ -8,4 +8,4 @@ app:
     
 customer:
     resource: "@AppBundle/Resources/config/routing-customer.yml"
-    prefix:   /
+    prefix:   /customer/
