@@ -226,7 +226,7 @@ class CustomerController extends Controller {
         $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
 
-        $html = $this->renderView('AppBundle:default:previewnewwindow.html.twig', array(
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
             'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
         $signImage = $myContract->getSignature();
 
