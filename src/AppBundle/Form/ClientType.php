@@ -50,6 +50,24 @@ class ClientType extends AbstractType {
                         'day' => 'Day', 'month' => 'Month', 'year' => 'Year',
                     )
                 ))
+                ->add('addressfirstline', 'text', array(
+                    'label' => 'Address',
+                    'required' => true,
+                    'attr' => array(
+                        'placeholder' => 'First line'
+            )))
+                ->add('addresstown', 'text', array(
+                    'label' => 'Town',
+                    'required' => true,
+                    'attr' => array(
+                        'placeholder' => 'Town'
+            )))
+                ->add('postcode', 'text', array(
+                    'label' => 'Postcode',
+                    'required' => true,
+                    'attr' => array(
+                        'placeholder' => 'Postcode'
+            )))
                 ->add('save', 'submit', array(
                     'label' => 'Save', 'attr' => array('class' => 'btn btn-default btn-md')))
 
