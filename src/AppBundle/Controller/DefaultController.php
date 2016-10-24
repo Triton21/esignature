@@ -368,7 +368,7 @@ class DefaultController extends Controller {
         $myJson = new JsonResponse(array('html' => $html, 'image' => $rawSignature));
         return $myJson;
     }
-    
+
     /**
      * Ajax request, returns the preview HTML code with the unsaved form data. Code will be displayed on the same page with iframe.
      * @param Request $request
@@ -652,7 +652,7 @@ class DefaultController extends Controller {
         $myJson = new JsonResponse(array('html' => $html, 'image' => $signImage, 'clientImage' => $clientImage,));
         return $myJson;
     }
-    
+
     /**
      * Ajax request, returns the preview HTML code of the saved templates
      * @param Request $request
@@ -664,7 +664,7 @@ class DefaultController extends Controller {
         $myContract = $em->getRepository('AppBundle:Econtract')
                 ->find($contractId);
         $signImage = $myContract->getSignature();
-        
+
         $rawContent = $myContract->getContent();
         $rawHeading = $myContract->getHeading();
         $rawFooter = $myContract->getFooter();
@@ -672,13 +672,13 @@ class DefaultController extends Controller {
         $rawSignpage = $myContract->getSignpage();
         $realSignPage = $this->renderView('AppBundle:Default:saveclientsignature.html.twig', array(
             'eContract' => $myContract,));
-        
-        
+
+
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
         $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
         $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
-        
+
 
         $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
         $content = str_replace('[[page break]]', $pageBREAK, $content);
@@ -688,7 +688,7 @@ class DefaultController extends Controller {
 
         $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
             'signImage' => $signImage, 'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
-        
+
         $response = new Response(json_encode($html));
         return $response;
     }
@@ -702,24 +702,24 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $settId = $request->request->get('myid');
         $clientId = $request->request->get('clientId');
-        
+
         $myTemplate = $em->getRepository('AppBundle:Etemplate')
                 ->find($settId);
         $client = $em->getRepository('AppBundle:Client')
                 ->find($clientId);
-        
-        
+
+
         $clientName = $client->getName();
         $addressFirstLine = $client->getAddressfirstline();
         $addressTown = $client->getAddresstown();
         $postcode = $client->getPostcode();
         $today = date("d/F/Y");
-        
+
         $rawHeading = $myTemplate->getHeading();
         $rawFooter = $myTemplate->getFooter();
         $rawFirstpage = $myTemplate->getFirstpage();
         $rawSignpage = $myTemplate->getSignpage();
-        
+
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
         $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
@@ -1117,8 +1117,8 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $name = $user->getUsername();
         /*
-        $etemplates = $em->getRepository('AppBundle:Etemplate')
-                ->findAll();
+          $etemplates = $em->getRepository('AppBundle:Etemplate')
+          ->findAll();
          * 
          */
         $eContract = $em->getRepository('AppBundle:Econtract')
@@ -1134,7 +1134,7 @@ class DefaultController extends Controller {
             }
         }
         unset($emailtemplates[$defaultKey]);
-        
+
         foreach ($settings as $sett) {
             $settingsarray[$sett->getId()] = $sett->getFromname() . ' - ' . $sett->getEusername();
         }
@@ -1184,7 +1184,7 @@ class DefaultController extends Controller {
         }
 
         return $this->render('AppBundle:Default:resendecontract.html.twig', array(
-                   'eContractId' => $id, 'eContract' => $eContract, 'emailtemplates' => $emailtemplates, 'settings' => $settings, 'form' => $form->createView(), 'name' => $name,));
+                    'eContractId' => $id, 'eContract' => $eContract, 'emailtemplates' => $emailtemplates, 'settings' => $settings, 'form' => $form->createView(), 'name' => $name,));
     }
 
     /**
@@ -1369,7 +1369,7 @@ class DefaultController extends Controller {
      * Only admin can access
      * 
      */
-    public function selfSignatureAction(Request $request, $page) {
+    public function selfSignatureAction($page) {
 
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
@@ -1377,7 +1377,6 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $name = $user->getUsername();
-        $uploadedImage = false;
 
         $limit = 10;
         $offset = ($limit * $page) - $limit;
@@ -1389,6 +1388,20 @@ class DefaultController extends Controller {
 
         $pager = new Paginator($page, $countAll, $limit);
 
+        return $this->render('AppBundle:Default:selfsignature.html.twig', array(
+                'selfSignature' => $selfSignature, 'pager' => $pager, 'name' => $name,));
+    }
+
+    /**
+     * Create self signature and displays saved pictures in a table
+     * Only admin can access
+     * 
+     */
+    public function selfUploadAction(Request $request) {
+        $user = $this->getUser();
+        $name = $user->getUsername();
+        $uploadedImage = false;
+        
         $document = new Product();
         $form = $this->createFormBuilder($document)
                 ->add('imageFile', 'file', array(
@@ -1398,17 +1411,34 @@ class DefaultController extends Controller {
                 ->getForm();
 
         $form->handleRequest($request);
-
+        
+        
         if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
             $em->persist($document);
             $em->flush();
             $imageName = $document->getImageName();
 
-            return $this->render('AppBundle:Default:selfsignature.html.twig', array(
-                        'uploadedImage' => $imageName, 'form' => $form->createView(), 'selfSignature' => $selfSignature, 'pager' => $pager, 'name' => $name,));
+            return $this->render('AppBundle:Default:selfSignatureUpload.html.twig', array(
+                        'uploadedImage' => $imageName, 'form' => $form->createView(), 'name' => $name,));
         }
-        return $this->render('AppBundle:Default:selfsignature.html.twig', array(
-                    'uploadedImage' => $uploadedImage, 'form' => $form->createView(), 'selfSignature' => $selfSignature, 'pager' => $pager, 'name' => $name,));
+        
+
+        return $this->render('AppBundle:Default:selfSignatureUpload.html.twig', array(
+                'uploadedImage' => $uploadedImage, 'form' => $form->createView(), 'name' => $name,));
+    }
+    
+    /**
+     * Create self signature and displays saved pictures in a table
+     * Only admin can access
+     * 
+     */
+    public function selfCreateAction() {
+        $user = $this->getUser();
+        $name = $user->getUsername();
+
+        return $this->render('AppBundle:Default:selfSignatureCreate.html.twig', array(
+                    'name' => $name,));
     }
 
     /**

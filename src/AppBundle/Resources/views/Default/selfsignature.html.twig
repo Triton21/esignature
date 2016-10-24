@@ -1,213 +1,28 @@
-{% extends "AppBundle:Default:defaultbase.html.twig" %}
+{% extends '::base.html.twig' %}
 
-{% block stylesheets %}
-
-    <style>
-        .smallbox {
-            width: 15px;
-            height: 15px;
-            display: inline-block;
-            margin: 0px
-        }
-        .smallcircle {
-            border-radius: 50%;
-            width: 15px;
-            height: 15px;
-            background: darkgray;
-            text-align: center;
-            color: white;
-            font-size: 10px;
-            display: inline-block;
-            margin-bottom: 10px;
-            line-height:15px;
-        }
-        .blue {
-            background: blue;
-        }
-        .black {
-            background: black;
-        } 
-        .red {
-            background: red;
-        }
-        td > * {
-            vertical-align: middle;
-        }
-        .sketchpadapp {
-            /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-    </style>
-    <link rel="stylesheet" href="{{asset('bundles/app/css/sketchpadstyle.css')}}">
-
-{% endblock %}
 
 {% block body %}
 
-
-    <div class="container">
-
+    <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div class="col-lg-10">
-                    <h2>Upload signature</h2>
-                    <p>600x180px JPG file only</p>
-                    {% if uploadedImage == false %}
-                        <div class="uploadForm">
-                            {{ form_start(form) }}
-                            {{ form_widget(form) }}
-                            {{ form_end(form) }}
-                        </div>
-                    {% else %}
-                        <div class="row">
-
-                            <canvas id="uploadedCanvas" width="600" height="180" style="margin-left:4em; border:1px solid #000000;"></canvas>
-
-                        </div>
-
-
-
-                    {% endif %}
-
-
+                <div class="col-md-12" center>
                     <br>
-                    <div class="col-md-6">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="companyUP">Company name</label>
-                                <input type="text" class="form-control" name="companyUP" id="companyUP" placeholder="Company">
-                            </div>
-                            <div class="form-group">
-                                <label for="signnameUP">Print name</label>
-                                <input type="text" class="form-control" name="signnameUP" id="signnameUP" placeholder="Your name">
-                            </div>
-                            <div class="form-group">
-                                <label for="positionUP">Position</label>
-                                <input type="text" class="form-control" name="positionUP" id="positionUP" placeholder="Position">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="addressUP">Address first line</label>
-                                <input type="text" class="form-control" name="addressUP" id="addressUP" placeholder="Address first line">
-                            </div>
-                            <div class="form-group">
-                                <label for="townUP">Town</label>
-                                <input type="text" class="form-control" name="townUP" id="townUP" placeholder="Town">
-                            </div>
-                            <div class="form-group">
-                                <label for="postcodeUP">Postcode</label>
-                                <input type="text" class="form-control" name="postcodeUP" id="postcodeUP" placeholder="Postcode">
-                            </div>
-                        </div>
-                    </div>
+                    <a href="{{path('app_selfCreate')}}" class="btn btn-default btn-lg" role="button"><i class="glyphicon glyphicon-pencil"></i> Create new signature</a>
                     <br>
+                </div>
+                <div class="col-md-12" center>
                     <br>
+                    <a href="{{path('app_selfUpload')}}" class="btn btn-default btn-lg" role="button"><i class="glyphicon glyphicon-upload"></i> Upload signature</a>
                     <br>
-                    <div class="col-md-12 center">
-                        <button type="button" class="btn btn-default btn-sm center" name="saveImageUP" id="saveImageUP">Save</button>
-
-
-                    </div>
-
-
-
-
                 </div>
-            </div>
-        </div>
-
-
-
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h2>Create new signature</h2>
-
-
-                <div class="row sketchpadapp">
-                    <div class="col-md-5">
-
-                        <!-- SMALL CANVAS  -->
-
-                        <div class="col-md-5 pull-left">
-                            <a href="#" class="smallsketch" data-color="black"><div class="smallbox black"></div></a>
-                            <a href="#" class="smallsketch" data-color="blue"><div class="smallbox blue"></div></a>
-                            <a href="#" class="smallsketch" data-color="red"><div class="smallbox red"></div></a>
-                        </div>    
-                        <div class="col-md-5 pull-left" id="circlesign">  
-
-                            <a href="#" class="smallsketch" data-size="1"><div id="smallcircle1" class="smallcircle">1</div></a>
-                            <a href="#" class="smallsketch" data-size="2"><div id="smallcircle2" class="smallcircle black">2</div></a>
-                            <a href="#" class="smallsketch" data-size="3"><div id="smallcircle3" class="smallcircle">3</div></a>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-default btn-sm" id="clearsmallsketch">Clear</button>
-
-
-                        </div>
-
-                    </div>
-                </div>
-                <div class="row sketchpadapp">
-                    <div style="min-height:1em;" class="sketchpadapp"></div>
-                    <canvas id="sketchpad" width="600" height="180" style="margin-left:4em; border:1px solid #000000;"></canvas>
-
-                </div>
-                <br>
-                <div class="col-md-6">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="company">Company name</label>
-                            <input type="text" class="form-control" name="company" id="company" placeholder="Company">
-                        </div>
-                        <div class="form-group">
-                            <label for="signname">Print name</label>
-                            <input type="text" class="form-control" name="signname" id="signname" placeholder="Your name">
-                        </div>
-                        <div class="form-group">
-                            <label for="position">Position</label>
-                            <input type="text" class="form-control" name="position" id="position" placeholder="Position">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="address">Address first line</label>
-                            <input type="text" class="form-control" name="address" id="address" placeholder="Address first line">
-                        </div>
-                        <div class="form-group">
-                            <label for="town">Town</label>
-                            <input type="text" class="form-control" name="town" id="town" placeholder="Town">
-                        </div>
-                        <div class="form-group">
-                            <label for="postcode">Postcode</label>
-                            <input type="text" class="form-control" name="postcode" id="postcode" placeholder="Postcode">
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <br>
-                <br>
-                <div class="col-md-12 center">
-                    <button type="button" class="btn btn-default btn-sm center" name="saveImage" id="saveImage">Save</button>
-
-
-                </div>
-
-
-
-
             </div>
         </div>
     </div>
+
+
+
+
 
 
     <div class="col-md-12">           
@@ -319,127 +134,6 @@
                             {% endblock %}
 
                                 {% block javascripts %}
-                                    <script src="{{asset('bundles/app/js/smallsketch.js')}}"></script>
-                                    <script>
-
-                                        $(document).ready(function () {
-
-                                            $(document).on('click', ".smallsketch", function (e) {
-                                                e.preventDefault();
-                                                var newsize = $(this).attr('data-size');
-                                                if (newsize) {
-                                                    TABLE1.sizeAdd(newsize);
-                                                    var currentid = '#smallcircle' + newsize;
-                                                    var baseid = '#smallcircle'
-                                                    removegray(baseid);
-                                                    changeMyCircle(currentid);
-                                                }
-                                                var newcolor = $(this).attr('data-color');
-                                                if (newcolor) {
-                                                    if (newcolor === 'black') {
-                                                        TABLE1.colorAdd([0, 0, 0]);
-                                                    } else if (newcolor === 'blue') {
-                                                        TABLE1.colorAdd([0, 0, 255]);
-                                                    } else if (newcolor === 'green') {
-                                                        TABLE1.colorAdd([0, 128, 0]);
-                                                    } else if (newcolor === 'yellow') {
-                                                        TABLE1.colorAdd([255, 255, 0]);
-                                                    } else if (newcolor === 'orange') {
-                                                        TABLE1.colorAdd([255, 165, 0]);
-                                                    } else if (newcolor === 'red') {
-                                                        TABLE1.colorAdd([255, 0, 0]);
-                                                    } else if (newcolor === 'white') {
-                                                        TABLE1.colorAdd([255, 255, 255]);
-                                                    }
-                                                }
-                                            });
-
-                                            function removegray(baseid) {
-                                                $(baseid + "1").removeClass('black');
-                                                $(baseid + "2").removeClass('black');
-                                                $(baseid + "3").removeClass('black');
-                                                return true;
-                                            }
-
-                                            function changeMyCircle(currentid) {
-                                                $(currentid).addClass('black');
-                                            }
-
-                                            $(document).on('click', "#saveImage", function (e) {
-                                                e.preventDefault();
-                                                var sketchpad = document.getElementById("sketchpad1");
-                                                var format = 'png';
-                                                var mime = "image/" + format;
-                                                var myimage = sketchpad.toDataURL(mime);
-                                                var signname = $('#signname').val();
-                                                var position = $('#position').val();
-                                                var company = $('#company').val();
-                                                var address = $('#address').val();
-                                                var town = $('#town').val();
-                                                var postcode = $('#postcode').val();
-                                                downloadMyimage(myimage, signname, position, company, address, town, postcode);
-                                            });
-
-                                            $(document).on('click', "#saveImageUP", function (e) {
-                                                e.preventDefault();
-                                                var sketchpad = document.getElementById("uploadedCanvas");
-                                                var format = 'png';
-                                                var mime = "image/" + format;
-                                                var myimage = sketchpad.toDataURL(mime);
-                                                var signname = $('#signnameUP').val();
-                                                var position = $('#positionUP').val();
-                                                var company = $('#companyUP').val();
-                                                var address = $('#addressUP').val();
-                                                var town = $('#townUP').val();
-                                                var postcode = $('#postcodeUP').val();
-                                                downloadMyimage(myimage, signname, position, company, address, town, postcode);
-                                            });
-
-                                            function downloadMyimage(myimage, signname, position, company, address, town, postcode) {
-                                                var myUrl = "{{ path('app_ajaxsketch')}}";
-                                                $.ajax({
-                                                    url: myUrl,
-                                                    type: "post",
-                                                    dataType: 'text',
-                                                    data: {image: myimage, signname: signname, position: position, company: company, address: address, town: town, postcode: postcode},
-                                                    success: function (response) {
-                                                        console.log(response);
-                                                        if (response === 'success') {
-                                                            location.reload();
-                                                        }
-                                                        location.reload();
-                                                    },
-                                                    complete: function () {
-                                                        //console.log('Request is complete');
-                                                    },
-                                                    error: function () {
-                                                        console.log('Oops...there was an error!');
-                                                    }
-                                                });
-                                            }
-
-                                            function getdownloadMyimage(myimage, signname, position, company, address, town, postcode) {
-                                                var data = {image: myimage, signname: signname, position: position, company: company, address: address, town: town, postcode: postcode}
-                                                console.log(data);
-                                            }
-
-                                            var imageExist = '{{uploadedImage}}';
-                                            if (imageExist !== '') {
-                                                $(function () {
-                                                    console.log(imageExist);
-                                                    var displaySign = document.getElementById("uploadedCanvas");
-                                                    var ctx = displaySign.getContext("2d");
-                                                    var image = new Image();
-                                                    image.onload = function () {
-                                                        ctx.drawImage(image, 0, 0, 600, 180);
-                                                    };
-                                                    image.src = '{{ asset('images/products/' ~ uploadedImage) }}';
-                                                });
-                                            }
-
-
-                                        });
-                                    </script>
 
                                     {% for selfsign in selfSignature %}
                                         <script>

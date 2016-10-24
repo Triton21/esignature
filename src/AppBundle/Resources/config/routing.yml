@@ -175,3 +175,11 @@ app_editEmailTemplate:
 app_ajaxOpenContractIframe:
     path:   /ajaxOpenContractIframe
     defaults: { _controller: AppBundle:Default:ajaxOpenContractIframe }
+    
+app_selfCreate:
+    path:   /create-your-signature
+    defaults: { _controller: AppBundle:Default:selfCreate }
+    
+app_selfUpload:
+    path:   /upload-your-signature
+    defaults: { _controller: AppBundle:Default:selfUpload }

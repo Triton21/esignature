@@ -1,0 +1,191 @@
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+
+    <style>
+        .smallbox {
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            margin: 0px
+        }
+        .smallcircle {
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            background: darkgray;
+            text-align: center;
+            color: white;
+            font-size: 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+            line-height:15px;
+        }
+        .blue {
+            background: blue;
+        }
+        .black {
+            background: black;
+        } 
+        .red {
+            background: red;
+        }
+        td > * {
+            vertical-align: middle;
+        }
+        .sketchpadapp {
+            /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+
+
+
+        .customPanel {
+            width: 80%;
+        }
+    </style>
+    <link rel="stylesheet" href="{{asset('bundles/app/css/sketchpadstyle.css')}}">
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="col-md-12">
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>Upload signature</h2>
+                <p>600x180px JPG file only</p>
+                {% if uploadedImage == false %}
+                    <div class="uploadForm">
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        {{ form_end(form) }}
+                    </div>
+                {% else %}
+                    <div class="row">
+
+                        <canvas id="uploadedCanvas" width="600" height="180" style="margin-left:4em; border:1px solid #000000;"></canvas>
+
+                    </div>
+
+
+
+                {% endif %}
+
+
+                <br>
+                <div class="col-md-6">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="companyUP">Company name</label>
+                            <input type="text" class="form-control" name="companyUP" id="companyUP" placeholder="Company">
+                        </div>
+                        <div class="form-group">
+                            <label for="signnameUP">Print name</label>
+                            <input type="text" class="form-control" name="signnameUP" id="signnameUP" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="positionUP">Position</label>
+                            <input type="text" class="form-control" name="positionUP" id="positionUP" placeholder="Position">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="addressUP">Address first line</label>
+                            <input type="text" class="form-control" name="addressUP" id="addressUP" placeholder="Address first line">
+                        </div>
+                        <div class="form-group">
+                            <label for="townUP">Town</label>
+                            <input type="text" class="form-control" name="townUP" id="townUP" placeholder="Town">
+                        </div>
+                        <div class="form-group">
+                            <label for="postcodeUP">Postcode</label>
+                            <input type="text" class="form-control" name="postcodeUP" id="postcodeUP" placeholder="Postcode">
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="col-md-12 center">
+                    <button type="button" class="btn btn-default btn-sm center" name="saveImageUP" id="saveImageUP">Save</button>
+
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            var imageExist = '{{uploadedImage}}';
+            if (imageExist !== '') {
+                $(function () {
+                    console.log(imageExist);
+                    var displaySign = document.getElementById("uploadedCanvas");
+                    var ctx = displaySign.getContext("2d");
+                    var image = new Image();
+                    image.onload = function () {
+                        ctx.drawImage(image, 0, 0, 600, 180);
+                    };
+                    image.src = '{{ asset('images/products/' ~ uploadedImage) }}';
+                });
+            }
+
+            $(document).on('click', "#saveImageUP", function (e) {
+                e.preventDefault();
+                var sketchpad = document.getElementById("uploadedCanvas");
+                var format = 'png';
+                var mime = "image/" + format;
+                var myimage = sketchpad.toDataURL(mime);
+                var signname = $('#signnameUP').val();
+                var position = $('#positionUP').val();
+                var company = $('#companyUP').val();
+                var address = $('#addressUP').val();
+                var town = $('#townUP').val();
+                var postcode = $('#postcodeUP').val();
+                downloadMyimage(myimage, signname, position, company, address, town, postcode);
+            });
+
+            function downloadMyimage(myimage, signname, position, company, address, town, postcode) {
+                var myUrl = "{{ path('app_ajaxsketch')}}";
+                $.ajax({
+                    url: myUrl,
+                    type: "post",
+                    dataType: 'text',
+                    data: {image: myimage, signname: signname, position: position, company: company, address: address, town: town, postcode: postcode},
+                    success: function (response) {
+                        console.log(response);
+                        if (response === 'success') {
+                            window.location.replace("{{path('app_selfSignature')}}");
+                        }
+                        window.location.replace("{{path('app_selfSignature')}}");
+                    },
+                    complete: function () {
+                        //console.log('Request is complete');
+                    },
+                    error: function () {
+                        console.log('Oops...there was an error!');
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}
