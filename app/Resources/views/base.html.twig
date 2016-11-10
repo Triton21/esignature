@@ -18,7 +18,7 @@
 
         <!-- Custom styles for this template -->
         <link href="{{asset('bundles/app/css/style.css')}}" rel="stylesheet">
-        <link href="{{asset('bundles/app/css/navbar.css')}}" rel="stylesheet">
+        <link href="{{asset('bundles/app/css/sidebar.css')}}" rel="stylesheet">
         <style type="text/css">
             @font-face {
                 font-family: 'Drug'; 
@@ -30,7 +30,7 @@
             .myLogo {
                 display:inline-block;
                 font-family: 'Drug';
-                font-size: 2em;
+                font-size: 22px;
                 color: white;
             }
 
@@ -52,72 +52,88 @@
     </head>
 
     <body>
-        <div id="wrapper">
 
-            <!-- Navigation -->
-            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <nav class="navbar navbar-inverse sidebar" role="navigation">
+            <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a href="{{path('app_index')}}" class="navbar-brand">
-                            <div class="myLogo">
-                                <img style="margin-top:-7px;" src="{{asset('bundles/app/images/LogoMakrSmall.png')}}" alt="A3Software Logo">
-                                <span style="color:#e0e7e2;">Dent1st </span><span style="color:#cc3333;">Esign</span>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- Top Menu Items -->
-                    <ul class="nav navbar-right top-nav collapse navbar-collapse navbar-ex1-collapse">
-                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <li><a href="#contact"><span class="showopacity glyphicon glyphicon-envelope"></span> Contact</a></li>
-                                {% if is_granted('ROLE_ADMIN') %}
-                                <li><a href="{{path('admin')}}"><span class="showopacity glyphicon glyphicon-cog"></span> Admin</a></li>
-                                <li><a href="{{path('register')}}"><span class="showopacity glyphicon glyphicon-pencil"></span> Register</a></li>
-                                {% endif %}
-                            <li><a href="{{path('logout')}}"><span class="showopacity glyphicon glyphicon-log-out"></span> Logout</a></li>
-                            {% else %}
-                            <li><a href="{{path('login')}}">Login</a></li>
-                            {% endif %}
-                    </ul> 
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="{{path('app_index')}}" class="navbar-brand">
+                        <div class="myLogo">
+                            <img class="pull-left" style="margin-top:-5px;margin-right:10px;margin-left:-5px;" src="{{asset('bundles/app/images/LogoMakrSmall.png')}}" alt="A3Software Logo">
+                            <span style="color:#cc3333;margin-left:-5px;"> Dent1st </span><span style="color:white;">Esign</span>
+                        </div>
+                    </a>
                 </div>
-
-                <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-                <div class="collapse navbar-collapse navbar-ex1-collapse">
-                    <ul class="nav navbar-nav side-nav">
-                        <li style="border-bottom:solid #efefef 1px;border-top:solid #efefef 1px;"><a href="{{path('app_send_econtract')}}">Send Econtract<span class="pull-right hidden-xs showopacity glyphicon glyphicon-send"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_sentcontracts')}}">Sent Econtracts<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_add_client')}}">Add new client<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_client')}}">Client manager<span class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_template')}}">Templates<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_create_template')}}">New template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_templatesettings')}}">Template settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_selfSignature')}}">Your signature<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_emailsettings')}}">Email settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
-                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_emailTemplate')}}">Email template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="{{path('logout')}}"><span class="pull-right showopacity glyphicon glyphicon-log-out"></span> Logout</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>
+                            <ul class="dropdown-menu forAnimate" role="menu">
+                                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                    <li><a href="#contact"><span class="showopacity glyphicon glyphicon-envelope"></span> Contact</a></li>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                        <li><a href="{{path('admin')}}"><span class="showopacity glyphicon glyphicon-cog"></span> Admin</a></li>
+                                        <li><a href="{{path('register')}}"><span class="showopacity glyphicon glyphicon-pencil"></span> Register</a></li>
+                                        {% endif %}
+                                    {% else %}
+                                    <li><a href="{{path('login')}}">Login</a></li>
+                                    {% endif %}
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Client <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a>
+                            <ul class="dropdown-menu forAnimate" role="menu">
+                                <li><a href="{{path('app_add_client')}}">Add new client<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
+                                <li><a href="{{path('app_client')}}">Client manager<span class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Econtract <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a>
+                            <ul class="dropdown-menu forAnimate" role="menu">
+                                <li><a href="{{path('app_send_econtract')}}">Send Econtract<span class="pull-right hidden-xs showopacity glyphicon glyphicon-send"></span></a></li>
+                                <li><a href="{{path('app_sentcontracts')}}">Sent Econtracts<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Template <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a>
+                            <ul class="dropdown-menu forAnimate" role="menu">
+                                <li><a href="{{path('app_create_template')}}">New template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
+                                <li><a href="{{path('app_templatesettings')}}">Template settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{{path('app_selfSignature')}}">Your signature<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Email <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-envelope"></span></a>
+                            <ul class="dropdown-menu forAnimate" role="menu">
+                                <li><a href="{{path('app_emailsettings')}}">Email settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                                <li><a href="{{path('app_emailTemplate')}}">Email template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-envelope"></span></a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
-                <!-- /.navbar-collapse -->
-            </nav>
-
-            <div id="page-wrapper">
-                <div class="container-fluid">
-                    {% block body %}
-                    {% endblock %}
-
-                </div>
             </div>
-        </div>
+        </nav>
+        <div class="main">
+            {% block body %}
+            {% endblock %}
+        </div>            
+
+
+
 
 
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
+        <script src="{{asset('bundles/app/js/sidebar.js')}}"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>

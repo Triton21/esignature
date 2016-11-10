@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="esignature application">
+        <meta name="Peter Csatai" content="E-signature Application">
+        <link rel="icon" href="../../favicon.ico">
+
+        <title>A3 Software / E-Signature</title>
+
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="{{asset('bundles/app/js/jquery.disable.autocomplete.min.js')}}"></script>
+
+        <!-- Custom styles for this template -->
+        <link href="{{asset('bundles/app/css/style.css')}}" rel="stylesheet">
+        <link href="{{asset('bundles/app/css/navbar.css')}}" rel="stylesheet">
+        <style type="text/css">
+            @font-face {
+                font-family: 'Drug'; 
+                src:    url({{asset('bundles/app/fonts/Drugs.otf')}}) format('opentype'); 
+            }
+            .myFont {
+                font-family: 'Drug';
+            }
+            .myLogo {
+                display:inline-block;
+                font-family: 'Drug';
+                font-size: 2em;
+                color: white;
+            }
+
+            @media all and (max-width: 300px) {
+                .sideBarDiv { display: none; }
+            }
+            #page-wrapper {
+                min-height: 65em;
+                margin-top: 50px;
+                background-color:white;
+            }
+        </style>
+        {% block stylesheets %}
+
+
+        {% endblock %}
+
+
+    </head>
+
+    <body>
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a href="{{path('app_index')}}" class="navbar-brand">
+                            <div class="myLogo">
+                                <img style="margin-top:-7px;" src="{{asset('bundles/app/images/LogoMakrSmall.png')}}" alt="A3Software Logo">
+                                <span style="color:#e0e7e2;">Dent1st </span><span style="color:#cc3333;">Esign</span>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Top Menu Items -->
+                    <ul class="nav navbar-right top-nav collapse navbar-collapse navbar-ex1-collapse">
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <li><a href="#contact"><span class="showopacity glyphicon glyphicon-envelope"></span> Contact</a></li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{path('admin')}}"><span class="showopacity glyphicon glyphicon-cog"></span> Admin</a></li>
+                                <li><a href="{{path('register')}}"><span class="showopacity glyphicon glyphicon-pencil"></span> Register</a></li>
+                                {% endif %}
+                            <li><a href="{{path('logout')}}"><span class="showopacity glyphicon glyphicon-log-out"></span> Logout</a></li>
+                            {% else %}
+                            <li><a href="{{path('login')}}">Login</a></li>
+                            {% endif %}
+                    </ul> 
+                </div>
+
+                <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav side-nav">
+                        <li style="border-bottom:solid #efefef 1px;border-top:solid #efefef 1px;"><a href="{{path('app_send_econtract')}}">Send Econtract<span class="pull-right hidden-xs showopacity glyphicon glyphicon-send"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_sentcontracts')}}">Sent Econtracts<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_add_client')}}">Add new client<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_client')}}">Client manager<span class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_template')}}">Templates<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_create_template')}}">New template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-plus"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_templatesettings')}}">Template settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_selfSignature')}}">Your signature<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_emailsettings')}}">Email settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                        <li style="border-bottom:solid #efefef 1px;"><a href="{{path('app_emailTemplate')}}">Email template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </nav>
+
+            <div id="page-wrapper">
+                <div class="container-fluid">
+                    {% block body %}
+                    {% endblock %}
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+        {% block javascripts %}
+
+        {% endblock %}    
+
+    </body>
+</html>
