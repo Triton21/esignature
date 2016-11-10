@@ -40,6 +40,7 @@
             #page-wrapper {
                 min-height: 65em;
                 margin-top: 50px;
+                background-color:white;
             }
         </style>
         {% block stylesheets %}
@@ -72,7 +73,7 @@
                         </a>
                     </div>
                     <!-- Top Menu Items -->
-                    <ul class="nav navbar-right top-nav">
+                    <ul class="nav navbar-right top-nav collapse navbar-collapse navbar-ex1-collapse">
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                             <li><a href="#contact"><span class="showopacity glyphicon glyphicon-envelope"></span> Contact</a></li>
                                 {% if is_granted('ROLE_ADMIN') %}

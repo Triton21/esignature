@@ -707,8 +707,9 @@ class DefaultController extends Controller {
                 ->find($settId);
         $client = $em->getRepository('AppBundle:Client')
                 ->find($clientId);
-
-
+        $html = 'test';
+        
+        
         $clientName = $client->getName();
         $addressFirstLine = $client->getAddressfirstline();
         $addressTown = $client->getAddresstown();
@@ -719,12 +720,14 @@ class DefaultController extends Controller {
         $rawFooter = $myTemplate->getFooter();
         $rawFirstpage = $myTemplate->getFirstpage();
         $rawSignpage = $myTemplate->getSignpage();
+        $rawContent = $myTemplate->getContent();
 
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
         $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
         $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
-
+        
+        
         $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
         $content = str_replace('[[page break]]', $pageBREAK, $content);
 

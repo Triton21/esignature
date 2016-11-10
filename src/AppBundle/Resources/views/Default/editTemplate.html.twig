@@ -1,23 +1,19 @@
-{% extends "AppBundle:Default:defaultbase.html.twig" %}
+{% extends '::base.html.twig' %}
 
 {% block stylesheets %}
     <script src="{{asset('bundles/app/ckeditor/ckeditor.js')}}"></script>
     <style>
         .wrap {
-            width: 512px;
+            width: 100%;
             height: 800px;
             padding: 0;
             overflow: hidden;
         }
         .frame {
-            width: 900px;
+            width: 820px;
             height: 1406.25px;
             border: 0;
-            -ms-transform: scale(0.569);
-            -moz-transform: scale(0.569);
-            -o-transform: scale(0.569);
-            -webkit-transform: scale(0.569);
-            transform: scale(0.5);
+            -webkit-transform: scale(0.35);
 
             -ms-transform-origin: 0 0;
             -moz-transform-origin: 0 0;
@@ -25,6 +21,7 @@
             -webkit-transform-origin: 0 0;
             transform-origin: 0 0;
         }
+
         /* Modal box */
         .modal {
             display: none; /* Hidden by default */
@@ -118,7 +115,11 @@
         </div>
     </div>
 
-    <div class="col-lg-offset-2 col-lg-10">
+
+
+
+
+    <div class="col-lg-12">
         <div class="col-md-7">
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -207,13 +208,11 @@
         </div>
         <div class="col-md-5">
             <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="col-md-12">
-                        <h3>Preview   </h3>
-                        <br>
-                        <div class="wrap">
-                            <iframe class="frame" id="iframeID"></iframe>
-                        </div>
+                <div class="panel-body" id="iframeBody" style="padding:5px;">
+                    <h3 style="margin:15px;">Preview   </h3>
+                    <br>
+                    <div class="wrap" style="margin-left:auto; margin-right:auto;">
+                        <iframe class="frame" id="iframeID"></iframe>
                     </div>
                 </div>
             </div>
@@ -231,6 +230,7 @@
 
     <script>
         $(document).ready(function () {
+
 
             CKEDITOR.replace('appbundle_etemplate_heading');
             CKEDITOR.replace('appbundle_etemplate_content');
@@ -286,7 +286,8 @@
                         image.src = data.image;
                     }
                 });
-            };
+            }
+            ;
 
             function initPreview(response) {
                 var iframe = document.getElementById('iframeID');
@@ -300,8 +301,9 @@
                 iframe.document.open();
                 iframe.document.write(response);
                 iframe.document.close();
-            };
-            
+            }
+            ;
+
             $(function () {
                 initSaved();
             });
@@ -327,11 +329,13 @@
                         initPreview(data);
                     }
                 });
-            };
+            }
+            ;
 
             $(document).on('click', "#previewButton", function (e) {
                 e.preventDefault();
                 initSaved();
+                resizeIframe();
             });
 
             $(document).on('click', "#editHeading", function (e) {
@@ -353,6 +357,26 @@
                 $('#signpageDiv').toggle();
             });
 
+            $(window).resize(function () {
+                resizeIframe();
+            });
+
+            $(function () {
+                resizeIframe();
+            });
+
+            function resizeIframe() {
+                var iframeBodyWidth = $('#iframeBody').width();
+                var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
+                var iScale = iframeWidth / 2450;
+                var myFrame = $('.frame');
+                myFrame.css('-ms-transform', 'scale(' + iScale + ')');
+                myFrame.css('-moz-transform', 'scale(' + iScale + ')');
+                myFrame.css('-o-transform', 'scale(' + iScale + ')');
+                myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
+                myFrame.css('transform', 'scale(' + iScale + ')');
+                myFrame.css('width', iframeWidth);
+            }
 
 
         });

@@ -1,24 +1,25 @@
-{% extends "AppBundle:Default:defaultbase.html.twig" %}
+{% extends '::base.html.twig' %}
+{# extends 'AppBundle:Default:defaultbase.html.twig' #}
 
 {% block stylesheets %}
     <script src="{{asset('bundles/app/ckeditor/ckeditor.js')}}"></script>
     <link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet">
     <style>
         .wrap {
-            width: 512px;
+            width: 100%;
             height: 800px;
             padding: 0;
             overflow: hidden;
         }
         .frame {
-            width: 900px;
+            width: 820px;
             height: 1406.25px;
             border: 0;
-            -ms-transform: scale(0.569);
-            -moz-transform: scale(0.569);
-            -o-transform: scale(0.569);
-            -webkit-transform: scale(0.569);
-            transform: scale(0.5);
+            -ms-transform: scale(0.35);
+            -moz-transform: scale(0.35);
+            -o-transform: scale(0.35);
+            -webkit-transform: scale(0.35);
+            transform: scale(0.35);
 
             -ms-transform-origin: 0 0;
             -moz-transform-origin: 0 0;
@@ -112,7 +113,7 @@
 {% block body %}
 
 
-    <div class="col-lg-10">
+    <div class="col-lg-12">
         <div class="col-md-7">
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -204,13 +205,11 @@
         </div>
         <div class="col-md-5">
             <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="col-md-12">
-                        <h3>Contract preview </h3>
-                        <br>
-                        <div class="wrap">
-                            <iframe class="frame" id="iframeID"></iframe>
-                        </div>
+                <div class="panel-body" id="iframeBody" style="padding:5px;">
+                    <h3 style="margin:15px;">Preview   </h3>
+                    <br>
+                    <div class="wrap" style="margin-left:auto; margin-right:auto;">
+                        <iframe class="frame" id="iframeID"></iframe>
                     </div>
                 </div>
             </div>
@@ -226,8 +225,8 @@
                 //console.log($('#form_save'));
                 $('#form_save').attr('disabled', true);
             });
-            
-            
+
+
             //autocomplete
             $(function () {
                 $.ajax({
@@ -257,7 +256,7 @@
                     }
                 });
             });
-            
+
             //format Date of Birth
             function formatDob(dob) {
                 var newDob, splitDob, dobResult;
@@ -310,7 +309,7 @@
                 appendEmailBody(emailId, clientName);
                 $('#form_save').removeAttr('disabled');
             });
-            
+
             //enable submit button if template id and client id set
             function checkSubmitButton() {
                 var templateId = $('#selectTemplate').val();
@@ -320,7 +319,7 @@
                     $('#submitForm').removeAttr('disabled');
                 }
             }
-            
+
             //enable submit button if template id and client id set
             $(document).on('change', "#selectTemplate", function () {
                 var templateId = $('#selectTemplate').val();
@@ -335,11 +334,11 @@
                 var nameInit = $("#name").val().charAt(0);
                 $('#form_reference').val(timeInMs + '-' + nameInit);
             }
-            
+
             function appendEmailBody(emailId, clientName) {
                 var myUrl = "{{path('app_ajaxappendemail')}}";
-                var data = {'emailId': emailId };
-                
+                var data = {'emailId': emailId};
+
                 $.ajax({
                     type: 'POST',
                     url: myUrl,
@@ -350,7 +349,7 @@
                         var mybody = response.body;
                         mybody = mybody.replace('%name%', clientName);
                         mybody = mybody.replace('%username%', '{{name}}');
-                        
+
                         CKEDITOR.instances["form_body"].setData(mybody);
                         $('#form_subject').val(response.subject);
                         $('#form_token').val(response.token);
@@ -364,9 +363,9 @@
                     }
                 });
             }
-            
+
             function previewContract(templateId, clientId) {
-                var data = {'myid': templateId, 'clientId': clientId };
+                var data = {'myid': templateId, 'clientId': clientId};
                 console.log(data);
 
                 var myUrl = "{{path('app_ajaxOpenTemplateIframe')}}";
@@ -384,6 +383,32 @@
 
             }
             ;
+
+            $(window).resize(function () {
+                resizeIframe();
+            });
+
+            $(function () {
+                var iframeBodyWidth = $('#iframeBody').width();
+                var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
+                var iScale = iframeWidth / 2450;
+                var myFrame = $('.frame');
+                myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
+                myFrame.css('width', iframeWidth);
+            });
+
+            function resizeIframe() {
+                var iframeBodyWidth = $('#iframeBody').width();
+                var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
+                var iScale = iframeWidth / 2450;
+                var myFrame = $('.frame');
+                myFrame.css('-ms-transform', 'scale(' + iScale + ')');
+                myFrame.css('-moz-transform', 'scale(' + iScale + ')');
+                myFrame.css('-o-transform', 'scale(' + iScale + ')');
+                myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
+                myFrame.css('transform', 'scale(' + iScale + ')');
+                myFrame.css('width', iframeWidth);
+            }
 
 
         });
