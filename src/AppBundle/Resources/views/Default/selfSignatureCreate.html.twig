@@ -4,8 +4,8 @@
 
     <style>
         .smallbox {
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
             display: inline-block;
             margin: 0px
         }
@@ -164,6 +164,7 @@
                     changeMyCircle(currentid);
                 }
                 var newcolor = $(this).attr('data-color');
+                console.log(newcolor);
                 if (newcolor) {
                     if (newcolor === 'black') {
                         TABLE1.colorAdd([0, 0, 0]);
