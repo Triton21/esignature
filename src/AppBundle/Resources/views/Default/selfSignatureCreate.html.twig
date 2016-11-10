@@ -43,14 +43,33 @@
             user-select: none;
         }
 
+        .centered {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .canvas-container {
+            width: 100%;
+            text-align:center;
+        }
+
+        canvas {
+            display: inline;
+        }
 
         .sketchTools {
-            width: 50%;
+            width: 30%;
         }
 
         .customPanel {
             width: 80%;
             padding: 20px;
+        }
+
+        .innerDiv {
+            width: 50%;
+            margin: 0 auto;
+            text-align: center;
         }
     </style>
     <link rel="stylesheet" href="{{asset('bundles/app/css/sketchpadstyle.css')}}">
@@ -59,40 +78,55 @@
 
 {% block body %}
 
-    <div class="container">
+
+    <div id="referenceRow" class="col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6" style="background-color:white;">
+        
+    </div>
+
+    <div class="row">
+
+
+
+        <h2 style="margin:20px">Create new signature</h2>
+
+
+
+        <div class="sketchpadapp sketchTools centered">
+            <!-- <div class="col-md-5"> -->
+
+            <!-- SMALL CANVAS  -->
+
+            <div class="innerDiv">
+                <a href="#" class="smallsketch" data-color="black"><div class="smallbox black"></div></a>
+                <a href="#" class="smallsketch" data-color="blue"><div class="smallbox blue"></div></a>
+                <a href="#" class="smallsketch" data-color="red"><div class="smallbox red"></div></a>
+            </div>    
+            <div class="innerDiv" id="circlesign">  
+
+                <a href="#" class="smallsketch" data-size="1"><div id="smallcircle1" class="smallcircle">1</div></a>
+                <a href="#" class="smallsketch" data-size="2"><div id="smallcircle2" class="smallcircle black">2</div></a>
+                <a href="#" class="smallsketch" data-size="3"><div id="smallcircle3" class="smallcircle">3</div></a>
+            </div>
+            <div class="innerDiv">
+                <button type="button" class="btn btn-default btn-sm" id="clearsmallsketch">Clear</button>
+
+
+            </div>
+
+            <!--</div>-->
+        </div>
+        <div class="sketchpadapp canvas-container">
+            <div style="min-height:1em; width:100%;" class="sketchpadapp"></div>
+            <canvas id="sketchpad" style="margin-left:0px; border:1px solid #000000;"></canvas>
+
+        </div>
+        <br>
+
+
         <div class="panel panel-default">
-            <div class="panel-body">
-                <h2>Create new signature</h2>
-                <div class="sketchpadapp sketchTools">
-                   <!-- <div class="col-md-5"> -->
-
-                        <!-- SMALL CANVAS  -->
-
-                        <div class="pull-left">
-                            <a href="#" class="smallsketch" data-color="black"><div class="smallbox black"></div></a>
-                            <a href="#" class="smallsketch" data-color="blue"><div class="smallbox blue"></div></a>
-                            <a href="#" class="smallsketch" data-color="red"><div class="smallbox red"></div></a>
-                        </div>    
-                        <div class="pull-left" id="circlesign">  
-
-                            <a href="#" class="smallsketch" data-size="1"><div id="smallcircle1" class="smallcircle">1</div></a>
-                            <a href="#" class="smallsketch" data-size="2"><div id="smallcircle2" class="smallcircle black">2</div></a>
-                            <a href="#" class="smallsketch" data-size="3"><div id="smallcircle3" class="smallcircle">3</div></a>
-                        </div>
-                        <div class="pull-left">
-                            <button type="button" class="btn btn-default btn-sm" id="clearsmallsketch">Clear</button>
+            <div class="panel-body">   
 
 
-                        </div>
-
-                    <!--</div>-->
-                </div>
-                <div class="row sketchpadapp">
-                    <div style="min-height:1em; width:100%;" class="sketchpadapp"></div>
-                    <canvas id="sketchpad" width="600" height="180" style="margin-left:4em; border:1px solid #000000;"></canvas>
-
-                </div>
-                <br>
                 <div class="col-md-6">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -245,6 +279,26 @@
                     }
                 });
             }
+
+            $(function () {
+                resizeCanvas();
+            });
+
+            $(window).resize(function () {
+                resizeCanvas();
+            });
+
+            function resizeCanvas() {
+                var referenceRow = $('#referenceRow').width();
+                var sketchpad = $('#sketchpad');
+                var sketchWidth = referenceRow;
+                var sketchHeigth = referenceRow / 3;
+                sketchpad.attr('width', sketchWidth);
+                sketchpad.attr('height', sketchHeigth);
+            }
+            ;
+
+
         });
     </script>
 

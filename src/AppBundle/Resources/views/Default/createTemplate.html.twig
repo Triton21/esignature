@@ -369,12 +369,7 @@
             });
 
             $(function () {
-                var iframeBodyWidth = $('#iframeBody').width();
-                var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
-                var iScale = iframeWidth / 2450;
-                var myFrame = $('.frame');
-                myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
-                myFrame.css('width', iframeWidth);
+                resizeIframe();
             });
 
             function resizeIframe() {
