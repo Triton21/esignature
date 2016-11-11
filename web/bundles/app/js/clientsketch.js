@@ -172,6 +172,17 @@ dependentModule1 = (function (OM) {
             }
         }
     }
+    
+    function resizeCanvas() {
+        var referenceRow = $('#referenceRow').width();
+        var sketchpad = $('#clientSignature');
+        var sketchWidth = referenceRow;
+        var sketchHeigth = referenceRow / 3;
+        sketchpad.attr('width', sketchWidth);
+        sketchpad.attr('height', sketchHeigth);
+        console.log('here');
+    }
+    
 
 
     // Set-up the canvas and add our event handlers after the page has loaded
@@ -202,6 +213,7 @@ dependentModule1 = (function (OM) {
                 function (event) {
                     event.stopPropagation();
                     clearCanvas(canvas,ctx);
+                    resizeCanvas();
                 }
         );
     }

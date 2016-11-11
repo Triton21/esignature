@@ -32,17 +32,17 @@ dependentModule1 = (function (OM) {
 
     // Variables to keep track of the touch position
     var touchX, touchY;
-    
-    var lastX,lastY=-1;
+
+    var lastX, lastY = -1;
     // Draws a dot at a specific position on the supplied canvas name
     // Parameters are: A canvas context, the x position, the y position, the size of the dot
-    
-    function drawLine(ctx,x,y,size) {
+
+    function drawLine(ctx, x, y, size) {
 
         // If lastX is not set, set lastX and lastY to the current position 
-        if (lastX==-1) {
-            lastX=x;
-	    lastY=y;
+        if (lastX == -1) {
+            lastX = x;
+            lastY = y;
         }
 
         // Let's use black by setting RGB values to 0, and 255 alpha (completely opaque)
@@ -53,7 +53,7 @@ dependentModule1 = (function (OM) {
         a = 255;
 
         // Select a fill style
-        ctx.strokeStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+        ctx.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
 
         // Set the line "cap" style to round, so lines at different angles can join into each other
         ctx.lineCap = "round";
@@ -63,11 +63,11 @@ dependentModule1 = (function (OM) {
         // Draw a filled line
         ctx.beginPath();
 
-	// First, move to the old (previous) position
-	ctx.moveTo(lastX,lastY);
+        // First, move to the old (previous) position
+        ctx.moveTo(lastX, lastY);
 
-	// Now draw a line to the current touch/pointer position
-	ctx.lineTo(x,y);
+        // Now draw a line to the current touch/pointer position
+        ctx.lineTo(x, y);
 
         // Set the line thickness and draw the line
         ctx.lineWidth = size;
@@ -75,30 +75,30 @@ dependentModule1 = (function (OM) {
 
         ctx.closePath();
 
-	// Update the last position to reference the current position
-	lastX=x;
-	lastY=y;
-    } 
+        // Update the last position to reference the current position
+        lastX = x;
+        lastY = y;
+    }
 
     // Clear the canvas context using the canvas width and height
     function clearCanvas(canvas, ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        lastY=-1;
-        lastX=-1;
+        lastY = -1;
+        lastX = -1;
     }
 
     // Keep track of the mouse button being pressed and draw a dot at current location
     function sketchpad_mouseDown() {
         mouseDown = 1;
         var mysize = OM.size;
-        drawLine(ctx,mouseX,mouseY,mysize);
+        drawLine(ctx, mouseX, mouseY, mysize);
     }
 
     // Keep track of the mouse button being released
     function sketchpad_mouseUp() {
         mouseDown = 0;
-        lastX=-1;
-        lastY=-1;
+        lastX = -1;
+        lastY = -1;
     }
 
     // Keep track of the mouse position and draw a dot if mouse button is currently pressed
@@ -108,7 +108,7 @@ dependentModule1 = (function (OM) {
         var mysize = OM.size;
         // Draw a dot if the mouse button is currently being pressed
         if (mouseDown == 1) {
-            drawLine(ctx,mouseX,mouseY, mysize);
+            drawLine(ctx, mouseX, mouseY, mysize);
         }
     }
 
@@ -132,16 +132,16 @@ dependentModule1 = (function (OM) {
         // Update the touch co-ordinates
         getTouchPos();
         var mysize = OM.size;
-        drawLine(ctx,touchX,touchY, mysize);
+        drawLine(ctx, touchX, touchY, mysize);
 
         // Prevents an additional mousedown event being triggered
         event.preventDefault();
     }
-    
+
     function sketchpad_touchEnd() {
         // Reset lastX and lastY to -1 to indicate that they are now invalid, since we have lifted the "pen"
-        lastX=-1;
-        lastY=-1;
+        lastX = -1;
+        lastY = -1;
     }
 
     // Draw something and prevent the default scrolling when touch movement is detected
@@ -150,7 +150,7 @@ dependentModule1 = (function (OM) {
         getTouchPos(e);
         var mysize = OM.size;
         // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
-        drawLine(ctx,touchX,touchY, mysize); 
+        drawLine(ctx, touchX, touchY, mysize);
 
         // Prevent a scrolling action as a result of this touchmove triggering.
         event.preventDefault();
@@ -172,6 +172,17 @@ dependentModule1 = (function (OM) {
             }
         }
     }
+
+    function resizeCanvas() {
+        var referenceRow = $('#referenceRow').width();
+        var sketchpad = $('#sketchpad');
+        var sketchWidth = referenceRow;
+        var sketchHeigth = referenceRow / 3;
+        sketchpad.attr('width', sketchWidth);
+        sketchpad.attr('height', sketchHeigth);
+        console.log('here');
+    }
+
 
 
     // Set-up the canvas and add our event handlers after the page has loaded
@@ -195,13 +206,14 @@ dependentModule1 = (function (OM) {
             canvas.addEventListener('touchend', sketchpad_touchEnd, false);
             canvas.addEventListener('touchmove', sketchpad_touchMove, false);
         }
-        
+
         var trigger = document.getElementById("clearsmallsketch");
         trigger.addEventListener(
                 "click",
                 function (event) {
                     event.stopPropagation();
-                    clearCanvas(canvas,ctx);
+                    clearCanvas(canvas, ctx);
+                    resizeCanvas();
                 }
         );
     }

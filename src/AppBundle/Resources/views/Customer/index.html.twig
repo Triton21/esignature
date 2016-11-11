@@ -56,6 +56,44 @@
             -ms-user-select: none;
             user-select: none;
         }
+        .wrap {
+            width: 100%;
+            height: 800px;
+            padding: 0;
+            overflow: hidden;
+        }
+        .frame {
+            width: 820px;
+            height: 100%;
+            border: 0;
+            -ms-transform: scale(0.35);
+            -moz-transform: scale(0.35);
+            -o-transform: scale(0.35);
+            -webkit-transform: scale(0.35);
+            transform: scale(0.35);
+
+            -ms-transform-origin: 0 0;
+            -moz-transform-origin: 0 0;
+            -o-transform-origin: 0 0;
+            -webkit-transform-origin: 0 0;
+            transform-origin: 0 0;
+        }
+        
+        .innerDiv {
+            width: 50%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .canvas-container {
+            width: 100%;
+            text-align:center;
+        }
+
+        canvas {
+            display: inline;
+        }
+        
+        
 
     </style>
 {% endblock %}
@@ -70,59 +108,67 @@
             <content id="modalContent"></content>
         </div>
     </div>
+    
+    <div id="referenceRow" class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4" style="background-color:white;">
+    </div>
 
-    <div class="container">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h4>E-Contract</h4>
-                    <div class="col-md-12">
-                        {{eContract.firstpage|raw}}
-                        {{eContract.content|raw}}
-                        {{eContract.signpage|raw}}
-                        <div class="col-md-9">
+    <div class="col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6" style="text-align:center;">
+        <h4>New electronic contract for: {{eContract.client.name}}</h4>
 
-                            <!-- SMALL CANVAS  -->
-                            <div style="min-height:1em;"></div>
-                            <div class="col-md-6 center">
-                                <button type="button" class="btn btn-default btn-sm" id="clearsmallsketch">Clear</button>
-                            </div>
-                            <div style="min-height:3em;"></div>
+
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" id="iframeBody" style="padding:5px;">
+                        <h3 style="margin:15px;"></h3>
+                        <br>
+                        <div class="wrap" style="margin-left:auto; margin-right:auto;">
+                            <iframe class="frame" id="iframeID"></iframe>
                         </div>
-                        <div class="row" id="sketchpadapp">
-                            <canvas id="clientSignature" width="400" height="120" style="margin-left:1em; border:1px solid #000000;"></canvas>
-                        </div>
-                        <div class="col-md-6 center">
-                            <div class="col-md-4">
-                                <div class="spinnerStyle pull-right" id="spinnerHere"></div>
-                            </div>
-                            <div class="col-md-8 center">
-                                <button type="button" class="btn btn-danger btn-lg" id="saveImage">Save signature</button>
-                            </div>
-                        </div>
-
-                        <div style="min-height:6em;"></div>
-                        <div class="col-md-12">
-                            <p>Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.name}}</span></p>
-                            <p>Address: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addressfirstline}}</span></p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addresstown}}</span></p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.postcode}}</span></p>
-                            <p>
-                                DoB:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.dob|date('m/d/Y')}}</span>
-                            </p>
-                            <p class="gi-5m">
-                                DATE:&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{today}}</span>
-                            </p>
-
-
-                        </div>
-                        <div style="min-height:15em;"></div>
                     </div>
-                </div>
             </div>
-            <div style="min-height:15em;"></div>
         </div>
     </div>
+    <div class="sketchpadapp sketchTools centered">
+
+            <!-- SMALL CANVAS  -->
+
+        <div class="innerDiv" style="margin-top:3px;">
+            <button type="button" class="btn btn-default btn-sm" id="clearsmallsketch"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+        </div>
+
+    </div>
+    <div class="sketchpadapp canvas-container">
+        <div style="min-height:1em; width:100%;" class="sketchpadapp"></div>
+        <canvas id="clientSignature" width="400" height="120" style="margin-left:1em; border:1px solid #000000;"></canvas>
+
+    </div>
+    <br>
+    <div class="sketchpadapp sketchTools centered">
+        <div class="innerDiv" style="margin-top:3px;">
+            <button type="button" class="btn btn-danger btn-lg" id="saveImage">Save signature</button>
+        </div>
+        <div class="innerDiv" style="margin-top:20px;">
+            <div class="col-md-12">
+                <p>Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.name}}</span></p>
+                <p>Address: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addressfirstline}}</span></p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addresstown}}</span></p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.postcode}}</span></p>
+                <p>
+                    DoB:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.dob|date('m/d/Y')}}</span>
+                </p>
+                <p class="gi-5m">
+                    DATE:&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{today}}</span>
+                </p>
+
+
+            </div>
+            
+            
+            
+        </div>
+    </div>
+
+        <div style="min-height:15em;"></div>
 
 
 {% endblock %}
@@ -130,101 +176,166 @@
 {% block javascripts %}
     <script src="{{asset('bundles/app/js/clientsketch.js')}}"></script>
     <script>
-                $(document).ready(function () {
-        var loading = '<div class="ispinner gray large animating myload" id="loader">\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                    <div class="ispinner-blade"></div>\
-                                </div>   ';
-                $(function () {
-                var modal = $('#myModal')[0];
-                        $(document).on('click', ".close", function () {
-                modal.style.display = "none";
-                });
-                        $(document).on('click', window, function (event) {
-                if (event.target == modal) {
-                modal.style.display = "none";
-                }
-                });
-                });
-                function loadAnimation() {
-                var myNewDiv = document.createElement('div');
-                        myNewDiv.id = 'displayhere';
-                        $('#spinnerHere').append(myNewDiv);
-                        myNewDiv.innerHTML = loading;
-                        return;
-                }
-
-        function removeAnimation() {
-        $('#spinnerHere').html('');
-                return;
-        }
+        $(document).ready(function () {
+            var loading = '<div class="ispinner gray large animating myload" id="loader">\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            <div class="ispinner-blade"></div>\
+            </div>   ';
 
 
         $(function () {
-        var displaySign = $("#mySign")[0];
-                var ctx = displaySign.getContext("2d");
-                var image = new Image();
-                image.onload = function () {
-                ctx.drawImage(image, 0, 0, 300, 100);
-                };
-                image.src = '{{eContract.signature}}';
-        });
-                $(document).on('click', "#saveImage", function (e) {
-        e.preventDefault();
-                loadAnimation();
-                var sketchpad = document.getElementById("clientSignature");
-                var format = 'png';
-                var mime = "image/" + format;
-                var myimage = sketchpad.toDataURL(mime);
-                downloadMyimage(myimage);
-        });
-                function downloadMyimage(myimage) {
-                var myUrl = "{{ path('customer_ajaxsketch')}}";
-                        var contractId = "{{eContract.id}}";
-                        console.log(contractId);
-                        $.ajax({
-                        url: myUrl,
-                                type: "post",
-                                dataType: 'text',
-                                data: {image: myimage, contractId: contractId},
-                                success: function (response) {
-                                if (response == '"image empty"') {
-                                var modal = $('#myModal')[0];
-                                        var contentDiv = document.getElementById('modalContent');
-                                        console.log(contentDiv);
-                                        contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
-                                        modal.style.display = "block";
-                                        removeAnimation();
-                                } else {
-                                var token = '{{eContract.token}}';
-                                        var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
-                                        myUrl.replace('PLACEHOLDER', token);
-                                        window.location.replace(myUrl.replace('PLACEHOLDER', token));
-                                }
-                                },
-                                complete: function () {
-                                console.log('Request is complete');
-                                },
-                                error: function () {
-                                console.log('Oops...there was an error!');
-                                }
-                        });
+            var modal = $('#myModal')[0];
+            $(document).on('click', ".close", function () {
+                modal.style.display = "none";
+            });
+
+            $(document).on('click', window, function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
                 }
-
-
-
-
+            });
         });
+
+        function loadAnimation() {
+            var myNewDiv = document.createElement('div');
+            myNewDiv.id = 'displayhere';
+            $('#spinnerHere').append(myNewDiv);
+            myNewDiv.innerHTML = loading;
+            return;
+        }
+
+        function removeAnimation() {
+            $('#spinnerHere').html('');
+                    return;
+        }
+
+
+        $(document).on('click', "#saveImage", function (e) {
+            e.preventDefault();
+            loadAnimation();
+            var sketchpad = document.getElementById("clientSignature");
+            var format = 'png';
+            var mime = "image/" + format;
+            var myimage = sketchpad.toDataURL(mime);
+            downloadMyimage(myimage);
+        });
+        
+        function downloadMyimage(myimage) {
+            var myUrl = "{{ path('customer_ajaxsketch')}}";
+            var contractId = "{{eContract.id}}";
+            console.log(contractId);
+            $.ajax({
+            url: myUrl,
+                type: "post",
+                dataType: 'text',
+                data: {image: myimage, contractId: contractId},
+                success: function (response) {
+                    if (response == '"image empty"') {
+                        var modal = $('#myModal')[0];
+                        var contentDiv = document.getElementById('modalContent');
+                        console.log(contentDiv);
+                        contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
+                        modal.style.display = "block";
+                        removeAnimation();
+                    } else {
+                         var token = '{{eContract.token}}';
+                        var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
+                        myUrl.replace('PLACEHOLDER', token);
+                        window.location.replace(myUrl.replace('PLACEHOLDER', token));
+                    }
+                },
+                complete: function () {
+                    console.log('Request is complete');
+                },
+                error: function () {
+                    console.log('Oops...there was an error!');
+                }
+            });
+        }
+        
+        //preview the contract with ajax
+        $(function () {
+            var econtractId = '{{eContract.id}}';
+            var data = {'econtractId': econtractId };
+            console.log(data);
+            var myUrl = "{{path('customer_ajaxpreviewcontract')}}";
+            $.ajax({
+            type: 'POST',
+                url: myUrl,
+                cache: false,
+                data: data,
+                dataType: "json",
+                success: function (data)
+                    {
+                        //console.log(data);
+                        initPreview(data);
+                    }
+            });
+        });
+        
+        //append the iframe with the HTML code
+        function initPreview(response) {
+            var iframe = document.getElementById('iframeID');
+            iframe = iframe.contentWindow ?
+                iframe.contentWindow :
+                (
+                    iframe.contentDocument.document ?
+                    iframe.contentDocument.document :
+                    iframe.contentDocument
+                );
+            iframe.document.open();
+            iframe.document.write(response);
+            iframe.document.close();
+        }
+        
+        //resize the iframe
+        $(window).resize(function () {
+            resizeIframe();
+        });
+
+        $(function () {
+            resizeIframe();
+        });
+
+        function resizeIframe() {
+            var iframeBodyWidth = $('#iframeBody').width();
+            var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
+            var iScale = iframeWidth / 2450;
+            var myFrame = $('.frame');
+            myFrame.css('-ms-transform', 'scale(' + iScale + ')');
+            myFrame.css('-moz-transform', 'scale(' + iScale + ')');
+            myFrame.css('-o-transform', 'scale(' + iScale + ')');
+            myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
+            myFrame.css('transform', 'scale(' + iScale + ')');
+            myFrame.css('width', iframeWidth);
+        }
+        
+        
+        //resize canvas
+        $(function () {
+            resizeCanvas();
+        });
+
+        function resizeCanvas() {
+            var referenceRow = $('#referenceRow').width();
+            var sketchpad = $('#clientSignature');
+            var sketchWidth = referenceRow;
+            var sketchHeigth = referenceRow / 3;
+            sketchpad.attr('width', sketchWidth);
+            sketchpad.attr('height', sketchHeigth);
+        }
+            
+    });
     </script>
 
 

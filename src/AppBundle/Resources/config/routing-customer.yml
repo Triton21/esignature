@@ -4,7 +4,7 @@ login_customer:
 
 customer_display_contract:
     path:   /e-contract/{token}/{dob}
-    defaults: { _controller: AppBundle:Customer:displaycontract, token:nonexist, dob:dob }
+    defaults: { _controller: AppBundle:Customer:displayContract, token:nonexist, dob:dob }
     
 customer_accessdenied:
     path:   /access-denied/{ip}
@@ -21,3 +21,7 @@ customer_signednote:
 customer_ajaxsketch:
     path:   /customerajaxsketch
     defaults: { _controller: AppBundle:Customer:customerAjaxSketch }
+    
+customer_ajaxpreviewcontract:
+    path:   /customerajaxpreviewcontract
+    defaults: { _controller: AppBundle:Customer:customerAjaxPreviewContract }

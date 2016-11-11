@@ -74,7 +74,7 @@ class CustomerController extends Controller {
      * @param type $token
      * @param type $dob
      */
-    public function displaycontractAction($token, $dob) {
+    public function displayContractAction($token, $dob) {
         $em = $this->getDoctrine()->getManager();
         
         $eContract = $em->getRepository('AppBundle:Econtract')
@@ -82,10 +82,54 @@ class CustomerController extends Controller {
         
         
         $today = date("d/F/Y");
-        return $this->render('AppBundle:Customer:index.html.twig', array(
+        
+         return $this->render('AppBundle:Customer:index.html.twig', array(
                     'today' => $today, 'eContract' => $eContract,));
+      
     }
     
+    /**
+     * Displays the contract to the customer. Ajax request, returns the contract view HTML for iframe.
+     */
+    public function customerAjaxPreviewContractAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $econtractId = $request->request->get('econtractId');
+        $myContract = $em->getRepository('AppBundle:Econtract')
+                ->find($econtractId);
+        $html = 'test';
+        
+        $signImage = $myContract->getSignature();
+
+        $rawContent = $myContract->getContent();
+        $rawHeading = $myContract->getHeading();
+        $rawFooter = $myContract->getFooter();
+        $rawFirstpage = $myContract->getFirstpage();
+        $rawSignpage = $myContract->getSignpage();
+        /*
+        $realSignPage = $this->renderView('AppBundle:Default:saveclientsignature.html.twig', array(
+            'eContract' => $myContract,));
+         * 
+         */
+        
+        $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
+        $footer = '<div class="footer">' . $rawFooter . '</div></div>';
+        $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
+        $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
+
+
+        $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
+        $content = str_replace('[[page break]]', $pageBREAK, $content);
+        $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
+        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
+        
+        $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
+            'signImage' => $signImage, 'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
+
+        
+        $response = new Response(json_encode($html));
+        return $response;
+        
+    }
     
 
     /**
