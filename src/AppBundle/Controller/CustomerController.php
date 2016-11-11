@@ -23,12 +23,14 @@ class CustomerController extends Controller {
                 ->findAll();
         $ip = $request->getClientIp();
         if ($token == 'nonexist') {
-            return $this->redirectToRoute('customer_accessdenied');
+            $error = 'token nonexist';
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
         }
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->findOneBy(array('token' => $token));
         if (!$eContract) {
-            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
+            $error = 'eContract not found in database';
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
         }
         $isSigned = $eContract->getPatientSigned();
         if ($isSigned) {
@@ -36,7 +38,8 @@ class CustomerController extends Controller {
         }
         $active = $eContract->getTokenactive();
         if (!$active) {
-            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
+            $error = 'eContract is not active';
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
         }
         
         $savedDob = $eContract->getClient()->getDob();
