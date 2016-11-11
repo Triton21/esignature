@@ -44,6 +44,11 @@
             display: inline-block;
             margin-top: 6px;
         }
+        .innerDiv {
+            width: 40%;
+            margin: 0 auto;
+            text-align: center;
+        }
 
     </style>
 {% endblock %}
@@ -63,18 +68,19 @@
     <br>
     <br>
 
-    <div class="container">
+    <div class="col-sm-offset-1 col-xs-10 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4">
 
-        <div class="col-lg-offset-3 col-lg-7">
+        <div style="text-align:center">
             {{ form_start(form) }}
             {{ form_errors(form) }}
 
-            <div class="form-group pull-left">
-                <label for="form_dob">Please verify your Date of Birth</label>
-                {{ form_errors(form.dob) }}
-                {{ form_widget(form.dob) }}
-            </div>
+            <label for="form_dob">Please verify your Date of Birth</label>
+            {{ form_errors(form.dob) }}
+            {{ form_widget(form.dob) }}
+            
+            <div class="innerDiv" style="margin-top:10px;">
             {{ form_end(form) }}
+            </div>
 
 
         </div>
