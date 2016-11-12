@@ -141,7 +141,7 @@
     </div>
     <div class="sketchpadapp canvas-container">
         <div style="min-height:1em; width:100%;" class="sketchpadapp"></div>
-        <canvas id="clientSignature" width="400" height="120" style="margin-left:1em; border:1px solid #000000;"></canvas>
+        <canvas id="clientSignature" width="400" height="120" style="margin-left:0em; border:1px solid #000000;"></canvas>
 
     </div>
     <br>
@@ -324,8 +324,13 @@
         }
         
         function resizePanel(iframeWidth) {
+            console.log(iframeWidth);
             var iframePanel = $('#iframePanel');
-            var heightScale = iframeWidth * 0.51;
+            if (iframeWidth < 1000) {
+                var heightScale = iframeWidth * 0.53;
+            } else {
+                var heightScale = iframeWidth * 0.52;
+            }
             iframePanel.css('height', heightScale);
         }
         
