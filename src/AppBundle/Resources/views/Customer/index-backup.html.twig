@@ -58,7 +58,7 @@
         }
         .wrap {
             width: 100%;
-            height: 1200px;
+            height: 820px;
             padding: 0;
             overflow: hidden;
         }
@@ -93,10 +93,6 @@
             display: inline;
         }
         
-        #iframePanel {
-            //max-height: 800px;
-        }
-        
         
 
     </style>
@@ -123,12 +119,14 @@
             <div class="col-md-12">
                 <div class="panel panel-default" id="iframePanel">
                     <div class="panel-body" id="iframeBody" style="padding:5px;">
+                        <h3 style="margin:15px;"></h3>
                         <br>
                         <div id="iframeWrap" class="wrap" style="margin-left:auto; margin-right:auto;">
                             <iframe class="frame" id="iframeID"></iframe>
                         </div>
                     </div>
             </div>
+        </div>
     </div>
     <div class="sketchpadapp sketchTools centered">
 
@@ -311,6 +309,10 @@
 
         function resizeIframe() {
             var iframeBodyWidth = $('#iframeBody').width();
+            var iframeWrapHeight = $('#iframeWrap').height();
+            var iframePanel = $('#iframePanel');
+            var iframeWrap = $('#iframeWrap');
+            console.log(iframeWrapHeight);
             var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
             var iScale = iframeWidth / 2450;
             var myFrame = $('.frame');
@@ -320,13 +322,7 @@
             myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
             myFrame.css('transform', 'scale(' + iScale + ')');
             myFrame.css('width', iframeWidth);
-            resizePanel(iframeWidth);
-        }
-        
-        function resizePanel(iframeWidth) {
-            var iframePanel = $('#iframePanel');
-            var heightScale = iframeWidth * 0.51;
-            iframePanel.css('height', heightScale);
+            //iframePanel.css('max-height', iframeBodyHeight);
         }
         
         
