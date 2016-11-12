@@ -133,6 +133,10 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $etemplate = $em->getRepository('AppBundle:Etemplate')
                 ->findOneBy(array('id' => $id));
+        if(!$etemplate) {
+            throw new \Exception('Something went wrong!');
+        }
+        
         $username = $etemplate->getUsername();
         $user = $this->getUser();
         $name = $user->getUsername();
@@ -236,15 +240,19 @@ class DefaultController extends Controller {
          */
         $signatureList = $em->getRepository('AppBundle:Selfsignature')
                 ->findAll();
+        if(!$signatureList) {
+            throw new \Exception('Something went wrong!');
+        }
 
         foreach ($signatureList as $signatureObject) {
             $signatureArray[$signatureObject->getId()] = $signatureObject->getSignname();
         }
 
-
         $templateSettings = $em->getRepository('AppBundle:Templatesettings')
                 ->find($id);
-        // var_dump($templateSettings->getSignatureid());die;
+        if(!$templateSettings) {
+            throw new \Exception('Something went wrong!');
+        }
 
         if ($templateSettings->getSignatureid()) {
             $signature = $em->getRepository('AppBundle:Selfsignature')
