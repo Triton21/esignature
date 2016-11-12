@@ -174,13 +174,12 @@ dependentModule1 = (function (OM) {
     }
     
     function resizeCanvas() {
-        var referenceRow = $('#referenceRow').width();
+        var referenceWidth = $('#iframePanel').width() * 0.9;
         var sketchpad = $('#clientSignature');
-        var sketchWidth = referenceRow;
-        var sketchHeigth = referenceRow / 3;
+        var sketchWidth = referenceWidth;
+        var sketchHeigth = referenceWidth / 3;
         sketchpad.attr('width', sketchWidth);
         sketchpad.attr('height', sketchHeigth);
-        console.log('here');
     }
     
 
