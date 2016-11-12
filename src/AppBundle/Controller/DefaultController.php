@@ -1261,8 +1261,8 @@ class DefaultController extends Controller {
         $todayDate = $todayObj->format('d-m-Y');
 
         //URL NEEDS TO BE CHANGED FOR PRODUCTION ENVIROMENT!!!
-        $url = 'http://localhost/esignature/web/app_dev.php/customer/customer';
-        //$url = 'http://esignature.cf/customer/customer';
+        //$url = 'http://localhost/esignature/web/app_dev.php/customer/customer';
+        $url = 'http://esignature.cf/customer/customer';
         $token = $url . '/' . $tokenRaw;
         $mylink = '<a href="' . $token . '">click here to access your contract</a>';
 
