@@ -93,6 +93,12 @@
             display: inline;
         }
         
+        .canvasBackground {
+            background: url('{{asset('bundles/app/images/sign-here.png')}}');
+            background-repeat:no-repeat;
+            background-size: 100% 100%; 
+        }
+        
         #iframePanel {
             //max-height: 800px;
         }
@@ -141,7 +147,7 @@
     </div>
     <div class="sketchpadapp canvas-container">
         <div style="min-height:1em; width:100%;" class="sketchpadapp"></div>
-        <canvas id="clientSignature" width="400" height="120" style="margin-left:0em; border:1px solid #000000;"></canvas>
+        <canvas id="clientSignature" class="canvasBackground" width="400" height="120" style="margin-left:0em; border:1px solid #000000;"></canvas>
 
     </div>
     <br>
@@ -150,16 +156,16 @@
             <button type="button" class="btn btn-danger btn-lg" id="saveImage">Save signature</button>
         </div>
         <div class="innerDiv" style="margin-top:20px;">
-            <div class="col-md-12">
-                <p>Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.name}}</span></p>
-                <p>Address: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addressfirstline}}</span></p>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.addresstown}}</span></p>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.postcode}}</span></p>
+            <div class="col-md-12" style="text-align:center;">
+                <p><span style="font-weight:bold;">{{eContract.client.name}}</span></p>
+                <p><span style="font-weight:bold;">{{eContract.client.addressfirstline}}</span></p>
+                <p><span style="font-weight:bold;">{{eContract.client.addresstown}}</span></p>
+                <p><span style="font-weight:bold;">{{eContract.client.postcode}}</span></p>
                 <p>
-                    DoB:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{eContract.client.dob|date('m/d/Y')}}</span>
+                    DoB: <span style="font-weight:bold;">{{eContract.client.dob|date('m/d/Y')}}</span>
                 </p>
                 <p class="gi-5m">
-                    DATE:&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-weight:bold;">{{today}}</span>
+                    <span style="font-weight:bold;">{{today}}</span>
                 </p>
 
 
@@ -347,6 +353,16 @@
             var sketchHeigth = referenceWidth / 3;
             sketchpad.attr('width', sketchWidth);
             sketchpad.attr('height', sketchHeigth);
+        }
+        
+        //remove Background image from canvas
+        $(document).on('click', "#clientSignature", function () {
+            removeCanvasBackground();
+        });
+        
+        function removeCanvasBackground() {
+            var canvas = $('#clientSignature');
+            canvas.removeClass('canvasBackground');
         }
             
     });
