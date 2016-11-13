@@ -206,7 +206,7 @@ dependentModule1 = (function (OM) {
         }
         
         //clear the background for the first click
-        $(document).one('click', "#clientSignature", function () {
+        $(document).one('click touch', "#clientSignature", function () {
             var canvas = $('#clientSignature');
             canvas.removeClass('canvasBackground');
         });
