@@ -104,6 +104,6 @@ knp_snappy:
     image:
         enabled:    true
         binary:     /usr/local/bin/wkhtmltoimage 
-        #binary: "\"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltoimage.exe\"" for Windows users
+        #binary: "\"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltoimage.exe\""
         options:    []
       

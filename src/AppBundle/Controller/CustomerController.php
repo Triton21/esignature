@@ -262,6 +262,86 @@ class CustomerController extends Controller {
 
         return true;
     }
+    
+    /**
+     * Generate the pdf file TEST ONLY
+     */
+    /*
+    public function generatePdftestAction($id) {
+        $em = $this->getDoctrine()->getManager();
+
+        $myContract = $em->getRepository('AppBundle:Econtract')
+                ->find($id);
+        if (!$myContract) {
+            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
+        }
+        $clientImage = $myContract->getClientSignature();
+
+        $rawContent = $myContract->getContent();
+        $rawHeading = $myContract->getHeading();
+        $rawFooter = $myContract->getFooter();
+        $rawFirstpage = $myContract->getFirstpage();
+        $rawSignpage = $myContract->getSignpage();
+        $realSignPage = $this->renderView('AppBundle:Customer:saveclientsignature.html.twig', array(
+            'eContract' => $myContract,));
+
+        $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
+        $footer = '<div class="footer">' . $rawFooter . '</div></div>';
+        $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
+        $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
+
+
+        $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
+        $content = str_replace('[[page break]]', $pageBREAK, $content);
+
+        $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
+        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
+
+        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
+            'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
+        $signImage = $myContract->getSignature();
+        
+        
+        
+        return $this->render('AppBundle:Customer:pdfdisplay.html.twig', array(
+            'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
+        ));
+        
+        /*
+
+        //generate pdf here
+        $nowDate = new \DateTime();
+        $nowString = $nowDate->format('d_m_Y_h_i_s');
+        $directoryPath = $this->container->getParameter('kernel.root_dir') . '/../web/Files/' . $id;
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
+        $clientName = $myContract->getClient()->getName();
+        $filename = $clientName . '-' . $id . '-' . $nowString . '.pdf';
+        $fullPath = $directoryPath . '/' . $filename;
+        if (file_exists($fullPath)) {
+            rename($fullPath, $fullPath . '_old');
+        }
+
+        $this->get('knp_snappy.pdf')->generateFromHtml(
+                $this->renderView(
+                        'AppBundle:Customer:pdfdisplay.html.twig', array(
+                    'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
+                        )
+                ), $fullPath
+        );
+        //Generate pdf end!
+        //save the filepath to the database
+        $relativePath = 'Files/' . $id . '/' . $filename;
+        $myContract->setFilepath($relativePath);
+        $em->persist($myContract);
+        $em->flush();
+        return true;
+     }
+     * * 
+         * 
+         */
+    
 
     /**
      * Generate the pdf file
@@ -317,12 +397,13 @@ class CustomerController extends Controller {
 
         $this->get('knp_snappy.pdf')->generateFromHtml(
                 $this->renderView(
-                        'AppBundle:Customer:displaycontract.html.twig', array(
+                        'AppBundle:Customer:pdfdisplay.html.twig', array(
                     'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
                         )
                 ), $fullPath
         );
         //Generate pdf end!
+        
         //save the filepath to the database
         $relativePath = 'Files/' . $id . '/' . $filename;
         $myContract->setFilepath($relativePath);
