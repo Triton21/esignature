@@ -25,3 +25,7 @@ customer_ajaxsketch:
 customer_ajaxpreviewcontract:
     path:   /customerajaxpreviewcontract
     defaults: { _controller: AppBundle:Customer:customerAjaxPreviewContract }
+    
+customer_ajaxIframeView:
+    path:   /ajaxIframeView
+    defaults: { _controller: AppBundle:Customer:ajaxIframeView }

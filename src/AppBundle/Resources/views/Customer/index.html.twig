@@ -58,27 +58,16 @@
         }
         .wrap {
             width: 100%;
-            height: 1200px;
             padding: 0;
+            position: relative;
             overflow: hidden;
         }
         .frame {
-            width: 820px;
-            height: 100%;
+            width: 100%;
+            height: 500px;
             border: 0;
-            -ms-transform: scale(0.35);
-            -moz-transform: scale(0.35);
-            -o-transform: scale(0.35);
-            -webkit-transform: scale(0.35);
-            transform: scale(0.35);
-
-            -ms-transform-origin: 0 0;
-            -moz-transform-origin: 0 0;
-            -o-transform-origin: 0 0;
-            -webkit-transform-origin: 0 0;
-            transform-origin: 0 0;
         }
-        
+
         .innerDiv {
             width: 50%;
             margin: 0 auto;
@@ -92,18 +81,16 @@
         canvas {
             display: inline;
         }
-        
+
         .canvasBackground {
             background: url('{{asset('bundles/app/images/sign-here.png')}}');
             background-repeat:no-repeat;
             background-size: 100% 100%; 
         }
-        
+
         #iframePanel {
             //max-height: 800px;
         }
-        
-        
 
     </style>
 {% endblock %}
@@ -118,41 +105,41 @@
             <content id="modalContent"></content>
         </div>
     </div>
-    
+
     <div id="referenceRow" class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4" style="background-color:white;">
     </div>
-    
-    <div class="sketchpadapp canvas-container">
-        <div style="min-height:1em; width:100%;" class="sketchpadapp"></div>
-        <canvas id="clientSignature" class="canvasBackground" width="400" height="120" style="margin-left:0em; border:1px solid #000000;"></canvas>
-
-    </div>
-    
-    
 
     <div class="col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6" style="text-align:center;">
         <h4>New electronic contract for: {{eContract.client.name}}</h4>
 
-
-            <div class="col-md-12">
-                <div class="panel panel-default" id="iframePanel">
-                    <div class="panel-body" id="iframeBody" style="padding:5px;">
-                        <br>
-                        <div id="iframeWrap" class="wrap" style="margin-left:auto; margin-right:auto;">
-                            <iframe class="frame" id="iframeID"></iframe>
-                        </div>
-                    </div>
+        <div class="wrap">
+            <div class="panel panel-default" id="iframePanel">
+                <div class="panel-body">
+                
+                    <iframe class="frame" id="iframeID"></iframe>
+                </div>
             </div>
+        </div>
     </div>
     <div class="sketchpadapp sketchTools centered">
 
-            <!-- SMALL CANVAS  -->
+        <!-- SMALL CANVAS  -->
 
         <div class="innerDiv" style="margin-top:3px;">
             <button type="button" class="btn btn-default btn-sm" id="clearsmallsketch"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
         </div>
 
     </div>
+
+    <div class="sketchpadapp canvas-container">
+        <div style="min-height:1em; width:100%;" class="sketchpadapp"></div>
+        <canvas id="clientSignature" class="canvasBackground" width="400" height="120" style="margin-left:0em; border:1px solid #000000;"></canvas>
+
+    </div>
+
+
+
+
     <br>
     <div class="sketchpadapp sketchTools centered">
         <div class="innerDiv" style="margin-top:3px;">
@@ -173,13 +160,13 @@
 
 
             </div>
-            
-            
-            
+
+
+
         </div>
     </div>
 
-        <div style="min-height:15em;"></div>
+    <div style="min-height:15em;"></div>
 
 
 {% endblock %}
@@ -204,160 +191,134 @@
             </div>   ';
 
 
-        $(function () {
-            var modal = $('#myModal')[0];
-            $(document).on('click', ".close", function () {
-                modal.style.display = "none";
-            });
-
-            $(document).on('click', window, function (event) {
-                if (event.target == modal) {
+            $(function () {
+                var modal = $('#myModal')[0];
+                $(document).on('click', ".close", function () {
                     modal.style.display = "none";
-                }
-            });
-        });
+                });
 
-        function loadAnimation() {
-            var myNewDiv = document.createElement('div');
-            myNewDiv.id = 'displayhere';
-            $('#spinnerHere').append(myNewDiv);
-            myNewDiv.innerHTML = loading;
-            return;
-        }
-
-        function removeAnimation() {
-            $('#spinnerHere').html('');
-                    return;
-        }
-
-
-        $(document).on('click', "#saveImage", function (e) {
-            e.preventDefault();
-            loadAnimation();
-            var sketchpad = document.getElementById("clientSignature");
-            var format = 'png';
-            var mime = "image/" + format;
-            var myimage = sketchpad.toDataURL(mime);
-            downloadMyimage(myimage);
-        });
-        
-        function downloadMyimage(myimage) {
-            var myUrl = "{{ path('customer_ajaxsketch')}}";
-            var contractId = "{{eContract.id}}";
-            console.log(contractId);
-            $.ajax({
-            url: myUrl,
-                type: "post",
-                dataType: 'text',
-                data: {image: myimage, contractId: contractId},
-                success: function (response) {
-                    if (response == '"image empty"') {
-                        var modal = $('#myModal')[0];
-                        var contentDiv = document.getElementById('modalContent');
-                        console.log(contentDiv);
-                        contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
-                        modal.style.display = "block";
-                        removeAnimation();
-                    } else {
-                         var token = '{{eContract.token}}';
-                        var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
-                        myUrl.replace('PLACEHOLDER', token);
-                        window.location.replace(myUrl.replace('PLACEHOLDER', token));
+                $(document).on('click', window, function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
                     }
-                },
-                complete: function () {
-                    console.log('Request is complete');
-                },
-                error: function () {
-                    console.log('Oops...there was an error!');
-                }
+                });
             });
-        }
-        
-        //preview the contract with ajax
-        $(function () {
-            var econtractId = '{{eContract.id}}';
-            var data = {'econtractId': econtractId };
-            console.log(data);
-            var myUrl = "{{path('customer_ajaxpreviewcontract')}}";
-            $.ajax({
-            type: 'POST',
-                url: myUrl,
-                cache: false,
-                data: data,
-                dataType: "json",
-                success: function (data)
+
+            function loadAnimation() {
+                var myNewDiv = document.createElement('div');
+                myNewDiv.id = 'displayhere';
+                $('#spinnerHere').append(myNewDiv);
+                myNewDiv.innerHTML = loading;
+                return;
+            }
+
+            function removeAnimation() {
+                $('#spinnerHere').html('');
+                return;
+            }
+
+
+            $(document).on('click', "#saveImage", function (e) {
+                e.preventDefault();
+                loadAnimation();
+                var sketchpad = document.getElementById("clientSignature");
+                var format = 'png';
+                var mime = "image/" + format;
+                var myimage = sketchpad.toDataURL(mime);
+                downloadMyimage(myimage);
+            });
+
+            function downloadMyimage(myimage) {
+                var myUrl = "{{ path('customer_ajaxsketch')}}";
+                var contractId = "{{eContract.id}}";
+                console.log(contractId);
+                $.ajax({
+                    url: myUrl,
+                    type: "post",
+                    dataType: 'text',
+                    data: {image: myimage, contractId: contractId},
+                    success: function (response) {
+                        if (response == '"image empty"') {
+                            var modal = $('#myModal')[0];
+                            var contentDiv = document.getElementById('modalContent');
+                            console.log(contentDiv);
+                            contentDiv.innerHTML = 'Signature box is empty! Please sign your name in the box.';
+                            modal.style.display = "block";
+                            removeAnimation();
+                        } else {
+                            var token = '{{eContract.token}}';
+                            var myUrl = '{{ path('customer_signednote', {'token': 'PLACEHOLDER'})}}';
+                            myUrl.replace('PLACEHOLDER', token);
+                            window.location.replace(myUrl.replace('PLACEHOLDER', token));
+                        }
+                    },
+                    complete: function () {
+                        console.log('Request is complete');
+                    },
+                    error: function () {
+                        console.log('Oops...there was an error!');
+                    }
+                });
+            }
+
+            //preview the contract with ajax
+            $(function () {
+                var econtractId = '{{eContract.id}}';
+                var data = {'econtractId': econtractId};
+                console.log(data);
+                var myUrl = "{{path('customer_ajaxIframeView')}}";
+                $.ajax({
+                    type: 'POST',
+                    url: myUrl,
+                    cache: false,
+                    data: data,
+                    dataType: "json",
+                    success: function (data)
                     {
                         //console.log(data);
                         initPreview(data);
                     }
+                });
             });
-        });
-        
-        //append the iframe with the HTML code
-        function initPreview(response) {
-            var iframe = document.getElementById('iframeID');
-            iframe = iframe.contentWindow ?
-                iframe.contentWindow :
-                (
-                    iframe.contentDocument.document ?
-                    iframe.contentDocument.document :
-                    iframe.contentDocument
-                );
-            iframe.document.open();
-            iframe.document.write(response);
-            iframe.document.close();
-        }
-        
-        //resize the iframe
-        $(window).resize(function () {
-            resizeIframe();
-        });
 
-        $(function () {
-            resizeIframe();
-        });
-
-        function resizeIframe() {
-            var iframeBodyWidth = $('#iframeBody').width();
-            var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
-            var iScale = iframeWidth / 2450;
-            var myFrame = $('.frame');
-            myFrame.css('-ms-transform', 'scale(' + iScale + ')');
-            myFrame.css('-moz-transform', 'scale(' + iScale + ')');
-            myFrame.css('-o-transform', 'scale(' + iScale + ')');
-            myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
-            myFrame.css('transform', 'scale(' + iScale + ')');
-            myFrame.css('width', iframeWidth);
-            //resizePanel(iframeWidth);
-        }
-        
-        function resizePanel(iframeWidth) {
-            console.log(iframeWidth);
-            var iframePanel = $('#iframePanel');
-            if (iframeWidth < 1000) {
-                var heightScale = iframeWidth * 0.53;
-            } else {
-                var heightScale = iframeWidth * 0.52;
+            //append the iframe with the HTML code
+            function initPreview(response) {
+                var iframe = document.getElementById('iframeID');
+                iframe = iframe.contentWindow ?
+                        iframe.contentWindow :
+                        (
+                                iframe.contentDocument.document ?
+                                iframe.contentDocument.document :
+                                iframe.contentDocument
+                                );
+                iframe.document.open();
+                iframe.document.write(response);
+                iframe.document.close();
             }
-            iframePanel.css('height', heightScale);
-        }
-        
-        
-        //resize canvas
-        $(function () {
-            resizeCanvas();
-        });
 
-        function resizeCanvas() {
-            var referenceWidth = $('#iframePanel').width() * 0.9;
-            var sketchpad = $('#clientSignature');
-            var sketchWidth = referenceWidth;
-            var sketchHeigth = referenceWidth / 3;
-            sketchpad.attr('width', sketchWidth);
-            sketchpad.attr('height', sketchHeigth);
-        }
-    });
+            //resize the iframe
+            $(window).resize(function () {
+                //resizeIframe();
+            });
+
+            $(function () {
+                //resizeIframe();
+            });
+
+            //resize canvas
+            $(function () {
+                resizeCanvas();
+            });
+
+            function resizeCanvas() {
+                var referenceWidth = $('#iframePanel').width() * 0.9;
+                var sketchpad = $('#clientSignature');
+                var sketchWidth = referenceWidth;
+                var sketchHeigth = referenceWidth / 3;
+                sketchpad.attr('width', sketchWidth);
+                sketchpad.attr('height', sketchHeigth);
+            }
+        });
     </script>
 
 

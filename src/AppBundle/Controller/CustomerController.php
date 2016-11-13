@@ -41,37 +41,37 @@ class CustomerController extends Controller {
             $error = 'eContract is not active';
             return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
         }
-        
+
         $savedDob = $eContract->getClient()->getDob();
         $dob = [];
         $form = $this->createFormBuilder($dob)
-            ->add('counter', 'hidden', array('read_only' => true))
-            ->add('dob', 'birthday', array(
+                ->add('counter', 'hidden', array('read_only' => true))
+                ->add('dob', 'birthday', array(
                     'format' => 'dd MM yyyy',
                     'placeholder' => array(
                         'day' => 'Day', 'month' => 'Month', 'year' => 'Year',
-                    )))
-            ->add('save', 'submit', array(
-                'label' => 'Submit',
-                'attr' => array('class' => 'btn btn-danger')
+            )))
+                ->add('save', 'submit', array(
+                    'label' => 'Submit',
+                    'attr' => array('class' => 'btn btn-danger')
                 ))
-            ->getForm();
+                ->getForm();
         $form->handleRequest($request);
         if ($form->isValid()) {
-           $dob = $form['dob']->getData();
-           $dobString = date_format($dob, 'd-m-Y');
-           $savedDobString = date_format($savedDob, 'd-m-Y');
-           
-           if($dobString == $savedDobString) {
-               return $this->redirectToRoute('customer_display_contract', array('token' => $token, 'dob' => $dobString));
-           }
+            $dob = $form['dob']->getData();
+            $dobString = date_format($dob, 'd-m-Y');
+            $savedDobString = date_format($savedDob, 'd-m-Y');
+
+            if ($dobString == $savedDobString) {
+                return $this->redirectToRoute('customer_display_contract', array('token' => $token, 'dob' => $dobString));
+            }
         }
 
 
         return $this->render('AppBundle:Customer:checkdob.html.twig', array(
-                  'form' => $form->createView()));
+                    'form' => $form->createView()));
     }
-    
+
     /**
      * Displays the contract if token is valid and DoB submitted in indexAction
      * @param type $token
@@ -79,18 +79,44 @@ class CustomerController extends Controller {
      */
     public function displayContractAction($token, $dob) {
         $em = $this->getDoctrine()->getManager();
-        
+
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->findOneBy(array('token' => $token));
-        
-        
+
+
         $today = date("d/F/Y");
-        
-         return $this->render('AppBundle:Customer:index.html.twig', array(
+
+        return $this->render('AppBundle:Customer:index.html.twig', array(
                     'today' => $today, 'eContract' => $eContract,));
-      
     }
-    
+
+    /**
+     * Displays the contract to the customer. Ajax request, returns the contract view HTML for iframe.
+     */
+    public function ajaxIframeViewAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $econtractId = $request->request->get('econtractId');
+        $myContract = $em->getRepository('AppBundle:Econtract')
+                ->find($econtractId);
+        if (!$myContract) {
+            $html = 'error';
+            $response = new Response(json_encode($html));
+            return $response;
+        }
+        $rawContent = $myContract->getContent();
+        $rawHeading = $myContract->getHeading();
+        $rawFirstpage = $myContract->getFirstpage();
+        $rawFooter = $myContract->getFooter();
+        
+        $html = $this->renderView('AppBundle:Customer:displaycontract.html.twig', array(
+            'footer' => $rawFooter, 'firstpage' =>$rawFirstpage, 'heading' => $rawHeading, 'html' => $rawContent,));
+
+
+
+        $response = new Response(json_encode($html));
+        return $response;
+    }
+
     /**
      * Displays the contract to the customer. Ajax request, returns the contract view HTML for iframe.
      */
@@ -100,7 +126,7 @@ class CustomerController extends Controller {
         $myContract = $em->getRepository('AppBundle:Econtract')
                 ->find($econtractId);
         $html = 'test';
-        
+
         $signImage = $myContract->getSignature();
 
         $rawContent = $myContract->getContent();
@@ -109,11 +135,11 @@ class CustomerController extends Controller {
         $rawFirstpage = $myContract->getFirstpage();
         $rawSignpage = $myContract->getSignpage();
         /*
-        $realSignPage = $this->renderView('AppBundle:Default:saveclientsignature.html.twig', array(
-            'eContract' => $myContract,));
+          $realSignPage = $this->renderView('AppBundle:Default:saveclientsignature.html.twig', array(
+          'eContract' => $myContract,));
          * 
          */
-        
+
         $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
         $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
@@ -124,16 +150,14 @@ class CustomerController extends Controller {
         $content = str_replace('[[page break]]', $pageBREAK, $content);
         $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
         $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '</div>' . $footer;
-        
+
         $html = $this->renderView('AppBundle:Default:previewiframe.html.twig', array(
             'signImage' => $signImage, 'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
 
-        
+
         $response = new Response(json_encode($html));
         return $response;
-        
     }
-    
 
     /**
      * Displays the not found homepage
@@ -199,7 +223,7 @@ class CustomerController extends Controller {
         $directoryPath = $this->container->getParameter('kernel.root_dir') . '/../web';
         $filePath = $myContract->getFilepath();
         $fullPath = $directoryPath . '/' . $filePath;
-        
+
         //replace %name% and %username%
         $body = str_replace('%name%', $cname, $body);
         $body = str_replace('%username%', $username, $body);
