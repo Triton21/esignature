@@ -182,6 +182,7 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script src="{{asset('bundles/app/js/clientsketch.js')}}"></script>
     <script>
         $(document).ready(function () {
             var loading = '<div class="ispinner gray large animating myload" id="loader">\
@@ -355,7 +356,6 @@
         }
     });
     </script>
-    <script src="{{asset('bundles/app/js/clientsketch.js')}}"></script>
 
 
 {% endblock %}
