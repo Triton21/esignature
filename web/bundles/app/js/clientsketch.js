@@ -205,6 +205,12 @@ dependentModule1 = (function (OM) {
             canvas.addEventListener('touchmove', sketchpad_touchMove, false);
         }
         
+        //clear the background for the first click
+        $(document).one('click', "#clientSignature", function () {
+            var canvas = $('#clientSignature');
+            canvas.removeClass('canvasBackground');
+        });
+        
         
         //clear canvas when button clicked
         var trigger = document.getElementById("clearsmallsketch");
