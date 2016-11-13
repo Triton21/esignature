@@ -259,11 +259,13 @@
 
             //format Date of Birth
             function formatDob(dob) {
+                console.log(dob);
                 var newDob, splitDob, dobResult;
                 newDob = dob.date.replace(' 00:00:00', '');
                 splitDob = newDob.split("-");
                 dobResult = splitDob[2] + '/' + splitDob[1] + '/' + splitDob[0];
                 $("#dob").val(dobResult);
+                console.log(dobResult);
             }
 
             //init preview iframe content

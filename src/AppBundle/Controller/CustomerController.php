@@ -48,6 +48,7 @@ class CustomerController extends Controller {
                 ->add('counter', 'hidden', array('read_only' => true))
                 ->add('dob', 'birthday', array(
                     'format' => 'dd MM yyyy',
+                    'years' => range(1920, date('Y')),
                     'placeholder' => array(
                         'day' => 'Day', 'month' => 'Month', 'year' => 'Year',
             )))
@@ -110,8 +111,6 @@ class CustomerController extends Controller {
         
         $html = $this->renderView('AppBundle:Customer:displaycontract.html.twig', array(
             'footer' => $rawFooter, 'firstpage' =>$rawFirstpage, 'heading' => $rawHeading, 'html' => $rawContent,));
-
-
 
         $response = new Response(json_encode($html));
         return $response;
