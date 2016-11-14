@@ -30,3 +30,11 @@ customer_ajaxIframeView:
     path:   /ajaxIframeView
     defaults: { _controller: AppBundle:Customer:ajaxIframeView }
     
+customer_about:
+    path:   /about
+    defaults: { _controller: AppBundle:Customer:about }
+    
+customer_contact:
+    path:   /contact
+    defaults: { _controller: AppBundle:Customer:contact }
+    

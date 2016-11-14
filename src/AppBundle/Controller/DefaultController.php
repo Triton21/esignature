@@ -10,10 +10,12 @@ use AppBundle\Form\EtemplateType;
 use AppBundle\Form\ClientType;
 use AppBundle\Form\EcontractType;
 use AppBundle\Form\TemplatesettingsType;
+use AppBundle\Form\CompanyType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\SettingssmtpType;
 use AppBundle\Entity\Etemplate;
 use AppBundle\Entity\Settings;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Emailtemplate;
 use AppBundle\Entity\Templatesettings;
@@ -42,11 +44,24 @@ class DefaultController extends Controller {
         if (in_array('ROLE_CUSTOMER', $roles, true)) {
             return $this->redirectToRoute('customer_index');
         }
+        $em = $this->getDoctrine()->getManager();
+        $signature = $em->getRepository('AppBundle:Selfsignature')
+                ->findOneBy(array('usethis' => 1));
+        if (!$signature) {
+            $signature = false;
+        }
+        //var_dump($signature);die;
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+        if (!$company) {
+            $company = false;
+        }
+
 
         $name = $user->getUsername();
         // replace this example code with whatever you need
         return $this->render('AppBundle:Default:index.html.twig', array(
-                    'name' => $name,));
+                  'signature' => $signature,  'company' => $company, 'name' => $name,));
     }
 
     /**
@@ -133,10 +148,10 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $etemplate = $em->getRepository('AppBundle:Etemplate')
                 ->findOneBy(array('id' => $id));
-        if(!$etemplate) {
+        if (!$etemplate) {
             throw new \Exception('Something went wrong!');
         }
-        
+
         $username = $etemplate->getUsername();
         $user = $this->getUser();
         $name = $user->getUsername();
@@ -206,9 +221,21 @@ class DefaultController extends Controller {
             $mySignature = $em->getRepository('AppBundle:Selfsignature')
                     ->find($signId);
             //var_dump($mySignature);die;
+            
+            $signPageText = $form["signpage"]->getData();
+            $signPageText = str_replace('%%printname%%', $mySignature->getSignname(), $signPageText);
+            $signPageText = str_replace('%%position%%', $mySignature->getPosition(), $signPageText);
+            $signPageText = str_replace('%%company%%', $mySignature->getCompanyname(), $signPageText);
+            $signPageText = str_replace('%%address%%', $mySignature->getAddressfirstline(), $signPageText);
+            $signPageText = str_replace('%%town%%', $mySignature->getAddresstown(), $signPageText);
+            $signPageText = str_replace('%%postcode%%', $mySignature->getPostcode(), $signPageText);
+            
+            /*
             $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
                 'mySignature' => $mySignature));
-            $templateSettings->setSignpage($signPage);
+             * 
+             */
+            $templateSettings->setSignpage($signPageText);
             $templateSettings->setUsethis(1);
             $em->persist($templateSettings);
 
@@ -240,7 +267,7 @@ class DefaultController extends Controller {
          */
         $signatureList = $em->getRepository('AppBundle:Selfsignature')
                 ->findAll();
-        if(!$signatureList) {
+        if (!$signatureList) {
             throw new \Exception('Something went wrong!');
         }
 
@@ -250,7 +277,7 @@ class DefaultController extends Controller {
 
         $templateSettings = $em->getRepository('AppBundle:Templatesettings')
                 ->find($id);
-        if(!$templateSettings) {
+        if (!$templateSettings) {
             throw new \Exception('Something went wrong!');
         }
 
@@ -275,14 +302,7 @@ class DefaultController extends Controller {
             $signId = $form["signatureid"]->getData();
             $mySignature = $em->getRepository('AppBundle:Selfsignature')
                     ->find($signId);
-            //var_dump($mySignature);die;
-            $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
-                'mySignature' => $mySignature));
-            $templateSettings->setSignpage($signPage);
             $em->persist($templateSettings);
-
-
-
             $em->flush();
             return $this->redirectToRoute('app_templatesettings');
         }
@@ -716,8 +736,8 @@ class DefaultController extends Controller {
         $client = $em->getRepository('AppBundle:Client')
                 ->find($clientId);
         $html = 'test';
-        
-        
+
+
         $clientName = $client->getName();
         $addressFirstLine = $client->getAddressfirstline();
         $addressTown = $client->getAddresstown();
@@ -734,8 +754,8 @@ class DefaultController extends Controller {
         $footer = '<div class="footer">' . $rawFooter . '</div></div>';
         $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
         $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
-        
-        
+
+
         $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
         $content = str_replace('[[page break]]', $pageBREAK, $content);
 
@@ -1400,7 +1420,7 @@ class DefaultController extends Controller {
         $pager = new Paginator($page, $countAll, $limit);
 
         return $this->render('AppBundle:Default:selfsignature.html.twig', array(
-                'selfSignature' => $selfSignature, 'pager' => $pager, 'name' => $name,));
+                    'selfSignature' => $selfSignature, 'pager' => $pager, 'name' => $name,));
     }
 
     /**
@@ -1412,7 +1432,7 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $name = $user->getUsername();
         $uploadedImage = false;
-        
+
         $document = new Product();
         $form = $this->createFormBuilder($document)
                 ->add('imageFile', 'file', array(
@@ -1422,8 +1442,8 @@ class DefaultController extends Controller {
                 ->getForm();
 
         $form->handleRequest($request);
-        
-        
+
+
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($document);
@@ -1433,12 +1453,12 @@ class DefaultController extends Controller {
             return $this->render('AppBundle:Default:selfSignatureUpload.html.twig', array(
                         'uploadedImage' => $imageName, 'form' => $form->createView(), 'name' => $name,));
         }
-        
+
 
         return $this->render('AppBundle:Default:selfSignatureUpload.html.twig', array(
-                'uploadedImage' => $uploadedImage, 'form' => $form->createView(), 'name' => $name,));
+                    'uploadedImage' => $uploadedImage, 'form' => $form->createView(), 'name' => $name,));
     }
-    
+
     /**
      * Create self signature and displays saved pictures in a table
      * Only admin can access
@@ -1794,4 +1814,81 @@ class DefaultController extends Controller {
         ));
     }
 
+    /**
+     * Delete email settings with id
+     * @param type $id
+     */
+    public function companyAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $login = $this->getUser();
+        $name = $login->getUsername();
+
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+        if (!$company) {
+            $company = new Company();
+        }
+        $signature = $em->getRepository('AppBundle:Selfsignature')
+                ->findOneBy(array('usethis' => 1));
+        if (!$signature) {
+            return $this->redirectToRoute('app_selfSignature');
+        }
+        $form = $this->createForm(new CompanyType(), $company);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $company->setActive(1);
+            $em->persist($company);
+            $em->flush();
+
+            //Create the default templatesettings with the company details
+            $findActive = $em->getRepository('AppBundle:Templatesettings')
+                    ->findOneBy(array('usethis' => 1));
+            if ($findActive) {
+                $findActive->setUsethis(0);
+                $em->persist($findActive);
+            }
+            $signature = $em->getRepository('AppBundle:Selfsignature')
+                    ->findOneBy(array('usethis' => 1));
+            if ($signature) {
+                $signId = $signature->getId();
+            } else {
+                return $this->redirectToRoute('app_selfSignature');
+            }
+            $heading = '<p style="text-align:center">' . $company->getCompanyName() . '<br />' . $company->getWebsite() . '</p><hr />';
+            $footer = '<hr /><p style="text-align:center"><strong>' .
+                    $company->getCompanyName() . '</strong><br /><strong>'
+                    . $company->getWebsite() . '</strong><br /><strong>Email:</strong> '
+                    . $company->getEmail() . ' &nbsp;<strong>Address:</strong> '
+                    . $company->getAddress() . '<br /><strong>Phone:</strong> '
+                    . $company->getPhone() . '</p>';
+            $firstpage = '<p style="text-align: center;">&nbsp;</p>
+                            <p style="text-align: center;">&nbsp;</p>
+                            <p style="text-align: center;">&nbsp;</p>
+                            <p style="text-align: center;"><span style="font-size:36px">Customer contract</span></p>';
+            
+            $defaultettings = $em->getRepository('AppBundle:Templatesettings')
+                    ->findOneBy(array('settingsname' => 'Default'));
+            if ($defaultettings) {
+                $templateSettings = $defaultettings;
+            } else {
+                $templateSettings = new Templatesettings();
+            }
+            $templateSettings->setSettingsname('Default');
+            $templateSettings->setUsername($name);
+            $templateSettings->setHeading($heading);
+            $templateSettings->setFooter($footer);
+            $templateSettings->setFirstpage($firstpage);
+            $templateSettings->setSignatureid($signId);
+            $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
+                'mySignature' => $signature));
+            $templateSettings->setSignpage($signPage);
+            $templateSettings->setUsethis(1);
+            $em->persist($templateSettings);
+            $em->flush();
+            return $this->redirectToRoute('app_company');
+        }
+        return $this->render('AppBundle:Default:company.html.twig', array(
+                    'form' => $form->createView(), 'company' => $company, 'name' => $name,
+        ));
+    }
 }

@@ -12,6 +12,22 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h2>Quick tools</h2>
+                    {% if signature != true %}
+                    <div class="col-md-12" center>
+                        <br>
+                        <h4 style="color:#8e1414">Your signature does not exist!</h4>
+                        <a href="{{path('app_selfSignature')}}" class="btn btn-danger btn-lg" role="button"><i class="glyphicon glyphicon-pencil"></i> Create signature</a>
+                        <br>
+                    </div>
+                        {% endif %}
+                    {% if company != true %}
+                    <div class="col-md-12" center>
+                        <br>
+                        <h4 style="color:#8e1414">Compant detail does not exist!</h4>
+                        <a href="{{path('app_company')}}" class="btn btn-danger btn-lg" role="button"><i class="glyphicon glyphicon-pencil"></i> Set company details</a>
+                        <br>
+                    </div>
+                        {% endif %}
                     <div class="col-md-12" center>
                         <br>
                         <a href="{{path('app_send_econtract')}}" class="btn btn-default btn-lg" role="button"><i class="glyphicon glyphicon-send"></i> Send new Econtract</a>

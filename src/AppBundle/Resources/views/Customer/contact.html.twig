@@ -1,0 +1,43 @@
+{% extends "::customerbase.html.twig" %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6" style="text-align:center; margin-top: 5em;">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>{% if company != false %}{{company.companyName}}{% endif %} Electronig Signature Application</h2>
+                <br>
+                <p style="text-align:center; margin-top:2em;">
+                    {% if company != false %}
+                        {{company.address}}<br/>
+                        {{company.website}}<br/>
+                        {{company.email}}<br/>
+                        {{company.phone}}<br/>
+                    {% endif %}
+                </p>
+                <br>
+                <p style="margin-top:2em;">
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    {{ form_end(form) }}
+                </p>
+                <br>
+                <br>
+                <p style="text-align:center; margin-top:3em; color:gray;" class="gi-2p">
+                    Copyright 2016 A3Software<br/>
+                    Esignature application created by Peter Csatai
+                </p>
+                <br>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}

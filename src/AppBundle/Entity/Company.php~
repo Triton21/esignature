@@ -193,28 +193,5 @@ class Company
     {
         return $this->phone;
     }
-
-    /**
-     * Set active
-     *
-     * @param integer $active
-     *
-     * @return Company
-     */
-    public function setActive($active)
-    {
-        $this->active = $active;
-
-        return $this;
-    }
-
-    /**
-     * Get active
-     *
-     * @return integer
-     */
-    public function getActive()
-    {
-        return $this->active;
-    }
 }
+

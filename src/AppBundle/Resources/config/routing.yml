@@ -183,3 +183,7 @@ app_selfCreate:
 app_selfUpload:
     path:   /upload-your-signature
     defaults: { _controller: AppBundle:Default:selfUpload }
+    
+app_company:
+    path:   /company
+    defaults: { _controller: AppBundle:Default:company }

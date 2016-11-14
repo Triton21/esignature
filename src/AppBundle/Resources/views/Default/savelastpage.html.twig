@@ -1,24 +1,18 @@
 <br><br><br><br>
 <div class="col-md-12">
-    <canvas id="mySign" width="300" height="90" style="margin-left:0em; border:1px solid #000000;"></canvas>
+    <div style="width: 100%;text-align:center;">
+        <canvas id="mySign" width="300" height="90" style="display: inline;margin-left:0em; border:1px solid #000000;"></canvas>
+    </div>
     <br>
     <br>
     <div class="row">
-        <div class="col-md-4">
-            Print name:<br>
-            Position:<br>
-            Company name:<br>
-            Address:<br>
-            Town:<br>
-            Postcode:<br>
-        </div>
-        <div class="col-md-4">
-            {{mySignature.signname}}<br>
-            {{mySignature.position}}<br>
-            {{mySignature.companyname}}<br>
-            {{mySignature.addressfirstline}}<br>
-            {{mySignature.addresstown}}<br>
-            {{mySignature.postcode}}<br>
+        <div class="col-md-12" style="text-align: center">
+            Print name: <strong>{{mySignature.signname}}</strong><br>
+            Position: <strong>{{mySignature.position}}</strong><br>
+            Company name: <strong>{{mySignature.companyname}}</strong><br>
+            Address: <strong>{{mySignature.addressfirstline}}</strong><br>
+            Town: <strong>{{mySignature.addresstown}}</strong><br>
+            Postcode: <strong>{{mySignature.postcode}}</strong><br>
         </div>
     </div>
 </div>

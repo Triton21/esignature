@@ -65,31 +65,17 @@
                     </button>
                     <a href="{{path('app_index')}}" class="navbar-brand">
                         <div class="myLogo">
-                            <img class="pull-left" style="margin-top:-5px;margin-right:10px;margin-left:-5px;" src="{{asset('bundles/app/images/LogoMakrSmall.png')}}" alt="A3Software Logo">
-                            <span style="color:#cc3333;margin-left:-5px;"> Dent1st </span><span style="color:white;">Esign</span>
+                            <img class="pull-left" style="margin-top:-3px;margin-right:10px;margin-left:-5px;" src="{{asset('bundles/app/images/LogoMakrSmall18.png')}}" alt="A3Software Logo">
+                            <span style="color:white;margin-left:-5px;"> Dent1st </span><span style="color:#cc3333;">Esign</span>
                         </div>
                     </a>
                 </div>
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li><a href="{{path('logout')}}"><span class="pull-right showopacity glyphicon glyphicon-log-out"></span> Logout</a></li>
-                        <li><a href="{{path('app_send_econtract')}}">Send Econtract<span class="pull-right hidden-xs showopacity glyphicon glyphicon-send"></span></a></li>
-                        <li><a href="{{path('app_sentcontracts')}}">Sent Econtracts<span class="pull-right hidden-xs showopacity glyphicon glyphicon-th-list"></span></a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>
-                            <ul class="dropdown-menu forAnimate" role="menu">
-                                {% if app.user is not null and is_granted('IS_AUTHENTICATED_FULLY') %}
-                                    <li><a href="#contact"><span class="showopacity glyphicon glyphicon-envelope"></span> Contact</a></li>
-                                        {% if is_granted('ROLE_ADMIN') %}
-                                        <li><a href="{{path('admin')}}"><span class="showopacity glyphicon glyphicon-cog"></span> Admin</a></li>
-                                        <li><a href="{{path('register')}}"><span class="showopacity glyphicon glyphicon-pencil"></span> Register</a></li>
-                                        {% endif %}
-                                    {% else %}
-                                    <li><a href="{{path('login')}}">Login</a></li>
-                                    {% endif %}
-                            </ul>
-                        </li>
+                        <li><a href="{{path('logout')}}"><span class="pull-right showopacity glyphicon hidden-xs glyphicon-log-out"></span> Logout</a></li>
+                        <li><a href="{{path('app_send_econtract')}}"><span class="pull-right showopacity hidden-xs glyphicon glyphicon-send"></span> Send Econtract</a></li>
+                        <li><a href="{{path('app_sentcontracts')}}"><span class="pull-right showopacity hidden-xs glyphicon glyphicon-th-list"></span> Sent Econtracts</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Client <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a>
                             <ul class="dropdown-menu forAnimate" role="menu">
@@ -111,6 +97,19 @@
                             <ul class="dropdown-menu forAnimate" role="menu">
                                 <li><a href="{{path('app_emailsettings')}}">Email settings<span class="pull-right hidden-xs showopacity glyphicon glyphicon-pencil"></span></a></li>
                                 <li><a href="{{path('app_emailTemplate')}}">Email template<span class="pull-right hidden-xs showopacity glyphicon glyphicon-envelope"></span></a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>
+                            <ul class="dropdown-menu forAnimate" role="menu">
+                                {% if app.user is not null and is_granted('IS_AUTHENTICATED_FULLY') %}
+                                    <li><a href="#"><span class="showopacity glyphicon glyphicon-envelope"></span> Contact</a></li>
+                                    <li><a href="{{path('app_company')}}"><span class="showopacity glyphicon glyphicon-th-list"></span> Company details</a></li>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                        <li><a href="{{path('admin')}}"><span class="showopacity glyphicon glyphicon-cog"></span> Admin</a></li>
+                                        <li><a href="{{path('register')}}"><span class="showopacity glyphicon glyphicon-pencil"></span> Register</a></li>
+                                        {% endif %}
+                                    {% endif %}
                             </ul>
                         </li>
                     </ul>

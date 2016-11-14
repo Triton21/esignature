@@ -11,6 +11,7 @@ use AppBundle\Entity\Blacklist;
 use AppBundle\Entity\Econtract;
 use AppBundle\Entity\Settings;
 use AppBundle\Entity\Client;
+use AppBundle\Entity\Company;
 
 class CustomerController extends Controller {
 
@@ -70,7 +71,7 @@ class CustomerController extends Controller {
 
 
         return $this->render('AppBundle:Customer:checkdob.html.twig', array(
-                    'form' => $form->createView()));
+                   'token' => $token, 'form' => $form->createView()));
     }
 
     /**
@@ -447,6 +448,47 @@ class CustomerController extends Controller {
         $html = 'no data';
         $response = new Response(json_encode($html));
         return $response;
+    }
+    
+    /**
+     * Displays the already signed homepage
+     */
+    public function aboutAction() {
+        $em = $this->getDoctrine()->getManager();
+        
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+        if (!$company) {
+            $company = false;
+        }
+        return $this->render('AppBundle:Customer:about.html.twig', array(
+            'company' => $company,
+        ));
+    }
+    
+    /**
+     * Displays the already signed homepage
+     */
+    public function contactAction() {
+        $em = $this->getDoctrine()->getManager();
+        
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+        if (!$company) {
+            $company = false;
+        }
+        $contact = [];
+        
+        $form = $this->createFormBuilder($contact)
+            ->add('message', 'textarea')
+            ->add('save', 'submit', array('label' => 'Send message'))
+            ->getForm();
+        
+        
+        
+        return $this->render('AppBundle:Customer:contact.html.twig', array(
+            'form' => $form->createView(), 'company' => $company,
+        ));
     }
 
 }
