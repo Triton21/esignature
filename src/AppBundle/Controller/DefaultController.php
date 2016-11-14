@@ -1891,4 +1891,109 @@ class DefaultController extends Controller {
                     'form' => $form->createView(), 'company' => $company, 'name' => $name,
         ));
     }
+    
+    /**
+     * Displays the already signed homepage
+     */
+    public function aboutAction() {
+        $em = $this->getDoctrine()->getManager();
+
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+        if (!$company) {
+            $company = false;
+        }
+        return $this->render('AppBundle:Default:about.html.twig', array(
+                    'company' => $company,
+        ));
+    }
+    
+    /**
+     * Send message from website to the system admin. Use the first email settings as mail server
+     */
+    public function contactAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $login = $this->getUser();
+        $name = $login->getUsername();
+
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+        if (!$company) {
+            $company = false;
+        }
+        $contact = [];
+
+        $form = $this->createFormBuilder($contact)
+                ->add('message', 'textarea', array(
+                    'label' => 'Message',
+                    'required' => true, "attr" => array("col" => "10", "row" => 10)))
+                ->add('name', 'text', array(
+                    'label' => 'Name',
+                    'read_only' => true,
+                    'data' => $name))
+                ->add('phone', 'text', array(
+                    'label' => 'Phone',
+                    ))
+                ->add('email', 'email', array(
+                    'label' => 'Email',
+                    ))
+                ->add('save', 'submit', array('label' => 'Send message'))
+                ->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $textMessage = $form["message"]->getData();
+            $textName = $form["name"]->getData();
+            $textPhone = $form["phone"]->getData();
+            $textEmail = $form["email"]->getData();
+            
+            $messageBody = ' ' . $textMessage . ' From: ' . $textName . ' Phone:' . $textPhone . ' Email: ' . $textEmail;
+            $fromname = 'Esignature';
+            $mySettingArray = $em->getRepository('AppBundle:Settings')
+                    ->findAll();
+            //var_dump($mySetting);die;
+            $mySetting = $mySettingArray[0];
+            $smtp = $mySetting->getSmtp();
+            $port = $mySetting->getPort();
+            $mssl = $mySetting->getEssl();
+            $euser = $mySetting->getEusername();
+            $epass = $mySetting->getEpassword();
+            $auth = $mySetting->getAuth();
+            //$fromname = $mySetting->getFromname();
+            if ($auth) {
+                $transport = \Swift_SmtpTransport::newInstance($smtp, $port)
+                        ->setUsername($euser)
+                        ->setPassword($epass)
+                        ->setAuthMode('PLAIN')
+                ;
+            } else {
+                $transport = \Swift_SmtpTransport::newInstance($smtp, $port, $mssl)
+                        ->setUsername($euser)
+                        ->setPassword($epass)
+                        ->setAuthMode('PLAIN')
+                ;
+            }
+            $mailer = \Swift_Mailer::newInstance($transport);
+            $message = \Swift_Message::newInstance('New message from eSignature' . $textName)
+                    ->setFrom(array($euser => $fromname))
+                    ->setTo('petercsatai@gmail.com')
+                    ->setBody($messageBody, 'text/html')
+            ;
+            $mailer->getTransport()->start();
+            $mailer->send($message);
+            $mailer->getTransport()->stop();
+
+            $this->addFlash(
+                    'notice', 'Your message has been sent!'
+            );
+            return $this->redirectToRoute('app_contact');
+        }
+
+
+        return $this->render('AppBundle:Default:contact.html.twig', array(
+                    'form' => $form->createView(), 'company' => $company,
+        ));
+    }
+    
+    
+    
 }

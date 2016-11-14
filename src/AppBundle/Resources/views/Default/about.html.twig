@@ -1,4 +1,4 @@
-{% extends "::customerbase.html.twig" %}
+{% extends "::base.html.twig" %}
 
 {% block stylesheets %}
 
@@ -20,22 +20,6 @@
                     {% endif %}
                 </p>
                 <br>
-                <p style="margin-top:2em;">
-                    {% if company != false %}
-                        {{ form_start(form) }}
-                        {{ form_widget(form) }}
-                        {{ form_end(form) }}
-                    {% endif %}
-                </p>
-                <p>
-                    {% for flash_message in app.session.flashBag.get('notice') %}
-                    <div class="flash-notice">
-                        <div class="alert alert-success">
-                            <strong>{{ flash_message }}</strong>
-                        </div>
-                    </div>
-                {% endfor %}
-                </p>
                 <br>
                 <p style="text-align:center; margin-top:3em; color:gray;" class="gi-2p">
                     Copyright 2016 A3Software<br/>
@@ -52,12 +36,3 @@
 
 {% endblock %}
 
-{% block javascripts %}
-    <script>
-        $(document).ready(function () {
-            $('#contact').addClass('active');
-
-
-        });
-    </script>
-{% endblock %} 

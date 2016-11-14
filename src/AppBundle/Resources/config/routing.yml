@@ -187,3 +187,11 @@ app_selfUpload:
 app_company:
     path:   /company
     defaults: { _controller: AppBundle:Default:company }
+    
+app_about:
+    path:   /application-about
+    defaults: { _controller: AppBundle:Default:about }
+    
+app_contact:
+    path:   /application-contact
+    defaults: { _controller: AppBundle:Default:contact }

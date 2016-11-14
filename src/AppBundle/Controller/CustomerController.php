@@ -71,7 +71,7 @@ class CustomerController extends Controller {
 
 
         return $this->render('AppBundle:Customer:checkdob.html.twig', array(
-                   'token' => $token, 'form' => $form->createView()));
+                    'token' => $token, 'form' => $form->createView()));
     }
 
     /**
@@ -109,9 +109,9 @@ class CustomerController extends Controller {
         $rawHeading = $myContract->getHeading();
         $rawFirstpage = $myContract->getFirstpage();
         $rawFooter = $myContract->getFooter();
-        
+
         $html = $this->renderView('AppBundle:Customer:displaycontract.html.twig', array(
-            'footer' => $rawFooter, 'firstpage' =>$rawFirstpage, 'heading' => $rawHeading, 'html' => $rawContent,));
+            'footer' => $rawFooter, 'firstpage' => $rawFirstpage, 'heading' => $rawHeading, 'html' => $rawContent,));
 
         $response = new Response(json_encode($html));
         return $response;
@@ -263,86 +263,85 @@ class CustomerController extends Controller {
 
         return true;
     }
-    
+
     /**
      * Generate the pdf file TEST ONLY
      */
     /*
-    public function generatePdftestAction($id) {
-        $em = $this->getDoctrine()->getManager();
+      public function generatePdftestAction($id) {
+      $em = $this->getDoctrine()->getManager();
 
-        $myContract = $em->getRepository('AppBundle:Econtract')
-                ->find($id);
-        if (!$myContract) {
-            return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
-        }
-        $clientImage = $myContract->getClientSignature();
+      $myContract = $em->getRepository('AppBundle:Econtract')
+      ->find($id);
+      if (!$myContract) {
+      return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
+      }
+      $clientImage = $myContract->getClientSignature();
 
-        $rawContent = $myContract->getContent();
-        $rawHeading = $myContract->getHeading();
-        $rawFooter = $myContract->getFooter();
-        $rawFirstpage = $myContract->getFirstpage();
-        $rawSignpage = $myContract->getSignpage();
-        $realSignPage = $this->renderView('AppBundle:Customer:saveclientsignature.html.twig', array(
-            'eContract' => $myContract,));
+      $rawContent = $myContract->getContent();
+      $rawHeading = $myContract->getHeading();
+      $rawFooter = $myContract->getFooter();
+      $rawFirstpage = $myContract->getFirstpage();
+      $rawSignpage = $myContract->getSignpage();
+      $realSignPage = $this->renderView('AppBundle:Customer:saveclientsignature.html.twig', array(
+      'eContract' => $myContract,));
 
-        $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
-        $footer = '<div class="footer">' . $rawFooter . '</div></div>';
-        $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
-        $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
+      $heading = '<div class="relative"><div class="header">' . $rawHeading . '</div>';
+      $footer = '<div class="footer">' . $rawFooter . '</div></div>';
+      $startContent = $heading . '<div class="pagebody">' . $rawContent . '</div>' . $footer;
+      $pageBREAK = '</div><div class="footer">' . $rawFooter . '</div></div><div class="relative"><div class="header">' . $rawHeading . '</div><div class="pagebody">';
 
 
-        $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
-        $content = str_replace('[[page break]]', $pageBREAK, $content);
+      $content = str_replace('<p>[[page break]]', $pageBREAK, $startContent);
+      $content = str_replace('[[page break]]', $pageBREAK, $content);
 
-        $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
-        $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
+      $firstpage = $heading . '<div class="pagebody">' . $rawFirstpage . '</div>' . $footer;
+      $signpage = $heading . '<div class="pagebody">' . $rawSignpage . '' . $realSignPage . '</div>' . $footer;
 
-        $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
-            'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
-        $signImage = $myContract->getSignature();
-        
-        
-        
-        return $this->render('AppBundle:Customer:pdfdisplay.html.twig', array(
-            'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
-        ));
-        
-        /*
+      $html = $this->renderView('AppBundle:Default:previewnewwindow.html.twig', array(
+      'content' => $content, 'firstpage' => $firstpage, 'signpage' => $signpage,));
+      $signImage = $myContract->getSignature();
 
-        //generate pdf here
-        $nowDate = new \DateTime();
-        $nowString = $nowDate->format('d_m_Y_h_i_s');
-        $directoryPath = $this->container->getParameter('kernel.root_dir') . '/../web/Files/' . $id;
-        if (!file_exists($directoryPath)) {
-            mkdir($directoryPath, 0777, true);
-        }
-        $clientName = $myContract->getClient()->getName();
-        $filename = $clientName . '-' . $id . '-' . $nowString . '.pdf';
-        $fullPath = $directoryPath . '/' . $filename;
-        if (file_exists($fullPath)) {
-            rename($fullPath, $fullPath . '_old');
-        }
 
-        $this->get('knp_snappy.pdf')->generateFromHtml(
-                $this->renderView(
-                        'AppBundle:Customer:pdfdisplay.html.twig', array(
-                    'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
-                        )
-                ), $fullPath
-        );
-        //Generate pdf end!
-        //save the filepath to the database
-        $relativePath = 'Files/' . $id . '/' . $filename;
-        $myContract->setFilepath($relativePath);
-        $em->persist($myContract);
-        $em->flush();
-        return true;
-     }
+
+      return $this->render('AppBundle:Customer:pdfdisplay.html.twig', array(
+      'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
+      ));
+
+      /*
+
+      //generate pdf here
+      $nowDate = new \DateTime();
+      $nowString = $nowDate->format('d_m_Y_h_i_s');
+      $directoryPath = $this->container->getParameter('kernel.root_dir') . '/../web/Files/' . $id;
+      if (!file_exists($directoryPath)) {
+      mkdir($directoryPath, 0777, true);
+      }
+      $clientName = $myContract->getClient()->getName();
+      $filename = $clientName . '-' . $id . '-' . $nowString . '.pdf';
+      $fullPath = $directoryPath . '/' . $filename;
+      if (file_exists($fullPath)) {
+      rename($fullPath, $fullPath . '_old');
+      }
+
+      $this->get('knp_snappy.pdf')->generateFromHtml(
+      $this->renderView(
+      'AppBundle:Customer:pdfdisplay.html.twig', array(
+      'html' => $html, 'clientImage' => $clientImage, 'signImage' => $signImage,
+      )
+      ), $fullPath
+      );
+      //Generate pdf end!
+      //save the filepath to the database
+      $relativePath = 'Files/' . $id . '/' . $filename;
+      $myContract->setFilepath($relativePath);
+      $em->persist($myContract);
+      $em->flush();
+      return true;
+      }
      * * 
-         * 
-         */
-    
+     * 
+     */
 
     /**
      * Generate the pdf file
@@ -404,7 +403,6 @@ class CustomerController extends Controller {
                 ), $fullPath
         );
         //Generate pdf end!
-        
         //save the filepath to the database
         $relativePath = 'Files/' . $id . '/' . $filename;
         $myContract->setFilepath($relativePath);
@@ -449,45 +447,103 @@ class CustomerController extends Controller {
         $response = new Response(json_encode($html));
         return $response;
     }
-    
+
     /**
-     * Displays the already signed homepage
+     * About page display
      */
     public function aboutAction() {
         $em = $this->getDoctrine()->getManager();
-        
+
         $company = $em->getRepository('AppBundle:Company')
                 ->findOneBy(array('active' => 1));
         if (!$company) {
             $company = false;
         }
         return $this->render('AppBundle:Customer:about.html.twig', array(
-            'company' => $company,
+                    'company' => $company,
         ));
     }
-    
+
     /**
-     * Displays the already signed homepage
+     * Send message from website. Use the first email settings as mail server
      */
-    public function contactAction() {
+    public function contactAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        
+
         $company = $em->getRepository('AppBundle:Company')
                 ->findOneBy(array('active' => 1));
         if (!$company) {
             $company = false;
         }
         $contact = [];
-        
+
         $form = $this->createFormBuilder($contact)
-            ->add('message', 'textarea')
-            ->add('save', 'submit', array('label' => 'Send message'))
-            ->getForm();
-        
-        
-        
+                ->add('message', 'textarea', array(
+                    'label' => 'Message',
+                    'required' => true, "attr" => array("col" => "10", "row" => 10)))
+                ->add('name', 'text', array(
+                    'label' => 'Name',
+                    'required' => true))
+                ->add('phone', 'text', array(
+                    'label' => 'Phone',
+                    'required' => true))
+                ->add('email', 'email', array(
+                    'label' => 'Email',
+                    'required' => true))
+                ->add('save', 'submit', array('label' => 'Send message'))
+                ->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $textMessage = $form["message"]->getData();
+            $textName = $form["name"]->getData();
+            $textPhone = $form["phone"]->getData();
+            $textEmail = $form["email"]->getData();
+            
+            $messageBody = ' ' . $textMessage . ' From: ' . $textName . ' Phone:' . $textPhone . ' Email: ' . $textEmail;
+            $fromname = 'Esignature';
+            $mySettingArray = $em->getRepository('AppBundle:Settings')
+                    ->findAll();
+            //var_dump($mySetting);die;
+            $mySetting = $mySettingArray[0];
+            $smtp = $mySetting->getSmtp();
+            $port = $mySetting->getPort();
+            $mssl = $mySetting->getEssl();
+            $euser = $mySetting->getEusername();
+            $epass = $mySetting->getEpassword();
+            $auth = $mySetting->getAuth();
+            //$fromname = $mySetting->getFromname();
+            if ($auth) {
+                $transport = \Swift_SmtpTransport::newInstance($smtp, $port)
+                        ->setUsername($euser)
+                        ->setPassword($epass)
+                        ->setAuthMode('PLAIN')
+                ;
+            } else {
+                $transport = \Swift_SmtpTransport::newInstance($smtp, $port, $mssl)
+                        ->setUsername($euser)
+                        ->setPassword($epass)
+                        ->setAuthMode('PLAIN')
+                ;
+            }
+            $mailer = \Swift_Mailer::newInstance($transport);
+            $message = \Swift_Message::newInstance('New message from eSignature' . $textName)
+                    ->setFrom(array($euser => $fromname))
+                    ->setTo('petercsatai@gmail.com')
+                    ->setBody($messageBody, 'text/html')
+            ;
+            $mailer->getTransport()->start();
+            $mailer->send($message);
+            $mailer->getTransport()->stop();
+
+            $this->addFlash(
+                    'notice', 'Your message has been sent!'
+            );
+            return $this->redirectToRoute('customer_contact');
+        }
+
+
         return $this->render('AppBundle:Customer:contact.html.twig', array(
-            'form' => $form->createView(), 'company' => $company,
+                    'form' => $form->createView(), 'company' => $company,
         ));
     }
 
