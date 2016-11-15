@@ -11,37 +11,46 @@
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <style> 
+            @font-face {
+                font-family: 'Drug'; 
+                src:    url({{asset('bundles/app/fonts/Drugs.otf')}}) format('opentype'); 
+            }
+            .myFont {
+                font-family: 'Drug';
+            }
+        </style>
         {%block stylesheets %}
         {%endblock%}
     </head>
 
     <body>
 
-<div class="container" id="indexwhite" style ="text-align: center;">
-    <div style="min-height:12em; font-size: large;"></div>
-    <div style="font-size: 4em; color: white;">DENT<span style="color: red;">1ST</span> ESIGNATURE
-    </div>
-<!-- FOS layout -->
+        <div class="container" id="indexwhite" style ="text-align: center;">
+            <div style="min-height:12em; width: 100%;"></div>
+            <div class="myFont" style="font-size: 4em; color: white;">DENT<span style="color: red;">1ST</span> ESIGNATURE
+            </div>
+            <!-- FOS layout -->
 
-        
 
-        <div>
-            {% block body %}
-            {% endblock  %}
+
+            <div>
+                {% block body %}
+                {% endblock  %}
+            </div>
+            <div style="min-height:20em;"></div>
+            <div class="myFont" style="font-size:20px; color: white;">
+                Application created by Peter Csatai (2016)
+            </div>
         </div>
-        <div style="min-height:20em;"></div>
-        <div style="font-size: large; color: white;">
-        Application created by Peter Csatai (2016)
-        </div>
-</div>
-    {%block container %}
-    {%endblock%}
+        {%block container %}
+        {%endblock%}
 
 
 
 
-    {%block javascripts %}
-    {%endblock%}
-</body>
+        {%block javascripts %}
+        {%endblock%}
+    </body>
 </html>
 

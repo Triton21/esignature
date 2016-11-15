@@ -28,7 +28,6 @@
 
         p.form-title
         {
-            font-family: 'Open Sans' , sans-serif;
             font-size: 20px;
             font-weight: 600;
             text-align: center;
@@ -207,6 +206,16 @@
         /* add padding  */
         .left-addon input  { padding-left:  30px; }
         .right-addon input { padding-right: 30px; }
+        @font-face {
+            font-family: 'Drug'; 
+            src:    url({{asset('bundles/app/fonts/Drugs.otf')}}) format('opentype'); 
+        }
+        .myFont {
+            font-family: 'Drug';
+        }
+        .inputFont {
+            font-weight:bold;
+        }
     </style>
 {%endblock%}
 
@@ -225,7 +234,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 myFont">
 
                 <div class="wrap">
                     <p class="form-title">
@@ -243,7 +252,7 @@
 
 
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate')}}" />
-                        <input type="submit" class="btn btn-success btn-sm" value="Sign In" id="_submit" name="_submit" />
+                        <input type="submit" class="btn btn-success btn-sm" style="font-weight:bold;" value="Sign In" id="_submit" name="_submit" />
                         <div class="remember-forgot">
                             <div class="row">
                                 <div class="col-md-12 forgot-pass-content">
