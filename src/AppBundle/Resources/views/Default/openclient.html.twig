@@ -109,7 +109,7 @@
 
 
     <div class="container">
-        <div class="col-md-12">
+        <div class="row">
 
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -123,7 +123,7 @@
 
                         <!-- PAGINATOR END -->
 
-                        <div class="col-md-12">
+                        <div class="row">
                             <br>
                             <br>
                             <div class="table-responsive">
@@ -172,106 +172,108 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
+        <div class="row">
 
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <div class="col-lg-12">
+                    <div class="row">
                         <div class="col-lg-6">
                             <h2>Contracts</h2>
                         </div>                            
                     </div>
-                    <div class="col-lg-12">
-                        <table class="table table-hover">
-                            <thead>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Email
-                            </th>
-                            <th>
-                                User
-                            </th>
-                            <th>
-                                Created At
-                            </th>
-                            <th>
-                                Expire At
-                            </th>
-                            <th>
-                                Token
-                            </th>
-                            <th>
-                                Signed
-                            </th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            </thead>
-                            {% for econtract in client.econtracts %}
-                                <tr id="econtractRow{{econtract.id}}"
-                                    {% if econtract.tokenactive == false %}
-                                        class="inactiveRow" 
-                                    {% else %}
-                                        class="activeRow"    
-                                    {% endif %}
-                                    >
-                                    <td>
-                                        {{econtract.client.name}}
-                                    </td>
-                                    <td>
-                                        {{econtract.email}}
-                                    </td>
-                                    <td>
-                                        {{econtract.username}}
-                                    </td>
-                                    <td>
-                                        {{econtract.createdAt|date('d-m-Y') }}
-                                    </td>
-                                    <td>
-                                        {{econtract.tokenExpiry|date('d-m-Y') }}
-                                    </td>
-                                    <td>
-                                        <span id="activeSpan{{econtract.id}}"
-                                              {% if econtract.tokenactive == true %}
-                                                  class="glyphicon glyphicon-ok greenColor"     
-                                              {% else %}
-                                                  class="glyphicon glyphicon-remove redColor"    
-                                              {% endif %}
-                                              ></span>
-                                    </td>
-                                    <td>
-                                        <span {% if econtract.patientSigned == true %}
-                                            class="glyphicon glyphicon-ok greenColor"     
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    User
+                                </th>
+                                <th>
+                                    Created At
+                                </th>
+                                <th>
+                                    Expire At
+                                </th>
+                                <th>
+                                    Token
+                                </th>
+                                <th>
+                                    Signed
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                </thead>
+                                {% for econtract in client.econtracts %}
+                                    <tr id="econtractRow{{econtract.id}}"
+                                        {% if econtract.tokenactive == false %}
+                                            class="inactiveRow" 
                                         {% else %}
-                                            class="glyphicon glyphicon-remove redColor"    
-                                            {% endif %}
-                                                ></span>
-                                        </td>
-                                        <td style="vertical-align: middle;">
-                                            <canvas id="clientSign{{econtract.id}}" width="120" height="36" style="border:1px solid #000000; "></canvas>
+                                            class="activeRow"    
+                                        {% endif %}
+                                        >
+                                        <td>
+                                            {{econtract.client.name}}
                                         </td>
                                         <td>
-                                            <a href="{{path('app_resend_econtract', {'id': econtract.id })}}" id="resendContract" role="button" class="btn btn-sm btn-default">Resend</a>
+                                            {{econtract.email}}
                                         </td>
                                         <td>
-                                            <a href="#" id="openContract" action-data="{{econtract.id}}" role="button" class="btn btn-sm btn-default">Open</a>
+                                            {{econtract.username}}
                                         </td>
                                         <td>
-                                            <a href="#" id="disableContract" action-data="{{econtract.id}}" role="button" 
-                                               {% if econtract.tokenactive == true %}
-                                                   class="btn btn-sm btn-danger">Disable
-                                               {% else %}
-                                                   class="btn btn-sm btn-success">Enable        
-                                               {% endif %}
-                                            </a>
+                                            {{econtract.createdAt|date('d-m-Y') }}
                                         </td>
-                                    </tr>
+                                        <td>
+                                            {{econtract.tokenExpiry|date('d-m-Y') }}
+                                        </td>
+                                        <td>
+                                            <span id="activeSpan{{econtract.id}}"
+                                                  {% if econtract.tokenactive == true %}
+                                                      class="glyphicon glyphicon-ok greenColor"     
+                                                  {% else %}
+                                                      class="glyphicon glyphicon-remove redColor"    
+                                                  {% endif %}
+                                                  ></span>
+                                        </td>
+                                        <td>
+                                            <span {% if econtract.patientSigned == true %}
+                                                class="glyphicon glyphicon-ok greenColor"     
+                                            {% else %}
+                                                class="glyphicon glyphicon-remove redColor"    
+                                                {% endif %}
+                                                    ></span>
+                                            </td>
+                                            <td style="vertical-align: middle;">
+                                                <canvas id="clientSign{{econtract.id}}" width="120" height="36" style="border:1px solid #000000; "></canvas>
+                                            </td>
+                                            <td>
+                                                <a href="{{path('app_resend_econtract', {'id': econtract.id })}}" id="resendContract" role="button" class="btn btn-sm btn-default">Resend</a>
+                                            </td>
+                                            <td>
+                                                <a href="#" id="openContract" action-data="{{econtract.id}}" role="button" class="btn btn-sm btn-default">Open</a>
+                                            </td>
+                                            <td>
+                                                <a href="#" id="disableContract" action-data="{{econtract.id}}" role="button" 
+                                                   {% if econtract.tokenactive == true %}
+                                                       class="btn btn-sm btn-danger">Disable
+                                                   {% else %}
+                                                       class="btn btn-sm btn-success">Enable        
+                                                   {% endif %}
+                                                </a>
+                                            </td>
+                                        </tr>
 
-                                    {% endfor %}
-                                    </table>
+                                        {% endfor %}
+                                        </table>
+                                    </div>    
                                 </div>    
                             </div>                            
                         </div>                            
