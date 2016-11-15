@@ -110,7 +110,7 @@
     </div>
 
 
-        <div class="col-md-12">
+        <div class="row">
 
             {% if result == false %}
                 <div class="panel panel-default">
@@ -122,7 +122,7 @@
 
                             <!-- PAGINATOR -->
 
-                            <div class="col-lg-4">
+                            <div class="col-lg-4" style="margin-top:5px;">
                                 <div style="min-height: 22px; width: 100%"></div>
                                 {%if pager.pagedown == false%} <span class="gi-7p glyphicon glyphicon-chevron-left"></span>{% else%}<a href="{{ path('app_sentcontracts', { 'page': pager.pagedown })}}"><span class="gi-7p glyphicon glyphicon-chevron-left"></span></a>{%endif%}
                                 {% for all in pager.pagesarray %}{% if pager.page == all %} <button type="button" class="btn btn-sm disabled">{{all}}</button>{%else%}
@@ -130,12 +130,15 @@
                                             {% endfor %}
                                                 {%if pager.pageup == false%} <span class="gi-7p glyphicon glyphicon-chevron-right"></span>{% else%}<a href="{{ path('app_sentcontracts', { 'page': pager.pageup })}}"><span class="gi-7p glyphicon glyphicon-chevron-right"></span></a>{%endif%}
                                         </div>
-                                        <div class="col-lg-5">
+                                        <div class="col-lg-5" style="margin-top:5px;">
                                             <div class="col-lg-8">
                                                 {{ form_start(form) }}
-                                                <div class="form-group">
+                                                <div class="form-group has-feedback">
+                                                    
                                                     {{ form_errors(form.search) }}
-                                                    {{ form_widget(form.search) }}  
+                                                    
+                                                    {{ form_widget(form.search) }} 
+                                                    <i class="glyphicon glyphicon-search form-control-feedback"></i>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4">
@@ -146,8 +149,7 @@
                                     <div class="clearfix"></div>
 
                                     <!-- PAGINATOR END -->
-
-                                    <div class="col-md-12">
+                                    <div class="row">
                                         <br>
                                         <br>
                                         <div class="table-responsive">

@@ -185,22 +185,41 @@
             padding: 10px;
             left: 45%;
         }
+        /* enable absolute positioning */
+        .inner-addon { 
+            position: relative; 
+        }
+
+        /* style icon */
+        .inner-addon .glyphicon {
+            position: absolute;
+            padding: 10px;
+            pointer-events: none;
+        }
+
+        /* align icon */
+        .left-addon .glyphicon  { left:  0px;}
+        .right-addon .glyphicon { right: 0px;}
+
+        /* add padding  */
+        .left-addon input  { padding-left:  30px; }
+        .right-addon input { padding-right: 30px; }
     </style>
 {%endblock%}
 
 {% block body %}
-    
+
     {% if error %}
-            <div class="alert alert-danger" role="alert">Invalid username or password! Please check it and try again!</div>
-        {% endif %}
-        {% if app.session.flashbag.has('success') %}
-            <div class="alert alert-success">
-                {% for message in app.session.flashbag.get('success') %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %}
-    
+        <div class="alert alert-danger" role="alert">Invalid username or password! Please check it and try again!</div>
+    {% endif %}
+    {% if app.session.flashbag.has('success') %}
+        <div class="alert alert-success">
+            {% for message in app.session.flashbag.get('success') %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -209,22 +228,22 @@
                     <p class="form-title">
                         Sign In</p>
                     <form class="login" action="{{ path('login_check') }}" method="post">
-                        <input type="text" placeholder="Username" id="email" name="_email" required="required"  />
-                        
-                        <input type="password" placeholder="Password" id="password" name="_password" required="required" />
+
+                        <div class="inner-addon left-addon">
+                            <i class="glyphicon glyphicon-user" style="color:white; margin-top: -5px; margin-left: 217px;"></i>
+                            <input type="text" placeholder="Username" id="email" name="_email" required="required"  />
+                        </div>
+                        <div class="inner-addon left-addon">
+                            <i class="glyphicon glyphicon-lock" style="color:white; margin-top: -5px; margin-left: 217px;"></i>
+                            <input type="password" placeholder="Password" id="password" name="_password" required="required" />
+                        </div>
+
+
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate')}}" />
                         <input type="submit" class="btn btn-success btn-sm" value="Sign In" id="_submit" name="_submit" />
                         <div class="remember-forgot">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
-                                            Remember Me
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 forgot-pass-content">
+                                <div class="col-md-12 forgot-pass-content">
                                     <a href="javascription:void(0)" class="forgot-pass">Forgot Password</a>
                                 </div>
                             </div>
@@ -234,7 +253,7 @@
             </div>
         </div>
     </div>
-    
+
 
 
 {%endblock%}
