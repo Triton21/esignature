@@ -61,7 +61,7 @@ class DefaultController extends Controller {
         $name = $user->getUsername();
         // replace this example code with whatever you need
         return $this->render('AppBundle:Default:index.html.twig', array(
-                  'signature' => $signature,  'company' => $company, 'name' => $name,));
+                    'signature' => $signature, 'company' => $company, 'name' => $name,));
     }
 
     /**
@@ -204,8 +204,9 @@ class DefaultController extends Controller {
         $initHeading = '<br><br><hr>';
         $initFooter = '<hr>';
 
+        $initFirstpage = $this->renderView('AppBundle:Default:initfirstpage.html.twig');
         $initSignpage = $this->renderView('AppBundle:Default:signlastpage.html.twig');
-        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFooter, $initSignpage, $signatureArray), $templateSettings);
+        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFirstpage, $initFooter, $initSignpage, $signatureArray), $templateSettings);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -221,7 +222,7 @@ class DefaultController extends Controller {
             $mySignature = $em->getRepository('AppBundle:Selfsignature')
                     ->find($signId);
             //var_dump($mySignature);die;
-            
+
             $signPageText = $form["signpage"]->getData();
             $signPageText = str_replace('%%printname%%', $mySignature->getSignname(), $signPageText);
             $signPageText = str_replace('%%position%%', $mySignature->getPosition(), $signPageText);
@@ -229,10 +230,10 @@ class DefaultController extends Controller {
             $signPageText = str_replace('%%address%%', $mySignature->getAddressfirstline(), $signPageText);
             $signPageText = str_replace('%%town%%', $mySignature->getAddresstown(), $signPageText);
             $signPageText = str_replace('%%postcode%%', $mySignature->getPostcode(), $signPageText);
-            
+
             /*
-            $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
-                'mySignature' => $mySignature));
+              $signPage = $this->renderView('AppBundle:Default:savelastpage.html.twig', array(
+              'mySignature' => $mySignature));
              * 
              */
             $templateSettings->setSignpage($signPageText);
@@ -292,9 +293,9 @@ class DefaultController extends Controller {
         $initHeading = $templateSettings->getHeading();
         $initFooter = $templateSettings->getFooter();
         $initSignpage = $templateSettings->getSignpage();
+        $initFirstpage = $templateSettings->getFirstpage();
 
-
-        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFooter, $initSignpage, $signatureArray), $templateSettings);
+        $form = $this->createForm(new TemplatesettingsType($initHeading, $initFirstpage, $initFooter, $initSignpage, $signatureArray), $templateSettings);
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -736,6 +737,8 @@ class DefaultController extends Controller {
         $client = $em->getRepository('AppBundle:Client')
                 ->find($clientId);
         $html = 'test';
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
 
 
         $clientName = $client->getName();
@@ -747,6 +750,8 @@ class DefaultController extends Controller {
         $rawHeading = $myTemplate->getHeading();
         $rawFooter = $myTemplate->getFooter();
         $rawFirstpage = $myTemplate->getFirstpage();
+        $rawFirstpage = $this->replaceFirstPage($rawFirstpage, $client, $company, $today);
+        
         $rawSignpage = $myTemplate->getSignpage();
         $rawContent = $myTemplate->getContent();
 
@@ -1078,16 +1083,20 @@ class DefaultController extends Controller {
                     ->find($settid);
             $client = $em->getRepository('AppBundle:Client')
                     ->find($clientID);
-            $clientName = $client->getName();
             $trimmedToEmail = strtolower(trim($toemailRaw));
             $toEmail = str_replace(array("\r", "\n"), '', $trimmedToEmail);
-
-
+            $firstPageRaw = $template->getFirstpage();
+            $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+            /*
+            $clientName = $client->getName();
             $addressFirstLine = $client->getAddressfirstline();
             $addressTown = $client->getAddresstown();
             $postcode = $client->getPostcode();
+             * 
+             */
             $today = date("d/F/Y");
-            $signPage = $template->getSignpage();
+            $signPageRaw = $template->getSignpage();
 
             $this->sendEmail($client, $setting, $toEmail, $messageBody, $subject);
 
@@ -1096,14 +1105,13 @@ class DefaultController extends Controller {
             $eContract->setContent($template->getContent());
             $eContract->setHeading($template->getHeading());
             $eContract->setFooter($template->getFooter());
-            $eContract->setFirstpage($template->getFirstpage());
+            
+            //replace company and client details in the first page
+            $firstPage = $this->replaceFirstPage($firstPageRaw, $client, $company, $today);
+            $eContract->setFirstpage($firstPage);
 
             //replace placeholders in the last page as name and address
-            $signPage = str_replace('%%clientname%%', $clientName, $signPage);
-            $signPage = str_replace('%%firstlineaddress%%', $addressFirstLine, $signPage);
-            $signPage = str_replace('%%addresstown%%', $addressTown, $signPage);
-            $signPage = str_replace('%%postcode%%', $postcode, $signPage);
-            $signPage = str_replace('%%date%%', $today, $signPage);
+            $signPage = $this->replaceSignPage($signPageRaw, $client, $today);
             $eContract->setSignpage($signPage);
 
             $eContract->setSignature($template->getSignature());
@@ -1134,6 +1142,51 @@ class DefaultController extends Controller {
                     'emailtemplates' => $emailtemplates, 'settings' => $settings, 'etemplates' => $etemplates, 'form' => $form->createView(), 'name' => $name,));
     }
 
+    /** Replace the client personal details in the last page of the contract
+     * @param $signPageRaw HTML code
+     * @param $client object
+     * @param $today date string
+     * @return $signPage HTML code
+     */
+    public function replaceSignPage($signPageRaw, $client, $today) {
+        if($today === false) {
+            $today = date("d/F/Y");
+        }
+        $signPage = str_replace('%%clientname%%', $client->getName(), $signPageRaw);
+        $signPage = str_replace('%%firstlineaddress%%', $client->getAddressfirstline(), $signPage);
+        $signPage = str_replace('%%addresstown%%', $client->getAddresstown(), $signPage);
+        $signPage = str_replace('%%postcode%%', $client->getPostcode(), $signPage);
+        $signPage = str_replace('%%date%%', $today, $signPage);
+        return $signPage;
+    }
+    
+    /** Replace the client personal details in the last page of the contract
+     * @param $signPageRaw HTML code
+     * @param $client object
+     * @param $today date string
+     * @return $signPage HTML code
+     */
+    public function replaceFirstPage($firstPageRaw, $client, $company, $today) {
+        
+        if($today === false) {
+            $today = date("d/F/Y");
+        }
+        /*
+        $em = $this->getDoctrine()->getManager();
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+         * 
+         */
+        $firstPage = str_replace('%%clientname%%', $client->getName(), $firstPageRaw);
+        $firstPage = str_replace('%%firstlineaddress%%', $client->getAddressfirstline(), $firstPage);
+        $firstPage = str_replace('%%addresstown%%', $client->getAddresstown(), $firstPage);
+        $firstPage = str_replace('%%postcode%%', $client->getPostcode(), $firstPage);
+        $firstPage = str_replace('%%date%%', $today, $firstPage);
+        $firstPage = str_replace('%%company%%', $company->getCompanyName(), $firstPage);
+        $firstPage = str_replace('%%address%%', $company->getAddress(), $firstPage);
+        return $firstPage;
+    }
+
     /**
      * Resend saved econtract to a previously saved client. Token link will be regenerated, link expiry reset.
      * 
@@ -1147,11 +1200,6 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $name = $user->getUsername();
-        /*
-          $etemplates = $em->getRepository('AppBundle:Etemplate')
-          ->findAll();
-         * 
-         */
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->find($id);
         //var_dump($eContract);die;
@@ -1349,7 +1397,6 @@ class DefaultController extends Controller {
         //fetch templates with limit and offset
         $econtracts = $em->getRepository('AppBundle:Econtract')
                 ->findByLimitOffset($offset, $limit);
-        //var_dump($econtracts[0]->getClient()->getName());die;
 
         $pager = new Paginator($page, $countAll, $limit);
 
@@ -1391,7 +1438,6 @@ class DefaultController extends Controller {
         if (empty($result)) {
             $result = 'no result';
         }
-        //var_dump($result);die;
         return $result;
     }
 
@@ -1442,7 +1488,6 @@ class DefaultController extends Controller {
                 ->getForm();
 
         $form->handleRequest($request);
-
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -1496,7 +1541,7 @@ class DefaultController extends Controller {
     }
 
     /**
-     * Persist drawing to database
+     * Persist drawing png code and signature personal details to the database
      * 
      */
     public function ajaxsketchAction(Request $request) {
@@ -1551,6 +1596,10 @@ class DefaultController extends Controller {
         return $this->redirectToRoute('app_selfSignature');
     }
 
+    /**
+     * Create the autocomplete client Object
+     * @return Response
+     */
     public function autocompleteAction() {
         $em = $this->getDoctrine()->getManager();
         $autocomplete = $em->getRepository('AppBundle:Client')
@@ -1563,6 +1612,10 @@ class DefaultController extends Controller {
         return $response;
     }
 
+    /**
+     * Mailserver settings display and form for new settings
+     * @param request $request
+     */
     public function emailsettingsAction(request $request) {
 
         $login = $this->getUser();
@@ -1595,10 +1648,8 @@ class DefaultController extends Controller {
         if ($form2->isValid()) {
 
             $data = $form->getData();
-            //var_dump($data);die;
             $settNameRaw = $data->getSettname();
             $settName = trim($settNameRaw);
-
             //persit data to database
             $settings->setCreatedAt(new \DateTime());
             $settings->setActive(true);
@@ -1857,15 +1908,18 @@ class DefaultController extends Controller {
             $heading = '<p style="text-align:center">' . $company->getCompanyName() . '<br />' . $company->getWebsite() . '</p><hr />';
             $footer = '<hr /><p style="text-align:center"><strong>' .
                     $company->getCompanyName() . '</strong><br /><strong>'
-                    . $company->getWebsite() . '</strong><br /><strong>Email:</strong> '
-                    . $company->getEmail() . ' &nbsp;<strong>Address:</strong> '
-                    . $company->getAddress() . '<br /><strong>Phone:</strong> '
-                    . $company->getPhone() . '</p>';
-            $firstpage = '<p style="text-align: center;">&nbsp;</p>
-                            <p style="text-align: center;">&nbsp;</p>
-                            <p style="text-align: center;">&nbsp;</p>
-                            <p style="text-align: center;"><span style="font-size:36px">Customer contract</span></p>';
-            
+                    . $company->getWebsite() . '</strong><br />Email:<strong> '
+                    . $company->getEmail() . ' &nbsp;</strong>Address:<strong> '
+                    . $company->getAddress() . '</strong><br />Phone:<strong> '
+                    . $company->getPhone() . '</strong></p>';
+            $firstpage = $this->renderView('AppBundle:Default:initfirstpage.html.twig');
+            /*
+              $firstpage = '<p style="text-align: center;">&nbsp;</p>
+              <p style="text-align: center;">&nbsp;</p>
+              <p style="text-align: center;">&nbsp;</p>
+              <p style="text-align: center;"><span style="font-size:36px">Customer contract</span></p>';
+             * 
+             */
             $defaultettings = $em->getRepository('AppBundle:Templatesettings')
                     ->findOneBy(array('settingsname' => 'Default'));
             if ($defaultettings) {
@@ -1891,9 +1945,9 @@ class DefaultController extends Controller {
                     'form' => $form->createView(), 'company' => $company, 'name' => $name,
         ));
     }
-    
+
     /**
-     * Displays the already signed homepage
+     * Displays the saved company details
      */
     public function aboutAction() {
         $em = $this->getDoctrine()->getManager();
@@ -1907,9 +1961,10 @@ class DefaultController extends Controller {
                     'company' => $company,
         ));
     }
-    
+
     /**
-     * Send message from website to the system admin. Use the first email settings as mail server
+     * Send message from website to the system admin. 
+     * It uses the first email settings as mail server
      */
     public function contactAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -1933,10 +1988,10 @@ class DefaultController extends Controller {
                     'data' => $name))
                 ->add('phone', 'text', array(
                     'label' => 'Phone',
-                    ))
+                ))
                 ->add('email', 'email', array(
                     'label' => 'Email',
-                    ))
+                ))
                 ->add('save', 'submit', array('label' => 'Send message'))
                 ->getForm();
         $form->handleRequest($request);
@@ -1945,7 +2000,7 @@ class DefaultController extends Controller {
             $textName = $form["name"]->getData();
             $textPhone = $form["phone"]->getData();
             $textEmail = $form["email"]->getData();
-            
+
             $messageBody = ' ' . $textMessage . ' From: ' . $textName . ' Phone:' . $textPhone . ' Email: ' . $textEmail;
             $fromname = 'Esignature';
             $mySettingArray = $em->getRepository('AppBundle:Settings')
@@ -1993,7 +2048,5 @@ class DefaultController extends Controller {
                     'form' => $form->createView(), 'company' => $company,
         ));
     }
-    
-    
-    
+
 }

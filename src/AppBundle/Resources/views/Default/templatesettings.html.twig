@@ -326,7 +326,7 @@
 
                                 CKEDITOR.replace('appbundle_templatesettings_heading');
                                 CKEDITOR.replace('appbundle_templatesettings_footer');
-                                CKEDITOR.replace('appbundle_templatesettings_firstpage');
+                                //CKEDITOR.replace('appbundle_templatesettings_firstpage');
                                 //CKEDITOR.replace('appbundle_templatesettings_signpage');
 
                                 $(function () {
@@ -385,7 +385,8 @@
                                 function newWindow() {
                                     var headinggText = CKEDITOR.instances.appbundle_templatesettings_heading.getData();
                                     var footerText = CKEDITOR.instances.appbundle_templatesettings_footer.getData();
-                                    var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
+                                    //var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
+                                    var firstpageText = $('#appbundle_templatesettings_firstpage').val();
                                     var signpageText = $('#appbundle_templatesettings_signpage').val();
                                     var signId = $('#appbundle_templatesettings_signatureid').val();
                                     console.log(signId);
@@ -448,7 +449,8 @@
                                     var contentText = '';
                                     var headingtestText = CKEDITOR.instances.appbundle_templatesettings_heading.getData();
                                     var footerText = CKEDITOR.instances.appbundle_templatesettings_footer.getData();
-                                    var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
+                                    var firstpageText = $('#appbundle_templatesettings_firstpage').val();
+                                    //var firstpageText = CKEDITOR.instances.appbundle_templatesettings_firstpage.getData();
                                     var signpageText = $('#appbundle_templatesettings_signpage').val();
                                     var signId = $('#appbundle_templatesettings_signatureid').val();
                                     var data = {'content': contentText, 'heading': headingtestText, 'footer': footerText, 'firstpage': firstpageText, 'signpage': signpageText, 'signId': signId};

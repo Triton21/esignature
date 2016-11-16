@@ -11,13 +11,15 @@ class TemplatesettingsType extends AbstractType
     
     
     private $initHeading;
+    private $initFirstpage;
     private $initFooter;
     private $initSignpage;
     private $signatureArray;
     
     
-    function __construct($initHeading, $initFooter, $initSignpage, $signatureArray) {
+    function __construct($initHeading, $initFirstpage, $initFooter, $initSignpage, $signatureArray) {
         $this->initHeading = $initHeading;
+        $this->initFirstpage = $initFirstpage;
         $this->initFooter = $initFooter;
         $this->initSignpage = $initSignpage;
         $this->signatureArray = $signatureArray;
@@ -45,6 +47,7 @@ class TemplatesettingsType extends AbstractType
                 ))
                 ->add('firstpage', 'textarea', array(
                     'label' => 'Firstpage',
+                    'data' => $this->initFirstpage,
                     'required' => true,
                     
                 ))
