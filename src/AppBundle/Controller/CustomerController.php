@@ -23,23 +23,46 @@ class CustomerController extends Controller {
         $ipblacklist = $em->getRepository('AppBundle:Etemplate')
                 ->findAll();
         $ip = $request->getClientIp();
+        //check if token is exist. If not redirect to access denied page
         if ($token == 'nonexist') {
             $error = 'token nonexist';
             return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
         }
+        //check if the token is valid. If valid, create an ip log in the database
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->findOneBy(array('token' => $token));
         if (!$eContract) {
             $error = 'eContract not found in database';
             return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
+        } else {
+            //check if the Ip log has been created
+            $ipLog = $em->getRepository('AppBundle:Iplog')
+                    ->findOneBy(array('token' => $token));
+            if (!$ipLog) {
+                $ipLog = new Iplog();
+                $ipLog->setIp($ip);
+                $ipLog->setToken($token);
+                $ipLog->setCreatedAt(new \DateTime());
+                $em->persist($ipLog);
+                $em->flush();
+            } else {
+                //check if DoB submission failed more than 4 times
+                $wrongDob = $ipLog->getWrongdob();
+                if ($wrongDob > 3) {
+                    $error = 'Date of Birth submission failed!';
+                    return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
+                }
+            }
         }
+
+
         $isSigned = $eContract->getPatientSigned();
         if ($isSigned) {
             return $this->redirectToRoute('customer_alreadysigned', array('id' => $ip));
         }
         $active = $eContract->getTokenactive();
         if (!$active) {
-            $error = 'eContract is not active';
+            $error = 'Contract is not active';
             return $this->redirectToRoute('customer_accessdenied', array('id' => $ip, 'error' => $error));
         }
 
@@ -66,12 +89,22 @@ class CustomerController extends Controller {
 
             if ($dobString == $savedDobString) {
                 return $this->redirectToRoute('customer_display_contract', array('token' => $token, 'dob' => $dobString));
+            } else {
+                //User submitted wrong DoB!
+                $wrongDob = $ipLog->getWrongdob();
+                if (!$wrongDob) {
+                    $newWrongDob = 1;
+                } else {
+                    $newWrongDob = $wrongDob + 1;
+                }
+                $ipLog->setWrongdob($newWrongDob);
+                $em->persist($ipLog);
+                $em->flush();
             }
         }
 
-
         return $this->render('AppBundle:Customer:checkdob.html.twig', array(
-                    'token' => $token, 'form' => $form->createView()));
+                  'ipLog' => $ipLog,  'token' => $token, 'form' => $form->createView()));
     }
 
     /**
@@ -162,10 +195,10 @@ class CustomerController extends Controller {
     /**
      * Displays the not found homepage
      */
-    public function accessDeniedAction($ip) {
+    public function accessDeniedAction($ip, $error) {
 
         return $this->render('AppBundle:Customer:access.html.twig', array(
-                    'ip' => $ip,));
+                    'ip' => $ip, 'error' => $error,));
     }
 
     /**
@@ -465,7 +498,7 @@ class CustomerController extends Controller {
     }
 
     /**
-     * Send message from website. Use the first email settings as mail server
+     * Send message from website to the system admin. Use the first email settings as mail server
      */
     public function contactAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
@@ -498,7 +531,7 @@ class CustomerController extends Controller {
             $textName = $form["name"]->getData();
             $textPhone = $form["phone"]->getData();
             $textEmail = $form["email"]->getData();
-            
+
             $messageBody = ' ' . $textMessage . ' From: ' . $textName . ' Phone:' . $textPhone . ' Email: ' . $textEmail;
             $fromname = 'Esignature';
             $mySettingArray = $em->getRepository('AppBundle:Settings')

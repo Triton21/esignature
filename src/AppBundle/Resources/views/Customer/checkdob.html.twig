@@ -45,8 +45,8 @@
             margin-top: 6px;
         }
         .innerDiv {
-            width: 40%;
-            margin: 0 auto;
+            width: 100%;
+            //margin: auto;
             text-align: center;
         }
 
@@ -77,13 +77,20 @@
             <label for="form_dob">Please verify your Date of Birth</label>
             {{ form_errors(form.dob) }}
             {{ form_widget(form.dob) }}
-            
-            <div class="innerDiv" style="margin-top:10px;">
-            {{ form_end(form) }}
-            </div>
-
-
         </div>
+        <div class="col-xs-offset-3 col-xs-6">
+            <div class="innerDiv" style="margin-top:10px; margin-left: -25px;">
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <div class="col-xs-offset-3 col-xs-6" style="margin-top:10px;">
+            {% if ipLog.wrongdob == 1 %}<div class="alert alert-warning" style="text-align:center;font-weight: bold;">Unsuccessful! Attempt remains: 4</div>
+            {% elseif ipLog.wrongdob == 2 %}<div class="alert alert-warning" style="text-align:center;font-weight: bold;">Unsuccessful! Attempt remains: 3</div>
+            {% elseif ipLog.wrongdob == 3 %}<div class="alert alert-warning" style="text-align:center;font-weight: bold;">Unsuccessful! Attempt remains: 2</div>
+            {% elseif ipLog.wrongdob == 4 %}<div class="alert alert-warning" style="text-align:center;font-weight: bold;">Unsuccessful! Attempt remains: 1</div>
+            {% endif %}
+        </div>
+
     </div>
 
 

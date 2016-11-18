@@ -15,6 +15,11 @@
                     <p style="text-align:center; margin-top:2em;">
                         Page unavailable. Please contact out customer service for further assistance.
                     </p>
+                    {% if error != 'non' %}
+                    <p style="text-align:center; margin-top:2em;">
+                        Error: <strong>{{error}}</strong>
+                    </p>
+                    {% endif %}
                     <br>
             </div>
         </div>

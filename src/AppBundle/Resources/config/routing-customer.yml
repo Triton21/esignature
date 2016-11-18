@@ -7,8 +7,8 @@ customer_display_contract:
     defaults: { _controller: AppBundle:Customer:displayContract, token:nonexist, dob:dob }
     
 customer_accessdenied:
-    path:   /access-denied/{ip}
-    defaults: { _controller: AppBundle:Customer:accessDenied, ip:non }
+    path:   /access-denied/{ip}/{error}
+    defaults: { _controller: AppBundle:Customer:accessDenied, ip:non, error:non }
     
 customer_alreadysigned:
     path:   /already-signed/{ip}
