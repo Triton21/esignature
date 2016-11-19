@@ -104,7 +104,7 @@ class CustomerController extends Controller {
         }
 
         return $this->render('AppBundle:Customer:checkdob.html.twig', array(
-                  'ipLog' => $ipLog,  'token' => $token, 'form' => $form->createView()));
+                    'ipLog' => $ipLog, 'token' => $token, 'form' => $form->createView()));
     }
 
     /**
@@ -224,10 +224,26 @@ class CustomerController extends Controller {
         if (!$eContract) {
             return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
         }
-        $this->generatePdf($eContract->getId());
-        $this->sendEmail($eContract->getId());
+        $pdf = $eContract->getFilepath();
+        if (!$pdf) {
+            $this->generatePdf($eContract->getId());
+            $this->sendEmail($eContract->getId());
+        }
 
         return $this->render('AppBundle:Customer:signednote.html.twig');
+    }
+    
+    /**
+     * Resend the pdf file by email
+     */
+    public function resendpdfAction($id, $page) {
+        $em = $this->getDoctrine()->getManager();
+        $eContract = $em->getRepository('AppBundle:Econtract')
+                ->find($id);
+        if($eContract) {
+           $this->sendEmail($id); 
+        }
+        return $this->redirectToRoute('app_sentcontracts', array('page' => $page, 'resend' => 'success'));
     }
 
     /**
@@ -414,7 +430,7 @@ class CustomerController extends Controller {
         $signImage = $myContract->getSignature();
 
 
-        //generate pdf here
+        //generate pdf start
         $nowDate = new \DateTime();
         $nowString = $nowDate->format('d_m_Y_h_i_s');
         $directoryPath = $this->container->getParameter('kernel.root_dir') . '/../web/Files/' . $id;

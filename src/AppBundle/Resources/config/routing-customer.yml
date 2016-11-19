@@ -38,3 +38,7 @@ customer_contact:
     path:   /contact
     defaults: { _controller: AppBundle:Customer:contact }
     
+customer_resendpdf:
+    path:   /resendpdf/{id}/{page}
+    defaults: { _controller: AppBundle:Customer:resendpdf, id:id, page:1 }
+    

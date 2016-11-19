@@ -1378,7 +1378,7 @@ class DefaultController extends Controller {
      * Displays sent Econtracts
      * @return list of sent econtracts
      */
-    public function sentContractsAction(Request $request, $page) {
+    public function sentContractsAction(Request $request, $page, $resend) {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
         }
@@ -1416,11 +1416,11 @@ class DefaultController extends Controller {
             $econtracts = false;
             $pager = false;
             return $this->render('AppBundle:Default:sentecontracts.html.twig', array(
-                        'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
+                      'resend' => $resend, 'page' => $page, 'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
         }
 
         return $this->render('AppBundle:Default:sentecontracts.html.twig', array(
-                    'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
+                  'resend' => $resend, 'page' => $page, 'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
     }
 
     /**

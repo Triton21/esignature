@@ -121,8 +121,8 @@ app_settingsedit:
     defaults: { _controller: AppBundle:Default:settingsEdit }
     
 app_sentcontracts:
-    path:   /sentcontracts/{page}
-    defaults: { _controller: AppBundle:Default:sentContracts, page:1 }
+    path:   /sentcontracts/{page}/{resend}
+    defaults: { _controller: AppBundle:Default:sentContracts, page:1, resend:non }
     
 app_emailsettings:
     path:   /emailsettings
