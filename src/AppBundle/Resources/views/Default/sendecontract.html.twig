@@ -2,7 +2,7 @@
 {# extends 'AppBundle:Default:defaultbase.html.twig' #}
 
 {% block stylesheets %}
-    <script src="{{asset('bundles/app/ckeditor/ckeditor.js')}}"></script>
+    <script src="{{asset('bundles/app/ckeditor46custom3/ckeditor.js')}}"></script>
     <link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet">
     <style>
         .wrap {
@@ -155,6 +155,12 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="dob" class="col-sm-2 control-label">Content</label>
+                                <div class="col-sm-10">
+                                    <textarea rows="4" cols="50" class="form-control" name="content" id="content"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label for="selectTemplate" class="col-sm-2 control-label">Contract</label>
                                 <div class="col-sm-10">
                                     <select class="form-control" id="selectTemplate" name="selectTemplate">
@@ -226,6 +232,7 @@
             $(function () {
                 //console.log($('#form_save'));
                 $('#form_save').attr('disabled', true);
+                 CKEDITOR.replace('content');
             });
 
 
@@ -235,7 +242,7 @@
                     url: "{{ path('app_autocomplete')}}",
                     dataType: "json",
                     success: function (response) {
-                        console.log(response);
+                        //console.log(response);
                         $("#findClient").autocomplete({
                             minLength: 1,
                             source: response,
@@ -251,7 +258,7 @@
                         });
                     },
                     complete: function () {
-                        console.log('Request is complete');
+                        //console.log('Request is complete');
                     },
                     error: function () {
                         console.log('Oops...there was an error!');
@@ -261,13 +268,13 @@
 
             //format Date of Birth
             function formatDob(dob) {
-                console.log(dob);
+                //console.log(dob);
                 var newDob, splitDob, dobResult;
                 newDob = dob.date.replace(' 00:00:00', '').replace('.000000', '');
                 splitDob = newDob.split("-");
                 dobResult = splitDob[2] + '/' + splitDob[1] + '/' + splitDob[0];
                 $("#dob").val(dobResult);
-                console.log(dobResult);
+                //console.log(dobResult);
             }
 
             //init preview iframe content
@@ -304,11 +311,13 @@
                 var clientId = $('#clientId').val();
                 var emailId = $('#emailTemplate').val();
                 var email = $('#email').val();
+                var content = CKEDITOR.instances['content'].getData();
                 var clientName = $('#name').val();
                 $('#form_tempId').val(templateId);
                 $('#form_clientId').val(clientId);
+                $('#form_extraContent').val(content);
                 $('#form_email').val(email);
-                previewContract(templateId, clientId);
+                previewContract(templateId, clientId, content);
                 referenceGenerator();
                 appendEmailBody(emailId, clientName);
                 $('#form_save').removeAttr('disabled');
@@ -368,9 +377,8 @@
                 });
             }
 
-            function previewContract(templateId, clientId) {
-                var data = {'myid': templateId, 'clientId': clientId};
-                console.log(data);
+            function previewContract(templateId, clientId, content) {
+                var data = {'myid': templateId, 'clientId': clientId, 'content': content};
 
                 var myUrl = "{{path('app_ajaxOpenTemplateIframe')}}";
                 $.ajax({

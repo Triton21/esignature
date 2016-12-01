@@ -1,0 +1,456 @@
+{% extends '::base.html.twig' %}
+{# extends 'AppBundle:Default:defaultbase.html.twig' #}
+
+{% block stylesheets %}
+    <script src="{{asset('bundles/app/ckeditor46custom3/ckeditor.js')}}"></script>
+    <link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet">
+    <style>
+        .wrap {
+            width: 100%;
+            height: 800px;
+            padding: 0;
+            overflow: hidden;
+        }
+        .frame {
+            width: 820px;
+            height: 1406.25px;
+            border: 0;
+            -ms-transform: scale(0.35);
+            -moz-transform: scale(0.35);
+            -o-transform: scale(0.35);
+            -webkit-transform: scale(0.35);
+            transform: scale(0.35);
+
+            -ms-transform-origin: 0 0;
+            -moz-transform-origin: 0 0;
+            -o-transform-origin: 0 0;
+            -webkit-transform-origin: 0 0;
+            transform-origin: 0 0;
+        }
+        /* Modal box */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        div.relative {
+            background-color: white;
+            position: relative;
+            width: 210mm;
+            height: 297mm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1cm;
+            box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+        }
+
+        div.footer {
+            position: absolute;
+            bottom: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+        div.header {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-top: 1cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+        div.pagebody {
+            position: relative;
+            top: 10px;
+            width: 210mm;
+            padding-bottom: 1cm;
+            padding-top: 0cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+
+
+    </style>
+{% endblock %}
+
+{% block body %}
+
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2>Create new Contract</h2>
+                    <div class="row">
+                        <form class="form-horizontal">
+                            <input type="text" name="clientId" id="clientId" hidden>
+                            <div class="form-group">
+                                <label for="findClient" class="col-sm-2 control-label">Search for client</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="findClient" id="findClient" placeholder="Start typing a name and choose from the dropdown list">
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="name" id="name" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="col-sm-2 control-label">Email</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="email" id="email" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" class="col-sm-2 control-label">Phone</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="phone" id="phone" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob" class="col-sm-2 control-label">Date of birth</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="dob" id="dob" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob" class="col-sm-2 control-label">Content</label>
+                                <div class="col-sm-10">
+                                    <textarea rows="4" cols="50" class="form-control" name="content" id="content"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="selectTemplate" class="col-sm-2 control-label">Contract</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="selectTemplate" name="selectTemplate">
+                                        <option></option>
+                                        {% for etemplate in etemplates %}
+                                            <option value="{{etemplate.id}}">{{etemplate.tempname}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="center">
+                                <button class="btn btn-primary" id="submitForm" disabled>Submit</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2>Create new E-contract</h2>
+                    <div class="row">
+
+
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        {{ form_end(form) }}
+
+
+
+                        <br>
+                        
+                    </div>
+                        <div style="text-align:center;">
+                            <a href="#" class="btn btn-lg btn-danger" style="display:none;" id="openContract" target="_blank" role="button">Open in new window</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <div class="panel-body" id="iframeBody" style="padding:5px;">
+                    <h3 style="margin:15px;">Preview   </h3>
+                    <br>
+                    <div class="wrap" style="margin-left:auto; margin-right:auto;">
+                        <iframe class="frame" id="iframeID"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        $(document).ready(function () {
+            //disable send button by default
+            $(function () {
+                //console.log($('#form_save'));
+                $('#form_save').attr('disabled', true);
+                 CKEDITOR.replace('content');
+            });
+
+
+            //autocomplete
+            $(function () {
+                $.ajax({
+                    url: "{{ path('app_autocomplete')}}",
+                    dataType: "json",
+                    success: function (response) {
+                        //console.log(response);
+                        $("#findClient").autocomplete({
+                            minLength: 1,
+                            source: response,
+                            select: function (event, ui) {
+                                $("#name").val(ui.item.name);
+                                $("#email").val(ui.item.email);
+                                $("#email").val(ui.item.email);
+                                $("#phone").val(ui.item.phone);
+                                $("#clientId").val(ui.item.id);
+                                formatDob(ui.item.dob);
+                                checkSubmitButton();
+                            },
+                        });
+                    },
+                    complete: function () {
+                        //console.log('Request is complete');
+                    },
+                    error: function () {
+                        console.log('Oops...there was an error!');
+                    }
+                });
+            });
+
+            //format Date of Birth
+            function formatDob(dob) {
+                //console.log(dob);
+                var newDob, splitDob, dobResult;
+                newDob = dob.date.replace(' 00:00:00', '').replace('.000000', '');
+                splitDob = newDob.split("-");
+                dobResult = splitDob[2] + '/' + splitDob[1] + '/' + splitDob[0];
+                $("#dob").val(dobResult);
+                //console.log(dobResult);
+            }
+
+            //init preview iframe content
+            $(function () {
+                var myUrl = "{{ path('app_initpreview' )}}";
+                $.ajax({
+                    url: myUrl,
+                    dataType: "json",
+                    success: function (response) {
+                        initPreview(response);
+                    }
+                });
+            });
+
+
+            function initPreview(response) {
+                var iframe = document.getElementById('iframeID');
+                iframe = iframe.contentWindow ?
+                        iframe.contentWindow :
+                        (
+                                iframe.contentDocument.document ?
+                                iframe.contentDocument.document :
+                                iframe.contentDocument
+                                );
+                iframe.document.open();
+                iframe.document.write(response);
+                iframe.document.close();
+            }
+
+            //submit patient data as pass it to the e-signature main form
+            $(document).on('click', "#submitForm", function (e) {
+                e.preventDefault();
+                var templateId = $('#selectTemplate').val();
+                var clientId = $('#clientId').val();
+                var content = CKEDITOR.instances['content'].getData();
+                $('#form_tempId').val(templateId);
+                $('#form_clientId').val(clientId);
+                $('#form_extraContent').val(content);
+                previewContract(templateId, clientId, content);
+                referenceGenerator();
+                $('#form_save').removeAttr('disabled');
+            });
+            
+            //submit sign here button
+            $(document).on('click', "#form_save", function (e) {
+                e.preventDefault();
+                e.preventDefault();
+                var tempId = $('#form_tempId').val();
+                var clientID = $('#form_clientId').val();
+                var reference = $('#form_reference').val();
+                var extraContent = $('#form_extraContent').val();
+                var data = {'tempId': tempId, 'clientID': clientID,  'reference': reference, 'extraContent': extraContent };
+                
+                console.log(data);
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('app_ajaxSignHere')}}",
+                    cache: false,
+                    data: data,
+                    dataType: "json",
+                    success: function (response) {
+                        disableSubmitButton();
+                        $("#openContract").removeAttr("style");
+                        $("#openContract").attr("href", response.token)
+                        console.log(response);
+                    },
+                    complete: function () {
+                        console.log('Request is complete');
+                    },
+                    error: function () {
+                        console.log('Oops...there was an error!');
+                    }
+                });
+                
+                
+            });
+            
+            function disableSubmitButton() {
+                $('#form_save').hide();
+                $('#submitForm').hide();
+            }
+            
+
+            //enable submit button if template id and client id set
+            function checkSubmitButton() {
+                var templateId = $('#selectTemplate').val();
+                var clientId = $('#clientId').val();
+                console.log(clientId);
+                if (templateId !== '' && clientId !== '') {
+                    $('#submitForm').removeAttr('disabled');
+                }
+            }
+
+            //enable submit button if template id and client id set
+            $(document).on('change', "#selectTemplate", function () {
+                var templateId = $('#selectTemplate').val();
+                var clientId = $('#clientId').val();
+                if (templateId !== '' && clientId !== '') {
+                    $('#submitForm').removeAttr('disabled');
+                }
+            });
+
+            function referenceGenerator() {
+                var timeInMs = Date.now();
+                var nameInit = $("#name").val().charAt(0);
+                $('#form_reference').val(timeInMs + '-' + nameInit);
+            }
+
+            function appendEmailBody(emailId, clientName) {
+                var myUrl = "{{path('app_ajaxappendemail')}}";
+                var data = {'emailId': emailId};
+
+                $.ajax({
+                    type: 'POST',
+                    url: myUrl,
+                    cache: false,
+                    data: data,
+                    dataType: "json",
+                    success: function (response) {
+                        var mybody = response.body;
+                        mybody = mybody.replace('%name%', clientName);
+                        mybody = mybody.replace('%username%', '{{name}}');
+
+                        CKEDITOR.instances["form_body"].setData(mybody);
+                        $('#form_subject').val(response.subject);
+                        $('#form_token').val(response.token);
+                        console.log(response.token);
+                    },
+                    complete: function () {
+                        console.log('Request is complete');
+                    },
+                    error: function () {
+                        console.log('Oops...there was an error!');
+                    }
+                });
+            }
+
+            function previewContract(templateId, clientId, content) {
+                var data = {'myid': templateId, 'clientId': clientId, 'content': content};
+
+                var myUrl = "{{path('app_ajaxOpenTemplateIframe')}}";
+                $.ajax({
+                    type: 'POST',
+                    url: myUrl,
+                    cache: false,
+                    data: data,
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        initPreview(data);
+                    }
+                });
+
+            }
+            ;
+
+            $(window).resize(function () {
+                resizeIframe();
+            });
+
+            $(function () {
+                var iframeBodyWidth = $('#iframeBody').width();
+                var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
+                var iScale = iframeWidth / 2450;
+                var myFrame = $('.frame');
+                myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
+                myFrame.css('width', iframeWidth);
+            });
+
+            function resizeIframe() {
+                var iframeBodyWidth = $('#iframeBody').width();
+                var iframeWidth = Math.ceil(iframeBodyWidth / 0.3414);
+                var iScale = iframeWidth / 2450;
+                var myFrame = $('.frame');
+                myFrame.css('-ms-transform', 'scale(' + iScale + ')');
+                myFrame.css('-moz-transform', 'scale(' + iScale + ')');
+                myFrame.css('-o-transform', 'scale(' + iScale + ')');
+                myFrame.css('-webkit-transform', 'scale(' + iScale + ')');
+                myFrame.css('transform', 'scale(' + iScale + ')');
+                myFrame.css('width', iframeWidth);
+            }
+
+
+        });
+
+
+    </script>
+
+{% endblock %}

@@ -53,7 +53,7 @@ class Econtract
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="text")
+     * @ORM\Column(name="email", type="text", nullable=true)
      */
     private $email;
     
@@ -84,6 +84,13 @@ class Econtract
      * @ORM\Column(name="emailContent", type="text", nullable=true)
      */
     private $emailContent;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="extraContent", type="text", nullable=true)
+     */
+    private $extraContent;
     
     /**
      * @var string
@@ -196,6 +203,13 @@ class Econtract
      * @ORM\Column(name="patientSigned", type="boolean")
      */
     private $patientSigned;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="needSelfSign", type="boolean", nullable=true)
+     */
+    private $needSelfSign;
     
     /**
      * @var string
@@ -843,5 +857,53 @@ class Econtract
     public function getSettid()
     {
         return $this->settid;
+    }
+
+    /**
+     * Set extraContent
+     *
+     * @param string $extraContent
+     *
+     * @return Econtract
+     */
+    public function setExtraContent($extraContent)
+    {
+        $this->extraContent = $extraContent;
+
+        return $this;
+    }
+
+    /**
+     * Get extraContent
+     *
+     * @return string
+     */
+    public function getExtraContent()
+    {
+        return $this->extraContent;
+    }
+
+    /**
+     * Set needSelfSign
+     *
+     * @param boolean $needSelfSign
+     *
+     * @return Econtract
+     */
+    public function setNeedSelfSign($needSelfSign)
+    {
+        $this->needSelfSign = $needSelfSign;
+
+        return $this;
+    }
+
+    /**
+     * Get needSelfSign
+     *
+     * @return boolean
+     */
+    public function getNeedSelfSign()
+    {
+        return $this->needSelfSign;
     }
 }

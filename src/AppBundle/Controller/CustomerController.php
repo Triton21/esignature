@@ -139,6 +139,14 @@ class CustomerController extends Controller {
             return $response;
         }
         $rawContent = $myContract->getContent();
+        //Insert the extra content to the contract body
+        $extraContent = $myContract->getExtraContent();
+        if ($extraContent) {
+            $rawContent = str_replace('%%content%%', $extraContent, $rawContent);
+        } else {
+            $rawContent = str_replace('%%content%%', '', $rawContent);
+        }
+
         $rawHeading = $myContract->getHeading();
         $rawFirstpage = $myContract->getFirstpage();
         $rawFooter = $myContract->getFooter();
@@ -224,15 +232,19 @@ class CustomerController extends Controller {
         if (!$eContract) {
             return $this->redirectToRoute('customer_accessdenied', array('id' => $ip));
         }
+        //check if email exist in eContract
+        $emailCheck = $eContract->getEmail();
         $pdf = $eContract->getFilepath();
         if (!$pdf) {
             $this->generatePdf($eContract->getId());
-            $this->sendEmail($eContract->getId());
+            if ($emailCheck) {
+                $this->sendEmail($eContract->getId());
+            }
         }
 
-        return $this->render('AppBundle:Customer:signednote.html.twig');
+        return $this->render('AppBundle:Customer:signednote.html.twig', array('emailCheck' => $emailCheck,));
     }
-    
+
     /**
      * Resend the pdf file by email
      */
@@ -240,8 +252,8 @@ class CustomerController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $eContract = $em->getRepository('AppBundle:Econtract')
                 ->find($id);
-        if($eContract) {
-           $this->sendEmail($id); 
+        if ($eContract) {
+            $this->sendEmail($id);
         }
         return $this->redirectToRoute('app_sentcontracts', array('page' => $page, 'resend' => 'success'));
     }
@@ -406,6 +418,13 @@ class CustomerController extends Controller {
         $clientImage = $myContract->getClientSignature();
 
         $rawContent = $myContract->getContent();
+        //Insert the extra content to the contract body
+        $extraContent = $myContract->getExtraContent();
+        if ($extraContent) {
+            $rawContent = str_replace('%%content%%', $extraContent, $rawContent);
+        } else {
+            $rawContent = str_replace('%%content%%', '', $rawContent);
+        }
         $rawHeading = $myContract->getHeading();
         $rawFooter = $myContract->getFooter();
         $rawFirstpage = $myContract->getFirstpage();

@@ -10,15 +10,16 @@
     <div class="container">
         <div class="col-md-offset-1 col-md-10">
             <div class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" style="text-align: center;">
                     <h2>Signature accepted</h2>
                     <div class="col-md-12">
                         <br>
                         <br>
                         <br>
-                        <div class="col-md-6 center">
-                            Your document has been signed. You will receive an email with the pdf document shortly.
-                        </div>
+                        <p style="text-align: center;">
+                            Your document has been signed.<br> 
+                            {% if emailCheck == true %}You will receive an email with the pdf document shortly.{% endif %}
+                        </p>
                         <br>
                         <br>
                     </div>

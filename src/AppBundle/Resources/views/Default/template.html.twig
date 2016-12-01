@@ -167,7 +167,7 @@
                                                     </td>
                                                     <td>
                                                         <a href="{{path('app_delete_template', {'id': etemplate.id })}}" id="deleteTemplate" role="button" class="btn btn-sm btn-danger"
-                                                           {% if etemplate.username != name %}disabled {% endif %}
+                                                           {% if etemplate.username != name and is_granted('ROLE_ADMIN')==false %}disabled {% endif %}
                                                            >Delete</a>
                                                     </td>
                                                 </tr>

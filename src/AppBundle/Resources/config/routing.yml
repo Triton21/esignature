@@ -195,3 +195,17 @@ app_about:
 app_contact:
     path:   /application-contact
     defaults: { _controller: AppBundle:Default:contact }
+    
+app_sign_here:
+    path:   /signhere
+    defaults: { _controller: AppBundle:Default:signHere }
+    
+app_ajaxSignHere:
+    path:   /ajaxSignHere
+    defaults: { _controller: AppBundle:Default:ajaxSignHere }
+    
+app_ajaxSignTest:
+    path:   /ajaxSignTest
+    defaults: { _controller: AppBundle:Default:ajaxSignTest }
+    
+

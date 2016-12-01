@@ -74,6 +74,9 @@ class DefaultController extends Controller {
         }
         $user = $this->getUser();
         $name = $user->getUsername();
+        $roles = $user->getRoles();
+        //var_dump($user);
+        //var_dump($roles);die;
 
         $em = $this->getDoctrine()->getManager();
         $limit = 20;
@@ -693,8 +696,11 @@ class DefaultController extends Controller {
         $myContract = $em->getRepository('AppBundle:Econtract')
                 ->find($contractId);
         $signImage = $myContract->getSignature();
+        $extraContent = $myContract->getExtraContent();
 
         $rawContent = $myContract->getContent();
+        //replace extra Content
+        $rawContent = str_replace('%%content%%', $extraContent, $rawContent);
         $rawHeading = $myContract->getHeading();
         $rawFooter = $myContract->getFooter();
         $rawFirstpage = $myContract->getFirstpage();
@@ -731,6 +737,7 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $settId = $request->request->get('myid');
         $clientId = $request->request->get('clientId');
+        $extraContent = $request->request->get('content');
 
         $myTemplate = $em->getRepository('AppBundle:Etemplate')
                 ->find($settId);
@@ -751,7 +758,7 @@ class DefaultController extends Controller {
         $rawFooter = $myTemplate->getFooter();
         $rawFirstpage = $myTemplate->getFirstpage();
         $rawFirstpage = $this->replaceFirstPage($rawFirstpage, $client, $company, $today);
-        
+
         $rawSignpage = $myTemplate->getSignpage();
         $rawContent = $myTemplate->getContent();
 
@@ -776,6 +783,7 @@ class DefaultController extends Controller {
         $html = str_replace('%%addresstown%%', $addressTown, $html);
         $html = str_replace('%%postcode%%', $postcode, $html);
         $html = str_replace('%%date%%', $today, $html);
+        $html = str_replace('%%content%%', $extraContent, $html);
 
         $response = new Response(json_encode($html));
         return $response;
@@ -840,7 +848,7 @@ class DefaultController extends Controller {
                 ->find($id);
         if ($template) {
             $username = $template->getUsername();
-            if ($username == $name) {
+            if ($username == $name || $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
                 $em->remove($template);
                 $em->flush();
             }
@@ -1057,6 +1065,7 @@ class DefaultController extends Controller {
         $form = $this->createFormBuilder($reference)
                 ->add('tempId', 'hidden', array('read_only' => true))
                 ->add('clientId', 'hidden', array('read_only' => true))
+                ->add('extraContent', 'hidden', array('read_only' => true))
                 ->add('token', 'hidden', array('read_only' => true))
                 ->add('reference', 'text', array('read_only' => true, 'label' => 'Reference', 'required' => true,))
                 ->add('email', 'text', array('read_only' => true, 'label' => 'Email'))
@@ -1072,6 +1081,7 @@ class DefaultController extends Controller {
             $templateID = $form->get('tempId')->getData();
             $clientID = $form->get('clientId')->getData();
             $reference = $form->get('reference')->getData();
+            $extraContent = $form->get('extraContent')->getData();
             $settid = $form->get('settings')->getData();
             $subject = $form->get('subject')->getData();
             $toemailRaw = $form->get('email')->getData();
@@ -1087,14 +1097,7 @@ class DefaultController extends Controller {
             $toEmail = str_replace(array("\r", "\n"), '', $trimmedToEmail);
             $firstPageRaw = $template->getFirstpage();
             $company = $em->getRepository('AppBundle:Company')
-                ->findOneBy(array('active' => 1));
-            /*
-            $clientName = $client->getName();
-            $addressFirstLine = $client->getAddressfirstline();
-            $addressTown = $client->getAddresstown();
-            $postcode = $client->getPostcode();
-             * 
-             */
+                    ->findOneBy(array('active' => 1));
             $today = date("d/F/Y");
             $signPageRaw = $template->getSignpage();
 
@@ -1105,7 +1108,7 @@ class DefaultController extends Controller {
             $eContract->setContent($template->getContent());
             $eContract->setHeading($template->getHeading());
             $eContract->setFooter($template->getFooter());
-            
+
             //replace company and client details in the first page
             $firstPage = $this->replaceFirstPage($firstPageRaw, $client, $company, $today);
             $eContract->setFirstpage($firstPage);
@@ -1119,6 +1122,7 @@ class DefaultController extends Controller {
             $eContract->setAddresstown($client->getAddresstown());
             $eContract->setPostcode($client->getPostcode());
             $eContract->setReference($reference);
+            $eContract->setExtraContent($extraContent);
             $eContract->setTokenactive(true);
             $eContract->setPatientSigned(false);
             $eContract->setEmail($toEmail);
@@ -1142,6 +1146,130 @@ class DefaultController extends Controller {
                     'emailtemplates' => $emailtemplates, 'settings' => $settings, 'etemplates' => $etemplates, 'form' => $form->createView(), 'name' => $name,));
     }
 
+    /**
+     * Send new econtract to a previously saved client
+     * 
+     */
+    public function signHereAction(Request $request) {
+
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+        $settingsarray = [];
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $name = $user->getUsername();
+        $etemplates = $em->getRepository('AppBundle:Etemplate')
+                ->findAll();
+        $settings = $em->getRepository('AppBundle:Settings')
+                ->findAll();
+        $emailtemplates = $em->getRepository('AppBundle:Emailtemplate')
+                ->findAll();
+        //remove default email template
+        //var_dump($emailtemplates);die;
+        foreach ($emailtemplates as $key => $emailtemplate) {
+            if ($emailtemplate->getTempname() === 'default') {
+                $defaultKey = $key;
+            }
+        }
+        unset($emailtemplates[$defaultKey]);
+
+        foreach ($settings as $sett) {
+            $settingsarray[$sett->getId()] = $sett->getFromname() . ' - ' . $sett->getEusername();
+        }
+
+        $reference = [];
+        $form = $this->createFormBuilder($reference, ['attr' => ['id' => 'sign-form']])
+                ->add('tempId', 'hidden', array('read_only' => true))
+                ->add('clientId', 'hidden', array('read_only' => true))
+                ->add('extraContent', 'hidden', array('read_only' => true))
+                ->add('token', 'hidden', array('read_only' => true))
+                ->add('reference', 'text', array('read_only' => true, 'label' => 'Reference', 'required' => true,))
+                ->add('save', 'submit', array('label' => 'Create', 'attr' => array('class' => 'btn btn-danger btn-lg')))
+                ->getForm();
+        $form->handleRequest($request);
+
+        return $this->render('AppBundle:Default:signhere.html.twig', array(
+                    'emailtemplates' => $emailtemplates, 'settings' => $settings, 'etemplates' => $etemplates, 'form' => $form->createView(), 'name' => $name,));
+    }
+    
+    /**
+     * Create the eContract object and persist to databas
+     */
+    public function ajaxSignHereAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $name = $user->getUsername();
+        $templateID = $request->request->get('tempId');
+        $clientID = $request->request->get('clientID');
+        $reference = $request->request->get('reference');
+        $extraContent = $request->request->get('extraContent');
+        $tokenArray = $this->tokenGenerator();
+        $token = $tokenArray[0];
+        $tokenRaw = $tokenArray[1];
+        $template = $em->getRepository('AppBundle:Etemplate')
+                ->find($templateID);
+        
+        
+        $client = $em->getRepository('AppBundle:Client')
+                ->find($clientID);
+        
+        $firstPageRaw = $template->getFirstpage();
+        $company = $em->getRepository('AppBundle:Company')
+                ->findOneBy(array('active' => 1));
+        $today = date("d/F/Y");
+        $signPageRaw = $template->getSignpage();
+        
+        
+        //create the eContract object and persist to databas
+        $eContract = new Econtract();
+        $eContract->setContent($template->getContent());
+        $eContract->setHeading($template->getHeading());
+        $eContract->setFooter($template->getFooter());
+        
+        //replace company and client details in the first page
+        $firstPage = $this->replaceFirstPage($firstPageRaw, $client, $company, $today);
+        $eContract->setFirstpage($firstPage);
+        
+        //replace placeholders in the last page as name and address
+        $signPage = $this->replaceSignPage($signPageRaw, $client, $today);
+        $eContract->setSignpage($signPage);
+        
+        $eContract->setSignature($template->getSignature());
+        $eContract->setAddressfirstline($client->getAddressfirstline());
+        $eContract->setAddresstown($client->getAddresstown());
+        $eContract->setPostcode($client->getPostcode());
+        
+        $eContract->setReference($reference);
+        $eContract->setCreatedAt(new \DateTime());
+        
+        $eContract->setExtraContent($extraContent);
+        
+        $eContract->setTokenactive(true);
+        $eContract->setPatientSigned(false);
+        
+        //$eContract->setEmail($client->getEmail());
+        //$eContract->setSettid($settid);
+        $eContract->setTokenDate(new \DateTime());
+        
+        $expiryObject = new \DateTime();
+        $expiryObject->modify('+1 month');
+        
+        $eContract->setTokenExpiry($expiryObject);
+        $eContract->setUsername($name);
+        $eContract->setToken($tokenRaw);
+
+        $eContract->setClient($client);
+        $em->persist($client);
+        $em->persist($eContract);
+        
+        $em->flush();
+        
+        $myJson = new JsonResponse(array('token' => $token,));
+        return $myJson;
+        
+    }
+
     /** Replace the client personal details in the last page of the contract
      * @param $signPageRaw HTML code
      * @param $client object
@@ -1149,7 +1277,7 @@ class DefaultController extends Controller {
      * @return $signPage HTML code
      */
     public function replaceSignPage($signPageRaw, $client, $today) {
-        if($today === false) {
+        if ($today === false) {
             $today = date("d/F/Y");
         }
         $signPage = str_replace('%%clientname%%', $client->getName(), $signPageRaw);
@@ -1159,7 +1287,7 @@ class DefaultController extends Controller {
         $signPage = str_replace('%%date%%', $today, $signPage);
         return $signPage;
     }
-    
+
     /** Replace the client personal details in the last page of the contract
      * @param $signPageRaw HTML code
      * @param $client object
@@ -1167,14 +1295,14 @@ class DefaultController extends Controller {
      * @return $signPage HTML code
      */
     public function replaceFirstPage($firstPageRaw, $client, $company, $today) {
-        
-        if($today === false) {
+
+        if ($today === false) {
             $today = date("d/F/Y");
         }
         /*
-        $em = $this->getDoctrine()->getManager();
-        $company = $em->getRepository('AppBundle:Company')
-                ->findOneBy(array('active' => 1));
+          $em = $this->getDoctrine()->getManager();
+          $company = $em->getRepository('AppBundle:Company')
+          ->findOneBy(array('active' => 1));
          * 
          */
         $firstPage = str_replace('%%clientname%%', $client->getName(), $firstPageRaw);
@@ -1313,6 +1441,21 @@ class DefaultController extends Controller {
 
         return true;
     }
+    
+    /*
+     * Generate token for eContract object
+     */
+    public function tokenGenerator() {
+        $tokenRaw = bin2hex(openssl_random_pseudo_bytes(32)) . '' . time();
+        //URL NEEDS TO BE CHANGED FOR PRODUCTION ENVIROMENT!!!
+        $url = 'http://localhost/esignature/web/app_dev.php/customer/customer';
+        //$url = 'http://esignature.cf/customer/customer';
+        //$url = 'http://esign.dent1st.co.uk/customer/customer';
+        $token = $url . '/' . $tokenRaw;
+        $tokenArray = [$token, $tokenRaw];
+        return $tokenArray;
+    }
+    
 
     /**
      * Receives the email and client IDs, and returns the email body and subject object.
@@ -1323,16 +1466,11 @@ class DefaultController extends Controller {
     public function ajaxappendemailAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $emailId = $request->request->get('emailId');
-        //generate token
-        $tokenRaw = bin2hex(openssl_random_pseudo_bytes(32)) . '' . time();
+        $tokenArray = $this->tokenGenerator();
+        
         $todayObj = new \DateTime();
         $todayDate = $todayObj->format('d-m-Y');
-
-        //URL NEEDS TO BE CHANGED FOR PRODUCTION ENVIROMENT!!!
-        //$url = 'http://localhost/esignature/web/app_dev.php/customer/customer';
-        $url = 'http://esignature.cf/customer/customer';
-        $token = $url . '/' . $tokenRaw;
-        $mylink = '<a href="' . $token . '">click here to access your contract</a>';
+        $mylink = '<a href="' . $tokenArray[0] . '">click here to access your contract</a>';
 
         $myEmailtemplate = $em->getRepository('AppBundle:Emailtemplate')
                 ->find($emailId);
@@ -1341,7 +1479,7 @@ class DefaultController extends Controller {
         $body = str_replace('%date%', $todayDate, $body);
         $subject = $myEmailtemplate->getSubject();
 
-        $myJson = new JsonResponse(array('body' => $body, 'subject' => $subject, 'token' => $tokenRaw));
+        $myJson = new JsonResponse(array('body' => $body, 'subject' => $subject, 'token' => $tokenArray[1]));
         return $myJson;
     }
 
@@ -1416,11 +1554,11 @@ class DefaultController extends Controller {
             $econtracts = false;
             $pager = false;
             return $this->render('AppBundle:Default:sentecontracts.html.twig', array(
-                      'resend' => $resend, 'page' => $page, 'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
+                        'resend' => $resend, 'page' => $page, 'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
         }
 
         return $this->render('AppBundle:Default:sentecontracts.html.twig', array(
-                  'resend' => $resend, 'page' => $page, 'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
+                    'resend' => $resend, 'page' => $page, 'searchTerm' => $searchTerm, 'result' => $result, 'form' => $form->createView(), 'econtracts' => $econtracts, 'pager' => $pager, 'name' => $name,));
     }
 
     /**

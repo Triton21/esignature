@@ -88,6 +88,13 @@ class Econtract
     /**
      * @var string
      *
+     * @ORM\Column(name="extraContent", type="text", nullable=true)
+     */
+    private $extraContent;
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="reference", type="text")
      */
     private $reference;
@@ -196,6 +203,13 @@ class Econtract
      * @ORM\Column(name="patientSigned", type="boolean")
      */
     private $patientSigned;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="needSelfSign", type="boolean")
+     */
+    private $needSelfSign;
     
     /**
      * @var string
@@ -819,5 +833,53 @@ class Econtract
     public function getFilepath()
     {
         return $this->filepath;
+    }
+
+    /**
+     * Set settid
+     *
+     * @param integer $settid
+     *
+     * @return Econtract
+     */
+    public function setSettid($settid)
+    {
+        $this->settid = $settid;
+
+        return $this;
+    }
+
+    /**
+     * Get settid
+     *
+     * @return integer
+     */
+    public function getSettid()
+    {
+        return $this->settid;
+    }
+
+    /**
+     * Set extraContent
+     *
+     * @param string $extraContent
+     *
+     * @return Econtract
+     */
+    public function setExtraContent($extraContent)
+    {
+        $this->extraContent = $extraContent;
+
+        return $this;
+    }
+
+    /**
+     * Get extraContent
+     *
+     * @return string
+     */
+    public function getExtraContent()
+    {
+        return $this->extraContent;
     }
 }
